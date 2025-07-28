@@ -44,9 +44,15 @@ class PropertyVideoInline(admin.TabularInline):
 @admin.register(Property)
 class PropertyAdmin(SortableAdminBase, admin.ModelAdmin):
     change_form_template = "admin/properties/property/change_form.html"
+<<<<<<< HEAD
     list_display = ['title', 'property_type', 'status', 'price', 'neighbourhood', 'agent', 'is_verified', 'is_featured', 'created_at']
     list_filter = ['property_type', 'status', 'is_verified', 'is_featured', 'created_at', 'features', 'neighbourhood']
     search_fields = ['title', 'description', 'address', 'neighbourhood', 'city']
+=======
+    list_display = ['title', 'property_type', 'status', 'price', 'agent', 'is_verified', 'is_featured', 'created_at']
+    list_filter = ['property_type', 'status', 'is_verified', 'is_featured', 'created_at', 'features']
+    search_fields = ['title', 'description', 'address', 'city', 'state']
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     prepopulated_fields = {'slug': ('title',)}
     readonly_fields = ['created_at', 'updated_at', 'views_count']
     inlines = [PropertyImageInline, PropertyVideoInline]
@@ -61,8 +67,12 @@ class PropertyAdmin(SortableAdminBase, admin.ModelAdmin):
             'description': 'Select or remove features for this property. You can select multiple features.'
         }),
         ('Location', {
+<<<<<<< HEAD
             'fields': ('address', 'neighbourhood', 'city'),
             'description': 'Address information (only visible to agents and admins in frontend)'
+=======
+            'fields': ('address', 'city', 'state', 'zip_code', 'latitude', 'longitude')
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
         }),
         ('Metadata', {
             'fields': ('agent', 'is_verified', 'is_featured', 'created_at', 'updated_at', 'views_count')

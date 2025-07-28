@@ -149,12 +149,18 @@
                             {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ property.title }}</h5>
+<<<<<<< HEAD
                                 {% if user.is_authenticated and user.is_agent or user.is_admin %}
                                 <p class="card-text text-muted">
                                     <i class="fas fa-map-marker-alt"></i> 
                                     {% if property.city %}{{ property.city }}{% else %}Location not available{% endif %}
                                 </p>
                                 {% endif %}
+=======
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> {{ property.city }}, {{ property.state }}
+                                </p>
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
                                 <div class="property-price">
                                     <h4 class="text-primary">₹{{ property.price|intcomma }}</h4>
                                     <span class="badge bg-{{ property.status|lower }}">{{ property.get_status_display }}</span>
@@ -227,12 +233,18 @@
                                         {% endif %}
                                     </div>
                                     <p class="price mb-2">₹{{ property.price|floatformat:0|intcomma }}</p>
+<<<<<<< HEAD
                                     {% if user.is_authenticated and user.is_agent or user.is_admin %}
                                     <p class="text-muted mb-3">
                                         <i class="fas fa-map-marker-alt"></i> 
                                         {% if property.city %}{{ property.city }}{% else %}Location not available{% endif %}
                                     </p>
                                     {% endif %}
+=======
+                                    <p class="text-muted mb-3">
+                                        <i class="fas fa-map-marker-alt"></i> {{ property.city }}, {{ property.state }}
+                                    </p>
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
                                     <p class="card-text">{{ property.description|truncatewords:30 }}</p>
                                     <div class="features">
                                         <div class="feature">
