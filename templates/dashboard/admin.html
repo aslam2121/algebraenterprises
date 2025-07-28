@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Admin Dashboard</h1>
+  <p>Welcome, {{ user.get_full_name }}!</p>
+  <h2>All Properties</h2>
+  <ul>
+    {% for property in properties %}
+      <li>{{ property }}</li>
+    {% empty %}
+      <li>No properties found.</li>
+    {% endfor %}
+  </ul>
+  <h2>All Agents</h2>
+  <ul>
+    {% for agent in agents %}
+      <li>{{ agent.get_full_name }}</li>
+    {% empty %}
+      <li>No agents found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %} 

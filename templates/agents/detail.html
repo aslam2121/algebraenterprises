@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ agent.user.get_full_name }} - Algebra Enterprises{% endblock %}
+
+{% block meta_description %}{{ agent.bio|truncatewords:30 }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Agent Profile -->
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="position-relative">
+                    {% if agent.profile_image %}
+                        <img src="{{ agent.profile_image.url }}" class="card-img-top" alt="{{ agent.user.get_full_name }}">
+                    {% else %}
+                        <img src="{% static 'images/no-image.svg' %}" class="card-img-top" alt="No image available">
+                    {% endif %}
+                    <div class="position-absolute top-0 end-0 p-2">
+                        <span class="badge bg-primary">{{ agent.get_experience_display }}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ agent.user.get_full_name }}</h4>
+                    <p class="text-muted mb-3">{{ agent.title }}</p>
+                    
+                    <div class="agent-stats mb-4">
+                        <div class="stat">
+                            <i class="fas fa-home"></i>
+                            <span>{{ agent.properties.count }} Properties</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-star"></i>
+                            <span>{{ agent.rating|default:"New" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="contact-info">
+                        <h5>Contact Information</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-phone"></i> {{ agent.phone }}</li>
+                            <li><i class="fas fa-envelope"></i> {{ agent.user.email }}</li>
+                            {% if agent.website %}
+                                <li><i class="fas fa-globe"></i> <a href="{{ agent.website }}" target="_blank">Website</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+
+                    <div class="social-links mt-4">
+                        {% if agent.facebook %}
+                            <a href="{{ agent.facebook }}" class="btn btn-outline-primary me-2" target="_blank">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        {% endif %}
+                        {% if agent.twitter %}
+                            <a href="{{ agent.twitter }}" class="btn btn-outline-info me-2" target="_blank">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        {% endif %}
+                        {% if agent.linkedin %}
+                            <a href="{{ agent.linkedin }}" class="btn btn-outline-primary me-2" target="_blank">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        {% endif %}
+                        {% if agent.instagram %}
+                            <a href="{{ agent.instagram }}" class="btn btn-outline-danger" target="_blank">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <!-- About -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">About</h5>
+                    <p class="card-text">{{ agent.bio }}</p>
+                </div>
+            </div>
+
+            <!-- Properties -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Properties</h5>
+                    <div class="row">
+                        {% for property in properties %}
+                            <div class="col-md-6 mb-4">
+                                <div class="property-card h-100">
+                                    <div class="position-relative">
+                                        {% if property.images.exists %}
+                                            <img src="{{ property.images.first.image.url }}" class="card-img-top" alt="{{ property.title }}">
+                                        {% else %}
+                                            <img src="{% static 'images/no-image.svg' %}" class="card-img-top" alt="No image available">
+                                        {% endif %}
+                                        <div class="position-absolute top-0 start-0 p-2">
+                                            <span class="badge bg-primary">{{ property.get_property_type_display }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ property.title }}</h6>
+                                        <p class="price mb-2">₹{{ property.price|floatformat:0|intcomma }}</p>
+                                        {% if user.is_authenticated and user.is_agent or user.is_admin %}
+                                        <p class="text-muted mb-3">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            {% if property.city %}{{ property.city }}{% else %}Location not available{% endif %}
+                                        </p>
+                                        {% endif %}
+                                        <div class="features">
+                                            <div class="feature">
+                                                <i class="fas fa-bed"></i>
+                                                <span>{{ property.bedrooms }} Beds</span>
+                                            </div>
+                                            <div class="feature">
+                                                <i class="fas fa-bath"></i>
+                                                <span>{{ property.bathrooms }} Baths</span>
+                                            </div>
+                                            <div class="feature">
+                                                <i class="fas fa-ruler-combined"></i>
+                                                <span>{{ property.area }} sqft</span>
+                                            </div>
+                                        </div>
+                                        <a href="{% url 'properties:detail' property.slug %}" class="btn btn-primary w-100 mt-3">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    No properties listed yet.
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if agent.properties.count > 6 %}
+                        <div class="text-center mt-4">
+                            <a href="{% url 'properties:list' %}?agent={{ agent.user.username }}" class="btn btn-outline-primary">View All Properties</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

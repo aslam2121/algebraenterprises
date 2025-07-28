@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - Algebra Enterprises{% endblock %}
+
+{% block meta_description %}Get in touch with Algebra Enterprises. Our team is here to help you with all your real estate needs. Contact us today for expert assistance.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Contact Us</h1>
+            <p class="lead">We're here to help you find your dream property</p>
+
+            <div class="row mb-5">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-phone fa-2x mb-3 text-primary"></i>
+                            <h3 class="h5">Phone</h3>
+                            <p class="mb-0">+1 234 567 890</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-envelope fa-2x mb-3 text-primary"></i>
+                            <h3 class="h5">Email</h3>
+                            <p class="mb-0">info@algebraenterprises.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-map-marker-alt fa-2x mb-3 text-primary"></i>
+                            <h3 class="h5">Address</h3>
+                            <p class="mb-0">123 Real Estate St, City, Country</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-5">
+                <div class="card-body">
+                    <h2 class="h4 mb-4">Send us a Message</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" name="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h4 mb-4">Office Hours</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <strong>Monday - Friday:</strong> 9:00 AM - 6:00 PM
+                        </li>
+                        <li class="mb-2">
+                            <strong>Saturday:</strong> 10:00 AM - 4:00 PM
+                        </li>
+                        <li>
+                            <strong>Sunday:</strong> Closed
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

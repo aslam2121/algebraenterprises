@@ -1,0 +1,28 @@
+PassengerEnabled On
+PassengerPython /home/satmz/virtualenv/ae.satmz.com/3.10/bin/python
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ /$1 [QSA,L]
+</IfModule>
+
+# Protect sensitive files
+<FilesMatch "^(\.env|\.git|\.gitignore|requirements\.txt|\.python-version)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect media and static directories
+<DirectoryMatch "^/media/">
+    Options -Indexes
+</DirectoryMatch>
+
+<DirectoryMatch "^/static/">
+    Options -Indexes
+</DirectoryMatch>
+
+# Force HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301] 

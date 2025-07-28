@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Our Agents - Algebra Enterprises{% endblock %}
+
+{% block meta_description %}Meet our experienced real estate agents at Algebra Enterprises. Find the perfect agent to help you with your property needs.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-3">Our Agents</h1>
+            <p class="text-muted">Meet our experienced real estate professionals</p>
+        </div>
+    </div>
+
+    <!-- Agents Grid -->
+    <div class="row">
+        {% for agent in agents %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="agent-card h-100">
+                    <div class="position-relative">
+                        {% if agent.profile_image %}
+                            <img src="{{ agent.profile_image.url }}" class="card-img-top" alt="{{ agent.user.get_full_name }}">
+                        {% else %}
+                            <img src="{% static 'images/no-image.svg' %}" class="card-img-top" alt="No image available">
+                        {% endif %}
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <span class="badge bg-primary">{{ agent.get_experience_display }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ agent.user.get_full_name }}</h5>
+                        <p class="text-muted mb-2">{{ agent.title }}</p>
+                        <p class="card-text">{{ agent.bio|truncatewords:30 }}</p>
+                        <div class="agent-stats mb-3">
+                            <div class="stat">
+                                <i class="fas fa-home"></i>
+                                <span>{{ agent.properties.count }} Properties</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-star"></i>
+                                <span>{{ agent.rating|default:"New" }}</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'agents:detail' agent.user.username %}" class="btn btn-primary w-100">View Profile</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No agents found.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if agents.has_other_pages %}
+        <nav aria-label="Agent pagination" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if agents.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ agents.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in agents.paginator.page_range %}
+                    {% if agents.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if agents.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ agents.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %} 

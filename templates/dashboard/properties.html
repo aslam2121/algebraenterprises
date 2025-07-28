@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Properties{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>My Properties</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if user.is_agent or user.is_admin %}
+            <a href="{% url 'dashboard:property_add' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Property
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if properties %}
+    <div class="row">
+        {% for property in properties %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                {% if property.images.exists %}
+                <img src="{{ property.images.first.image.url }}" class="card-img-top" alt="{{ property.title }}">
+                {% else %}
+                <img src="{% static 'images/no-image.svg' %}" class="card-img-top" alt="No image available">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ property.title }}</h5>
+                    {% if user.is_authenticated and user.is_agent or user.is_admin %}
+                    <p class="card-text text-muted">
+                        <i class="fas fa-map-marker-alt"></i> 
+                        {% if property.city %}{{ property.city }}{% else %}Location not available{% endif %}
+                    </p>
+                    {% endif %}
+                    <p class="card-text">
+                        <strong>₹{{ property.price|floatformat:0 }}</strong>
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-{{ property.status|lower }}">{{ property.get_status_display }}</span>
+                        <div class="btn-group">
+                            <a href="{% url 'properties:detail' property.slug %}" class="btn btn-sm btn-outline-primary">View</a>
+                            {% if user.is_agent or user.is_admin %}
+                            <a href="{% url 'dashboard:property_edit' property.slug %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <a href="{% url 'dashboard:property_delete' property.slug %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <p class="mb-0">You haven't added any properties yet.</p>
+        {% if user.is_agent or user.is_admin %}
+        <a href="{% url 'dashboard:property_add' %}" class="btn btn-primary mt-3">Add Your First Property</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

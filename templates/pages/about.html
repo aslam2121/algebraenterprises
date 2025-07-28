@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - Algebra Enterprises{% endblock %}
+
+{% block meta_description %}Learn more about Algebra Enterprises, your trusted partner in real estate. We help you find your dream property with our expert agents and comprehensive services.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">About Algebra Enterprises</h1>
+            <p class="lead">Your Trusted Partner in Real Estate</p>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Our Story</h2>
+                    <p>Algebra Enterprises was founded with a simple mission: to make real estate transactions seamless and enjoyable for everyone. With years of experience in the industry, we've built a reputation for excellence, integrity, and customer satisfaction.</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Our Mission</h2>
+                    <p>We strive to be the most trusted real estate company by providing exceptional service, innovative solutions, and personalized attention to each client. Our goal is to help you find your dream property and make the buying or selling process as smooth as possible.</p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Our Values</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <h3 class="h5">Integrity</h3>
+                            <p>We conduct our business with honesty, transparency, and ethical practices.</p>
+                        </li>
+                        <li class="mb-3">
+                            <h3 class="h5">Excellence</h3>
+                            <p>We strive for excellence in everything we do, from customer service to property management.</p>
+                        </li>
+                        <li class="mb-3">
+                            <h3 class="h5">Innovation</h3>
+                            <p>We embrace new technologies and methods to provide better service to our clients.</p>
+                        </li>
+                        <li>
+                            <h3 class="h5">Customer Focus</h3>
+                            <p>We put our clients' needs first and work tirelessly to exceed their expectations.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Our Team</h2>
+                    <p>Our team of experienced real estate professionals is dedicated to helping you achieve your property goals. With extensive knowledge of the local market and a commitment to customer service, we're here to guide you through every step of your real estate journey.</p>
+                    <a href="{% url 'agents:list' %}" class="btn btn-primary mt-3">Meet Our Agents</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Why Choose Us?</h2>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <h3 class="h5">Expert Knowledge</h3>
+                            <p>Our agents have deep knowledge of the local real estate market and can provide valuable insights.</p>
+                        </li>
+                        <li class="mb-3">
+                            <h3 class="h5">Personalized Service</h3>
+                            <p>We take the time to understand your needs and preferences to find the perfect property for you.</p>
+                        </li>
+                        <li class="mb-3">
+                            <h3 class="h5">Comprehensive Support</h3>
+                            <p>From property search to closing, we provide full support throughout the entire process.</p>
+                        </li>
+                        <li>
+                            <h3 class="h5">Proven Track Record</h3>
+                            <p>Our success is measured by the satisfaction of our clients and their successful property transactions.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Favorite Properties{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_thumbnail.url }}" alt="{{ user.get_full_name }}" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" alt="{{ user.get_full_name }}" class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
+                        <h4>{{ user.get_full_name }}</h4>
+                        <p class="text-muted">{{ user.email }}</p>
+                    </div>
+                    <div class="list-group">
+                        <a href="{% url 'dashboard:customer' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-home me-2"></i> Dashboard
+                        </a>
+                        <a href="{% url 'dashboard:favorites' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-heart me-2"></i> Favorite Properties
+                        </a>
+                        <a href="{% url 'dashboard:viewings' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-alt me-2"></i> Property Viewings
+                        </a>
+                        <a href="{% url 'dashboard:profile' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user me-2"></i> Profile Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Favorite Properties</h5>
+                </div>
+                <div class="card-body">
+                    {% if properties %}
+                        <div class="row">
+                            {% for property in properties %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        {% if property.images.first %}
+                                            <img src="{{ property.images.first.image.url }}" class="card-img-top" alt="{{ property.title }}" style="height: 200px; object-fit: cover;">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ property.title }}</h5>
+                                            <p class="card-text text-muted">{{ property.property_type|title }} - {{ property.status|title }}</p>
+                                            <p class="card-text"><strong>₹{{ property.price|intcomma }}</strong></p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a href="{% url 'properties:detail' property.slug %}" class="btn btn-outline-primary btn-sm">View Details</a>
+                                                <form method="post" action="{% url 'properties:remove_favorite' property.slug %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                        <i class="fas fa-heart-broken"></i> Remove
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if is_paginated %}
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-heart-broken fa-3x text-muted mb-3"></i>
+                            <h5>No Favorite Properties</h5>
+                            <p class="text-muted">You haven't added any properties to your favorites yet.</p>
+                            <a href="{% url 'properties:list' %}" class="btn btn-primary">Browse Properties</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

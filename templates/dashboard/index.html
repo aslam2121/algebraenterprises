@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Welcome to Your Dashboard</h2>
+                    
+                    {% if user.is_authenticated %}
+                        {% if user.is_agent %}
+                            <div class="alert alert-info">
+                                <h4 class="alert-heading">Agent Dashboard</h4>
+                                <p>You are logged in as a real estate agent. You can manage your properties, view inquiries, and track your performance.</p>
+                                <hr>
+                                <p class="mb-0">
+                                    <a href="{% url 'dashboard:agent' %}" class="btn btn-primary">Go to Agent Dashboard</a>
+                                </p>
+                            </div>
+                        {% elif user.is_admin %}
+                            <div class="alert alert-info">
+                                <h4 class="alert-heading">Admin Dashboard</h4>
+                                <p>You are logged in as an administrator. You have access to all system features and can manage users, properties, and site settings.</p>
+                                <hr>
+                                <p class="mb-0">
+                                    <a href="{% url 'dashboard:admin' %}" class="btn btn-primary">Go to Admin Dashboard</a>
+                                </p>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <h4 class="alert-heading">Customer Dashboard</h4>
+                                <p>Welcome to your customer dashboard. Here you can view your favorite properties, manage property viewings, and update your profile.</p>
+                                <hr>
+                                <p class="mb-0">
+                                    <a href="{% url 'dashboard:customer' %}" class="btn btn-primary">Go to Customer Dashboard</a>
+                                </p>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <h4 class="alert-heading">Not Logged In</h4>
+                            <p>Please log in to access your dashboard.</p>
+                            <hr>
+                            <p class="mb-0">
+                                <a href="{% url 'account_login' %}" class="btn btn-primary">Log In</a>
+                                <a href="{% url 'account_signup' %}" class="btn btn-outline-primary">Sign Up</a>
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

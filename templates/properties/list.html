@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Properties - Algebra Enterprises{% endblock %}
+
+{% block meta_description %}Browse our extensive collection of properties for sale and rent. Find your dream home with Algebra Enterprises.{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% csrf_token %}
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h1 class="mb-3">Properties</h1>
+            <p class="text-muted">Found {{ properties.paginator.count }} properties</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" id="grid-view">
+                    <i class="fas fa-th"></i> Grid
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="list-view">
+                    <i class="fas fa-list"></i> List
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Filters</h5>
+                    <form id="property-filter-form" method="get">
+                        <!-- Property Type -->
+                        <div class="mb-3">
+                            <label class="form-label">Property Type</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="property_type" id="type-all" value="" {% if not current_filters.property_type %}checked{% endif %}>
+                                <label class="form-check-label" for="type-all">All</label>
+                            </div>
+                            {% for value, label in property_types %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="property_type" id="type-{{ value|lower }}" value="{{ value }}" {% if current_filters.property_type == value %}checked{% endif %}>
+                                <label class="form-check-label" for="type-{{ value|lower }}">{{ label }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" name="category">
+                                <option value="">All Categories</option>
+                                {% for category in categories %}
+                                    <option value="{{ category.id }}" {% if current_filters.category == category.id|stringformat:"i" %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="mb-3">
+                            <label class="form-label">Price Range</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="min_price" placeholder="Min" value="{{ current_filters.min_price }}">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="max_price" placeholder="Max" value="{{ current_filters.max_price }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bedrooms -->
+                        <div class="mb-3">
+                            <label class="form-label">Bedrooms</label>
+                            <select class="form-select" name="bedrooms">
+                                <option value="">Any</option>
+                                {% for i in "12345" %}
+                                    <option value="{{ i }}" {% if current_filters.bedrooms == i %}selected{% endif %}>{{ i }}+</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Bathrooms -->
+                        <div class="mb-3">
+                            <label class="form-label">Bathrooms</label>
+                            <select class="form-select" name="bathrooms">
+                                <option value="">Any</option>
+                                {% for i in "12345" %}
+                                    <option value="{{ i }}" {% if current_filters.bathrooms == i %}selected{% endif %}>{{ i }}+</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Features -->
+                        <div class="mb-3">
+                            <label class="form-label">Features</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="features" value="garage" {% if 'garage' in current_filters.features %}checked{% endif %}>
+                                <label class="form-check-label">Garage</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="features" value="pool" {% if 'pool' in current_filters.features %}checked{% endif %}>
+                                <label class="form-check-label">Pool</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="features" value="garden" {% if 'garden' in current_filters.features %}checked{% endif %}>
+                                <label class="form-check-label">Garden</label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Properties Grid/List -->
+        <div class="col-lg-9">
+            <!-- Sort Options -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown">
+                        Sort by: {{ sort_label }}
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="?sort=newest">Newest</a></li>
+                        <li><a class="dropdown-item" href="?sort=price_asc">Price: Low to High</a></li>
+                        <li><a class="dropdown-item" href="?sort=price_desc">Price: High to Low</a></li>
+                        <li><a class="dropdown-item" href="?sort=area_desc">Largest Area</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Properties Grid View -->
+            <div id="properties-grid" class="row">
+                {% for property in properties %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            {% if property.images.exists %}
+                                <img src="{{ property.images.first.image.url }}" class="card-img-top" alt="{{ property.title }}">
+                            {% else %}
+                                <img src="{% static 'images/no-image.svg' %}" class="card-img-top" alt="No image available">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ property.title }}</h5>
+                                {% if user.is_authenticated and user.is_agent or user.is_admin %}
+                                <p class="card-text text-muted">
+                                    <i class="fas fa-map-marker-alt"></i> 
+                                    {% if property.city %}{{ property.city }}{% else %}Location not available{% endif %}
+                                </p>
+                                {% endif %}
+                                <div class="property-price">
+                                    <h4 class="text-primary">₹{{ property.price|intcomma }}</h4>
+                                    <span class="badge bg-{{ property.status|lower }}">{{ property.get_status_display }}</span>
+                                </div>
+                                <div class="property-features mb-3">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <small><i class="fas fa-bed"></i> {{ property.bedrooms }} Beds</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <small><i class="fas fa-bath"></i> {{ property.bathrooms }} Baths</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <small><i class="fas fa-ruler-combined"></i> {{ property.area }} sqm</small>
+                                        </div>
+                                        <div class="col-6">
+                                            <small><i class="fas fa-car"></i> {{ property.garages }} Garages</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if property.features.exists %}
+                                <div class="property-additional-features">
+                                    <small class="text-muted">Features:</small>
+                                    <div class="feature-tags">
+                                        {% for feature in property.features.all|slice:":3" %}
+                                            <span class="badge bg-light text-dark">{{ feature.name }}</span>
+                                        {% endfor %}
+                                        {% if property.features.count > 3 %}
+                                            <span class="badge bg-light text-dark">+{{ property.features.count|add:"-3" }} more</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer bg-white border-top-0">
+                                <a href="{{ property.get_absolute_url }}" class="btn btn-primary w-100">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            No properties found matching your criteria.
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Properties List View (Hidden by default) -->
+            <div id="properties-list" class="d-none">
+                {% for property in properties %}
+                    <div class="card mb-4">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                {% if property.images.exists %}
+                                    <img src="{{ property.images.first.image.url }}" class="img-fluid rounded-start h-100" alt="{{ property.title }}">
+                                {% else %}
+                                    <img src="{% static 'images/no-image.svg' %}" class="img-fluid rounded-start h-100" alt="No image available">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h5 class="card-title">{{ property.title }}</h5>
+                                        {% if user.is_authenticated %}
+                                        <button class="btn btn-light btn-sm favorite-property {% if property in user.favorite_properties.all %}active{% endif %}" 
+                                                data-property-id="{{ property.id }}">
+                                            <i class="{% if property in user.favorite_properties.all %}fas{% else %}far{% endif %} fa-heart"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                    <p class="price mb-2">₹{{ property.price|floatformat:0|intcomma }}</p>
+                                    {% if user.is_authenticated and user.is_agent or user.is_admin %}
+                                    <p class="text-muted mb-3">
+                                        <i class="fas fa-map-marker-alt"></i> 
+                                        {% if property.city %}{{ property.city }}{% else %}Location not available{% endif %}
+                                    </p>
+                                    {% endif %}
+                                    <p class="card-text">{{ property.description|truncatewords:30 }}</p>
+                                    <div class="features">
+                                        <div class="feature">
+                                            <i class="fas fa-bed"></i>
+                                            <span>{{ property.bedrooms }} Beds</span>
+                                        </div>
+                                        <div class="feature">
+                                            <i class="fas fa-bath"></i>
+                                            <span>{{ property.bathrooms }} Baths</span>
+                                        </div>
+                                        <div class="feature">
+                                            <i class="fas fa-ruler-combined"></i>
+                                            <span>{{ property.area }} sqm</span>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'properties:detail' property.slug %}" class="btn btn-primary mt-3">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if properties.has_other_pages %}
+                <nav aria-label="Property pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if properties.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ properties.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for num in properties.paginator.page_range %}
+                            {% if properties.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if properties.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ properties.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Grid/List view toggle
+        const gridView = document.getElementById('grid-view');
+        const listView = document.getElementById('list-view');
+        const propertiesGrid = document.getElementById('properties-grid');
+        const propertiesList = document.getElementById('properties-list');
+
+        if (gridView && listView) {
+            gridView.addEventListener('click', function() {
+                gridView.classList.add('active');
+                listView.classList.remove('active');
+                propertiesGrid.classList.remove('d-none');
+                propertiesList.classList.add('d-none');
+            });
+
+            listView.addEventListener('click', function() {
+                listView.classList.add('active');
+                gridView.classList.remove('active');
+                propertiesList.classList.remove('d-none');
+                propertiesGrid.classList.add('d-none');
+            });
+        }
+
+        // Favorite property toggle
+        const favoriteButtons = document.querySelectorAll('.favorite-property');
+        favoriteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const propertyId = this.dataset.propertyId;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch(`/properties/${propertyId}/toggle-favorite/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        this.classList.toggle('active');
+                        const icon = this.querySelector('i');
+                        icon.classList.toggle('fas');
+                        icon.classList.toggle('far');
+                        showAlert('success', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'An error occurred. Please try again.');
+                });
+            });
+        });
+    });
+
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.querySelector('main').insertBefore(alertDiv, document.querySelector('main').firstChild);
+
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.property-features {
+    font-size: 0.9rem;
+}
+
+.property-features i {
+    color: var(--primary-color);
+    margin-right: 0.25rem;
+}
+
+.feature-tags {
+    margin-top: 0.5rem;
+}
+
+.feature-tags .badge {
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+    font-weight: normal;
+}
+
+.property-additional-features {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+/* Property card image styling */
+.card-img-top {
+    width: 100%;
+    height: 250px; /* Fixed height */
+    object-fit: cover; /* Maintain aspect ratio while covering the area */
+    object-position: center; /* Center the image */
+}
+
+/* List view image styling */
+.img-fluid.rounded-start {
+    width: 100%;
+    height: 300px; /* Slightly taller for list view */
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Card hover effect */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure consistent card heights */
+.card.h-100 {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-footer {
+    margin-top: auto;
+}
+</style>
+{% endblock %} 

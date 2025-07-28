@@ -1,0 +1,58 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block after_field_sets %}
+<h3>Bulk Image Upload</h3>
+<input type="file" id="bulkUpload" name="file" multiple />
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link href="https://unpkg.com/filepond/dist/filepond.min.css" rel="stylesheet">
+<script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+{% endblock %}
+
+{% block admin_change_form_document_ready %}
+{{ block.super }}
+<script>
+    // Extract property ID from the URL
+    const pathParts = window.location.pathname.split('/');
+    const propertyId = pathParts[pathParts.indexOf('property') + 1];
+    
+    const pond = FilePond.create(document.querySelector('#bulkUpload'), {
+        allowMultiple: true,
+        server: {
+            process: {
+                url: `/properties/admin/properties/property/${propertyId}/upload-image/`,
+                method: 'POST',
+                withCredentials: false,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                onload: (response) => {
+                    try {
+                        const data = JSON.parse(response);
+                        if (data.success) {
+                            console.log('Images uploaded successfully:', data.images);
+                            // Only reload if all files have been processed
+                            if (pond.getFiles().length === 0) {
+                                window.location.reload();
+                            }
+                        } else {
+                            console.error('Upload error:', data.error);
+                            alert('Failed to upload images: ' + data.error);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
+                        alert('Failed to process server response');
+                    }
+                },
+                onerror: (error) => {
+                    console.error('Upload error:', error);
+                    alert('Failed to upload images. Please try again.');
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
