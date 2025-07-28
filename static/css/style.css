@@ -100,8 +100,14 @@ body {
     border-radius: 50%;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     object-fit: cover;
     margin-bottom: 1rem;
+=======
+    margin: 0 auto 1.5rem;
+    object-fit: cover;
+    border: 5px solid var(--light-color);
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     margin: 0 auto 1.5rem;
     object-fit: cover;
@@ -118,7 +124,10 @@ body {
     font-size: 1.5rem;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     font-weight: bold;
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -136,8 +145,13 @@ body {
     justify-content: space-around;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     margin-top: 1rem;
     padding-top: 1rem;
+=======
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     margin-top: 1.5rem;
     padding-top: 1.5rem;
@@ -153,10 +167,16 @@ body {
 .form-control {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-radius: 8px;
     border: 2px solid #e9ecef;
     padding: 0.75rem 1rem;
     transition: border-color 0.3s ease;
+=======
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     border-radius: 5px;
     border: 1px solid #ddd;
@@ -179,10 +199,16 @@ body {
     border-color: var(--secondary-color);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-radius: 8px;
     padding: 0.75rem 2rem;
     font-weight: 600;
     transition: all 0.3s ease;
+=======
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    font-weight: 500;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     padding: 0.75rem 1.5rem;
     border-radius: 5px;
@@ -200,7 +226,10 @@ body {
     border-color: #2980b9;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     transform: translateY(-2px);
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -211,9 +240,13 @@ body {
 footer {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     background-color: var(--dark-color);
     color: white;
     padding: 3rem 0 1rem;
+=======
+    margin-top: 5rem;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     margin-top: 5rem;
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -226,6 +259,7 @@ footer h5 {
     color: var(--light-color);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     margin-bottom: 1rem;
 }
 
@@ -234,11 +268,16 @@ footer a {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     margin-bottom: 1.5rem;
 }
 
 footer a {
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -247,6 +286,7 @@ footer a {
 }
 
 footer a:hover {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     color: var(--light-color);
@@ -263,6 +303,8 @@ footer a:hover {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     color: var(--secondary-color) !important;
 }
 
@@ -274,6 +316,9 @@ footer a:hover {
 .social-links a:hover {
     transform: translateY(-3px);
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -292,6 +337,7 @@ footer a:hover {
     color: white;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -305,6 +351,8 @@ footer a:hover {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -315,6 +363,9 @@ footer a:hover {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -322,6 +373,7 @@ footer a:hover {
 }
 
 .whatsapp-button:hover {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     background-color: #128c7e;
@@ -334,6 +386,8 @@ footer a:hover {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     transform: scale(1.1);
     color: white;
 }
@@ -342,6 +396,9 @@ footer a:hover {
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -352,10 +409,13 @@ footer a:hover {
 .property-gallery .main-image {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 =======
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     width: 100%;
@@ -363,6 +423,9 @@ footer a:hover {
     object-fit: cover;
     border-radius: 10px;
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -370,6 +433,7 @@ footer a:hover {
 }
 
 .property-gallery .thumbnail {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     border-radius: 8px;
@@ -390,6 +454,8 @@ footer a:hover {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     width: 100px;
     height: 70px;
     object-fit: cover;
@@ -405,6 +471,9 @@ footer a:hover {
 .property-details {
     background-color: white;
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -417,7 +486,11 @@ footer a:hover {
     color: var(--dark-color);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     margin-bottom: 1rem;
+=======
+    margin-bottom: 1.5rem;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     margin-bottom: 1.5rem;
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -432,7 +505,11 @@ footer a:hover {
     font-weight: bold;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     margin-bottom: 1rem;
+=======
+    margin-bottom: 1.5rem;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     margin-bottom: 1.5rem;
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -446,8 +523,13 @@ footer a:hover {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     gap: 1rem;
     margin-top: 2rem;
+=======
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     gap: 1.5rem;
     margin-bottom: 2rem;
@@ -463,9 +545,12 @@ footer a:hover {
     align-items: center;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     padding: 0.5rem;
     background: #f8f9fa;
     border-radius: 8px;
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -477,6 +562,7 @@ footer a:hover {
     margin-right: 0.5rem;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     font-size: 1.2rem;
 }
 
@@ -484,11 +570,16 @@ footer a:hover {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     font-size: 1.25rem;
 }
 
 /* Responsive Styles */
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -496,6 +587,7 @@ footer a:hover {
     .property-card .card-img-top {
         height: 150px;
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     
@@ -510,6 +602,8 @@ footer a:hover {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 
     .property-gallery .main-image {
         height: 300px;
@@ -520,6 +614,9 @@ footer a:hover {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -532,6 +629,7 @@ footer a:hover {
 .spinner {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border: 4px solid #f3f3f3;
     border-top: 4px solid var(--secondary-color);
     border-radius: 50%;
@@ -542,6 +640,8 @@ footer a:hover {
 =======
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     width: 40px;
     height: 40px;
     border: 4px solid #f3f3f3;
@@ -549,6 +649,9 @@ footer a:hover {
     border-radius: 50%;
     animation: spin 1s linear infinite;
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -563,9 +666,15 @@ footer a:hover {
 .alert {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-radius: 8px;
     border: none;
     padding: 1rem 1.5rem;
+=======
+    border-radius: 5px;
+    border: none;
+    padding: 1rem;
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     border-radius: 5px;
     border: none;
@@ -584,7 +693,10 @@ footer a:hover {
     color: #155724;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-left: 4px solid var(--success-color);
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -596,7 +708,10 @@ footer a:hover {
     color: #721c24;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-left: 4px solid var(--danger-color);
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -608,7 +723,10 @@ footer a:hover {
     color: #856404;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     border-left: 4px solid var(--warning-color);
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -618,6 +736,7 @@ footer a:hover {
 .alert-info {
     background-color: #d1ecf1;
     color: #0c5460;
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     border-left: 4px solid var(--secondary-color);
@@ -750,6 +869,8 @@ footer a:hover {
     .auth-card .card-footer {
         padding: 1rem 1.5rem;
     }
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======

@@ -46,9 +46,15 @@ class PropertyAdmin(SortableAdminBase, admin.ModelAdmin):
     change_form_template = "admin/properties/property/change_form.html"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     list_display = ['title', 'property_type', 'status', 'price', 'neighbourhood', 'agent', 'is_verified', 'is_featured', 'created_at']
     list_filter = ['property_type', 'status', 'is_verified', 'is_featured', 'created_at', 'features', 'neighbourhood']
     search_fields = ['title', 'description', 'address', 'neighbourhood', 'city']
+=======
+    list_display = ['title', 'property_type', 'status', 'price', 'agent', 'is_verified', 'is_featured', 'created_at']
+    list_filter = ['property_type', 'status', 'is_verified', 'is_featured', 'created_at', 'features']
+    search_fields = ['title', 'description', 'address', 'city', 'state']
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
     list_display = ['title', 'property_type', 'status', 'price', 'agent', 'is_verified', 'is_featured', 'created_at']
     list_filter = ['property_type', 'status', 'is_verified', 'is_featured', 'created_at', 'features']
@@ -75,8 +81,12 @@ class PropertyAdmin(SortableAdminBase, admin.ModelAdmin):
         ('Location', {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             'fields': ('address', 'neighbourhood', 'city'),
             'description': 'Address information (only visible to agents and admins in frontend)'
+=======
+            'fields': ('address', 'city', 'state', 'zip_code', 'latitude', 'longitude')
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
             'fields': ('address', 'city', 'state', 'zip_code', 'latitude', 'longitude')
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472

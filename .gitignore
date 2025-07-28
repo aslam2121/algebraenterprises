@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -183,6 +184,9 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
+=======
+venv/
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 venv/
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
