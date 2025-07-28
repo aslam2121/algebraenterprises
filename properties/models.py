@@ -56,6 +56,7 @@ class Property(models.Model):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     NEIGHBOURHOOD_CHOICES = [
         # South Delhi Neighborhoods
         ('ANAND_LOK', 'Anand Lok'),
@@ -113,6 +114,8 @@ class Property(models.Model):
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -133,6 +136,7 @@ class Property(models.Model):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     address = models.CharField(max_length=200, null=True, blank=True, help_text="Full address (only visible to agents and admins)")
     neighbourhood = models.CharField(max_length=20, choices=NEIGHBOURHOOD_CHOICES, default='OTHER', help_text="Neighbourhood of the property (only visible to agents and admins)")
     city = models.CharField(max_length=100, help_text="City where property is located (only visible to agents and admins)")
@@ -141,6 +145,8 @@ class Property(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, help_text="Longitude coordinates")
 
 =======
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -154,6 +160,9 @@ class Property(models.Model):
     
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472

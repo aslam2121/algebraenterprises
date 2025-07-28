@@ -7,6 +7,7 @@ class PropertyForm(forms.ModelForm):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         widget=forms.SelectMultiple(attrs={
             'class': 'form-control',
             'size': '8',
@@ -15,6 +16,8 @@ class PropertyForm(forms.ModelForm):
         required=False,
         help_text="Select multiple features for this property. Hold Ctrl (Windows) or Cmd (Mac) to select multiple options."
 =======
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -28,6 +31,9 @@ class PropertyForm(forms.ModelForm):
         help_text="Select or deselect features for this property. You can remove features by unchecking them."
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -43,7 +49,12 @@ class PropertyForm(forms.ModelForm):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             'year_built', 'features', 'address', 'neighbourhood', 'city'
+=======
+            'year_built', 'features', 'address', 'city', 'state',
+            'zip_code', 'latitude', 'longitude'
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
             'year_built', 'features', 'address', 'city', 'state',
             'zip_code', 'latitude', 'longitude'
@@ -65,6 +76,7 @@ class PropertyForm(forms.ModelForm):
             'area': forms.NumberInput(attrs={'min': 0}),
             'garages': forms.NumberInput(attrs={'min': 0}),
             'year_built': forms.NumberInput(attrs={'min': 1800, 'max': 2100}),
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -94,12 +106,17 @@ class PropertyForm(forms.ModelForm):
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
             'latitude': forms.NumberInput(attrs={'step': 'any'}),
             'longitude': forms.NumberInput(attrs={'step': 'any'}),
         }
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472

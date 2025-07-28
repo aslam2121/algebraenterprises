@@ -18,11 +18,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_admin:
             return redirect('dashboard:admin')
         return super().dispatch(request, *args, **kwargs)
 
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -70,7 +73,11 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         context['agents'] = User.objects.filter(is_agent=True)
+=======
+        context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
         context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -116,11 +123,14 @@ class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
@@ -168,11 +178,14 @@ class PropertyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
