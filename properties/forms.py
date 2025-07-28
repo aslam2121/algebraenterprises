@@ -5,6 +5,7 @@ class PropertyForm(forms.ModelForm):
     features = forms.ModelMultipleChoiceField(
         queryset=PropertyFeature.objects.all(),
 <<<<<<< HEAD
+<<<<<<< HEAD
         widget=forms.SelectMultiple(attrs={
             'class': 'form-control',
             'size': '8',
@@ -13,6 +14,8 @@ class PropertyForm(forms.ModelForm):
         required=False,
         help_text="Select multiple features for this property. Hold Ctrl (Windows) or Cmd (Mac) to select multiple options."
 =======
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
         widget=forms.CheckboxSelectMultiple(attrs={
             'class': 'feature-checkboxes',
             'data-toggle': 'tooltip',
@@ -20,6 +23,9 @@ class PropertyForm(forms.ModelForm):
         }),
         required=False,
         help_text="Select or deselect features for this property. You can remove features by unchecking them."
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     )
 
@@ -29,7 +35,12 @@ class PropertyForm(forms.ModelForm):
             'title', 'description', 'price', 'property_type', 'status',
             'category', 'bedrooms', 'bathrooms', 'area', 'garages',
 <<<<<<< HEAD
+<<<<<<< HEAD
             'year_built', 'features', 'address', 'neighbourhood', 'city'
+=======
+            'year_built', 'features', 'address', 'city', 'state',
+            'zip_code', 'latitude', 'longitude'
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
             'year_built', 'features', 'address', 'city', 'state',
             'zip_code', 'latitude', 'longitude'
@@ -43,6 +54,7 @@ class PropertyForm(forms.ModelForm):
             'area': forms.NumberInput(attrs={'min': 0}),
             'garages': forms.NumberInput(attrs={'min': 0}),
             'year_built': forms.NumberInput(attrs={'min': 1800, 'max': 2100}),
+<<<<<<< HEAD
 <<<<<<< HEAD
             'address': forms.TextInput(attrs={'placeholder': 'Enter full address'}),
             'city': forms.TextInput(attrs={'placeholder': 'Enter city name'}),
@@ -66,10 +78,15 @@ class PropertyForm(forms.ModelForm):
                 del self.fields['city']
 
 =======
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
             'latitude': forms.NumberInput(attrs={'step': 'any'}),
             'longitude': forms.NumberInput(attrs={'step': 'any'}),
         }
 
+<<<<<<< HEAD
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
+=======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 class PropertyImageForm(forms.ModelForm):
     class Meta:

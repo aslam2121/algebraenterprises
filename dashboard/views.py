@@ -16,11 +16,14 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/index.html'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_admin:
             return redirect('dashboard:admin')
         return super().dispatch(request, *args, **kwargs)
 
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     def get_context_data(self, **kwargs):
@@ -62,7 +65,11 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context['properties'] = Property.objects.all()
         context['viewings'] = PropertyView.objects.all()
 <<<<<<< HEAD
+<<<<<<< HEAD
         context['agents'] = User.objects.filter(is_agent=True)
+=======
+        context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
         context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
@@ -100,11 +107,14 @@ class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return self.request.user.is_agent or self.request.user.is_admin
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     def form_valid(self, form):
@@ -146,11 +156,14 @@ class PropertyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user.is_admin or (self.request.user.is_agent and obj.agent.user == self.request.user)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
+=======
+>>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 =======
 >>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     def form_valid(self, form):
