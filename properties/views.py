@@ -8,23 +8,7 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 from .models import Property, PropertyCategory, PropertyInquiry, PropertyViewing, PropertyFeature
-=======
-from .models import Property, PropertyCategory, PropertyInquiry, PropertyViewing
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-from .models import Property, PropertyCategory, PropertyInquiry, PropertyViewing
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-from .models import Property, PropertyCategory, PropertyInquiry, PropertyViewing
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-from .models import Property, PropertyCategory, PropertyInquiry, PropertyViewing
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 from django.views.decorators.csrf import csrf_exempt
 from .models import Property, PropertyImage
 from django.core.files.storage import default_storage
@@ -80,10 +64,6 @@ def ajax_property_image_upload(request, property_id):
         'error': 'Invalid request method'
     }, status=400)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 def remove_favorite(request, slug):
     """Remove a property from user's favorites"""
     if not request.user.is_authenticated:
@@ -99,14 +79,6 @@ def remove_favorite(request, slug):
     except Property.DoesNotExist:
         return JsonResponse({'error': 'Property not found'}, status=404)
 
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
 class PropertyListView(ListView):
     model = Property
     template_name = 'properties/list.html'

@@ -48,6 +48,29 @@
                         </ul>
                     </div>
 
+                    {% if user.is_authenticated and user.is_agent or user.is_admin %}
+                    <div class="address-info mt-4">
+                        <h5>Address Information</h5>
+                        <ul class="list-unstyled">
+                            {% if agent.address %}
+                                <li><i class="fas fa-map-marker-alt"></i> {{ agent.address }}</li>
+                            {% endif %}
+                            {% if agent.city %}
+                                <li><i class="fas fa-city"></i> {{ agent.city }}</li>
+                            {% endif %}
+                            {% if agent.state %}
+                                <li><i class="fas fa-map"></i> {{ agent.state }}</li>
+                            {% endif %}
+                            {% if agent.zip_code %}
+                                <li><i class="fas fa-mail-bulk"></i> {{ agent.zip_code }}</li>
+                            {% endif %}
+                            {% if not agent.address and not agent.city and not agent.state %}
+                                <li><i class="fas fa-map-marker-alt"></i> Address information not available</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
                     <div class="social-links mt-4">
                         {% if agent.facebook %}
                             <a href="{{ agent.facebook }}" class="btn btn-outline-primary me-2" target="_blank">
@@ -104,36 +127,12 @@
                                     <div class="card-body">
                                         <h6 class="card-title">{{ property.title }}</h6>
                                         <p class="price mb-2">₹{{ property.price|floatformat:0|intcomma }}</p>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
                                         {% if user.is_authenticated and user.is_agent or user.is_admin %}
                                         <p class="text-muted mb-3">
                                             <i class="fas fa-map-marker-alt"></i>
                                             {% if property.city %}{{ property.city }}{% else %}Location not available{% endif %}
                                         </p>
                                         {% endif %}
-=======
-                                        <p class="text-muted mb-3">
-                                            <i class="fas fa-map-marker-alt"></i> {{ property.city }}, {{ property.state }}
-                                        </p>
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-                                        <p class="text-muted mb-3">
-                                            <i class="fas fa-map-marker-alt"></i> {{ property.city }}, {{ property.state }}
-                                        </p>
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-                                        <p class="text-muted mb-3">
-                                            <i class="fas fa-map-marker-alt"></i> {{ property.city }}, {{ property.state }}
-                                        </p>
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-                                        <p class="text-muted mb-3">
-                                            <i class="fas fa-map-marker-alt"></i> {{ property.city }}, {{ property.state }}
-                                        </p>
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
                                         <div class="features">
                                             <div class="feature">
                                                 <i class="fas fa-bed"></i>

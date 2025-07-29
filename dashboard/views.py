@@ -15,23 +15,11 @@ from properties.forms import PropertyForm
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/index.html'
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_admin:
             return redirect('dashboard:admin')
         return super().dispatch(request, *args, **kwargs)
 
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_agent:
@@ -70,23 +58,7 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['properties'] = Property.objects.all()
         context['viewings'] = PropertyView.objects.all()
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         context['agents'] = User.objects.filter(is_agent=True)
-=======
-        context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-        context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-        context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
-        context['agents'] = settings.AUTH_USER_MODEL.objects.filter(is_agent=True)
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
         return context
 
 class CustomerDashboardView(LoginRequiredMixin, TemplateView):
@@ -120,23 +92,11 @@ class PropertyCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def test_func(self):
         return self.request.user.is_agent or self.request.user.is_admin
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     def form_valid(self, form):
         try:
             agent_profile = get_object_or_404(AgentProfile, user=self.request.user)
@@ -175,23 +135,11 @@ class PropertyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         obj = self.get_object()
         return self.request.user.is_admin or (self.request.user.is_agent and obj.agent.user == self.request.user)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
 
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
-=======
->>>>>>> 071638c8575366cd0a285d6fe2c370b5d92be472
     def form_valid(self, form):
         response = super().form_valid(form)
         
