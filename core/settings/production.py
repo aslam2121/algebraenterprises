@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 from .base import *
 import os
 from pathlib import Path
@@ -5,31 +7,28 @@ from pathlib import Path
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['ae.satmz.com', 'www.ae.satmz.com']
+ALLOWED_HOSTS = ['152.67.166.237', '152.67.166.237']
 
 # Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'NAME': os.getenv('DB_NAME', 'ae'),
+        'USER': os.getenv('DB_USER', 'aslam2121'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'aslam.123'),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
         'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {
-            'charset': 'utf8',
-        }
     }
 }
 
 # Static files
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'public_html/static'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'public_html/media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Security settings
 SECURE_SSL_REDIRECT = True
@@ -55,7 +54,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 # Media files
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
@@ -97,3 +96,4 @@ LOGGING = {
         },
     },
 } 
+

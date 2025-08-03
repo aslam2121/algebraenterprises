@@ -22,7 +22,7 @@ INSTALLED_APPS = [
     # Third party apps
     'django_cleanup.apps.CleanupConfig',
     'imagekit',
-    'django_meta',
+    'meta',
     'debug_toolbar',
     'whitenoise.runserver_nostatic',
     'compressor',
