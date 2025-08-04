@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-9jfpy#55g%pnsa#zoo#4iq)@jaq*7)6%&)vy_-3=7a(04ene=3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['152.67.166.237']
+ALLOWED_HOSTS = ['localhost','127.0.0.1']
 
 
 # Application definition
@@ -93,13 +93,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'algebra_db',
-        'USER': 'algebra_user',
+        'NAME': 'ae',
+        'USER': 'aslam2121',
         'PASSWORD': 'aslam.123',
         'HOST': 'localhost',
         'PORT': '5432',
     }
-	}
+}
 
 #Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
