@@ -1,0 +1,196 @@
+{
+  "kind": "collectionType",
+  "collectionName": "properties",
+  "info": {
+    "singularName": "property",
+    "pluralName": "properties",
+    "displayName": "Property"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "blocks"
+    },
+    "Price": {
+      "type": "decimal"
+    },
+    "Property_Type": {
+      "type": "enumeration",
+      "enum": [
+        "Apartment",
+        "Entire Building",
+        "Independent House",
+        "Duplex",
+        "Service Apartment",
+        "Farm House"
+      ]
+    },
+    "Listing_Type": {
+      "type": "enumeration",
+      "enum": [
+        "For Rent",
+        "For Sale",
+        "For Rent and For Sale"
+      ]
+    },
+    "Property_Status": {
+      "type": "enumeration",
+      "enum": [
+        "Live",
+        "Rented Out",
+        "Sold"
+      ]
+    },
+    "Bedrooms": {
+      "type": "integer"
+    },
+    "Bathrooms": {
+      "type": "integer"
+    },
+    "Area_Sqm": {
+      "type": "decimal"
+    },
+    "Area_sqft": {
+      "type": "decimal"
+    },
+    "Area_Acre": {
+      "type": "decimal"
+    },
+    "Property_Code": {
+      "type": "uid"
+    },
+    "Images": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Agent_Phone": {
+      "type": "string"
+    },
+    "Featured_Property": {
+      "type": "boolean"
+    },
+    "Property_Age": {
+      "type": "integer"
+    },
+    "Features": {
+      "type": "customField",
+      "customField": "plugin::multi-select.multi-select",
+      "default": "[]",
+      "options": [
+        "Air Conditioning",
+        "Balcony",
+        "Basement",
+        "Brand New",
+        "Corner Plot",
+        "Dining Room",
+        "Driveway Parking",
+        "Equipped Kitchen",
+        "Four Side Open",
+        "Front Terrace",
+        "Fruit & Vegetable Garden",
+        "Fully Furnished",
+        "Furnished",
+        "Gas Pipeline",
+        "Generator",
+        "Gym Room",
+        "Inverter",
+        "Laundry Room",
+        "Lawn",
+        "Lift",
+        "Living Room",
+        "Marble Floors",
+        "Outside Parking",
+        "Park Facing",
+        "Powder Room",
+        "Power Backup",
+        "Quiet Location",
+        "Security",
+        "Semi Furnished",
+        "Staff Quarter",
+        "Stilt Parking",
+        "Study Room",
+        "Swimming Pool",
+        "Terrace",
+        "Two Side Open",
+        "UPVC Window",
+        "Wide Road"
+      ]
+    },
+    "Neighborhood": {
+      "type": "customField",
+      "customField": "plugin::multi-select.multi-select",
+      "default": "[]",
+      "options": [
+        "Anand Niketan",
+        "Asola",
+        "Bandh Road",
+        "Bijwasan",
+        "Chanakyapuri",
+        "Chandan Hola",
+        "Chattarpur",
+        "Defence Colony",
+        "Dera Mandi",
+        "Friends Colony West",
+        "G.K Enclave 1",
+        "G.K-1",
+        "G.K-2",
+        "Gadaipur",
+        "Ghitorni",
+        "Golf Links",
+        "Green Park Extension",
+        "Green Park Main",
+        "Gulmohar Park",
+        "Hauz Khas",
+        "Jangpura Extension",
+        "Jor Bagh",
+        "Kapashera",
+        "Lajpat Nagar",
+        "Mayfair Garden",
+        "Neeti Bagh",
+        "Nizamuddin East",
+        "Panchsheel Park",
+        "Pansheel Enclave",
+        "Pushpanjali",
+        "Radhey Mohan Drive",
+        "Safdarjung Enclave",
+        "Sarvodaya Enclave",
+        "Satbari",
+        "SDA",
+        "Shanti Niketan",
+        "South Extension Part 1",
+        "Sultanpur",
+        "Sundar Nagar",
+        "Vasant Kunj Bhawani Kunj",
+        "Vasant Kunj Farms",
+        "Vasant Vihar",
+        "Westend",
+        "Westend Greens"
+      ],
+      "required": true,
+      "max": 1
+    },
+    "Assigned_Agent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "properties"
+    },
+    "Property_Address": {
+      "type": "text",
+      "private": true,
+      "required": true
+    }
+  }
+}

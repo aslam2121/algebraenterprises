@@ -1,0 +1,40 @@
+# Root workspace
+.DS_Store
+*~
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.node_history
+
+# Frontend
+algebra-enterprises-frontend/.next/
+algebra-enterprises-frontend/out/
+algebra-enterprises-frontend/build/
+algebra-enterprises-frontend/.vercel/
+algebra-enterprises-frontend/coverage/
+algebra-enterprises-frontend/*.tsbuildinfo
+algebra-enterprises-frontend/next-env.d.ts
+
+# Backend / Strapi
+algebra-enterprises-backend/.tmp/
+algebra-enterprises-backend/.strapi/
+algebra-enterprises-backend/dist/
+algebra-enterprises-backend/build/
+algebra-enterprises-backend/.strapi-updater.json
+algebra-enterprises-backend/.strapi-cloud.json
+algebra-enterprises-backend/public/uploads/*
+!algebra-enterprises-backend/public/uploads/.gitkeep
+algebra-enterprises-backend/coverage/
+algebra-enterprises-backend/*.log
+algebra-enterprises-backend/*.sqlite
+algebra-enterprises-backend/*.sqlite3

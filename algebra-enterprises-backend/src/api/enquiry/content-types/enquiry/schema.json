@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "enquiries",
+  "info": {
+    "singularName": "enquiry",
+    "pluralName": "enquiries",
+    "displayName": "Enquiry"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string"
+    },
+    "Phone": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "email"
+    },
+    "Message": {
+      "type": "text"
+    },
+    "Property_Code": {
+      "type": "string"
+    },
+    "Property_Title": {
+      "type": "string"
+    },
+    "Client_Status": {
+      "type": "enumeration",
+      "enum": [
+        "New",
+        "Contacted",
+        "Closed"
+      ]
+    }
+  }
+}
