@@ -2,12 +2,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getStrapiMediaUrl } from '@/lib/strapi';
 
 export default function PropertyCard({ property }) {
   const [hovered, setHovered] = useState(false);
 
   const img = property.Images?.length > 0
-    ? property.Images[0].url
+    ? getStrapiMediaUrl(property.Images[0].url)
     : null;
 
   const formatPrice = (price) => {

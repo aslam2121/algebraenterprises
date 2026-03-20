@@ -20,7 +20,10 @@ const PROPERTY_TYPES = propertySchema.attributes.Property_Type.enum;
 const LISTING_TYPES = propertySchema.attributes.Listing_Type.enum;
 const STATUS_TYPES = propertySchema.attributes.Property_Status.enum;
 const FEATURE_OPTIONS = propertySchema.attributes.Features.options;
-const NEIGHBORHOOD_OPTIONS = propertySchema.attributes.Neighborhood.options;
+const NEIGHBORHOOD_ATTRIBUTE_KEY = propertySchema.attributes.Neighborhood
+  ? 'Neighborhood'
+  : 'Neighbourhood';
+const NEIGHBORHOOD_OPTIONS = propertySchema.attributes[NEIGHBORHOOD_ATTRIBUTE_KEY]?.options || [];
 
 const FEATURE_SET = new Set(FEATURE_OPTIONS);
 const NEIGHBORHOOD_SET = new Set(NEIGHBORHOOD_OPTIONS);
@@ -218,15 +221,17 @@ function extractImageFiles(files) {
   ].filter(Boolean);
 }
 
-function buildPropertyData(body, agentId, imageIds = []) {
+function buildPropertyData(body, agentId, imageIds = [], options = {}) {
   const title = normalizeString(body.Title);
   const propertyAddress = normalizeString(body.Property_Address);
+  const allowEmptyAddress = options.allowEmptyAddress === true;
+  const neighborhoodValue = body.Neighborhood ?? body.Neighbourhood;
 
   if (!title) {
     throw new Error('Title is required.');
   }
 
-  if (!propertyAddress) {
+  if (!propertyAddress && !allowEmptyAddress) {
     throw new Error('Property address is required.');
   }
 
@@ -249,9 +254,12 @@ function buildPropertyData(body, agentId, imageIds = []) {
     Featured_Property: normalizeBoolean(body.Featured_Property),
     Property_Age: normalizeInteger(body.Property_Age, 'Property age'),
     Features: JSON.stringify(features),
-    Neighborhood: normalizeNeighborhood(body.Neighborhood),
+    [NEIGHBORHOOD_ATTRIBUTE_KEY]: normalizeNeighborhood(neighborhoodValue),
     Assigned_Agent: agentId,
-    Property_Address: propertyAddress,
+    Property_Address: allowEmptyAddress && !propertyAddress ? '' : propertyAddress,
+    Rooms: normalizeInteger(body.Rooms, 'Rooms'),
+    Parking: normalizeInteger(body.Parking, 'Parking'),
+    Directions: normalizeOptionalString(body.Directions),
     Images: imageIds,
   };
 }

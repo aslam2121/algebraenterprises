@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import { getStrapiMediaUrl } from '@/lib/strapi';
 
 export default function PropertyDetailPage() {
   const { code } = useParams();
@@ -110,6 +111,10 @@ export default function PropertyDetailPage() {
   const images = property.Images || [];
   const description = getDescription(property.Description);
   const statusColor = { 'Live': '#22c55e', 'Rented Out': '#f59e0b', 'Sold': '#ef4444' };
+  const resolvedImages = images.map((image) => ({
+    ...image,
+    resolvedUrl: getStrapiMediaUrl(image.url),
+  }));
 
   return (
     <>
@@ -322,11 +327,11 @@ export default function PropertyDetailPage() {
               </div>
 
               {/* Image Gallery */}
-              {images.length > 0 ? (
+              {resolvedImages.length > 0 ? (
                 <>
                   <div className="pd-main-img">
                     <Image
-                      src={images[activeImage]?.url}
+                      src={resolvedImages[activeImage]?.resolvedUrl}
                       alt={property.Title}
                       fill
                       sizes="(max-width: 860px) 100vw, 960px"
@@ -338,23 +343,23 @@ export default function PropertyDetailPage() {
                       ⛶ Fullscreen
                     </div>
                     <div style={{ position: 'absolute', bottom: '0.7rem', right: '0.7rem', background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(4px)', padding: '0.22rem 0.65rem', borderRadius: '20px', fontSize: '0.72rem', color: '#fff' }}>
-                      {activeImage + 1} / {images.length}
+                      {activeImage + 1} / {resolvedImages.length}
                     </div>
-                    {images.length > 1 && (
+                    {resolvedImages.length > 1 && (
                       <>
                         {activeImage > 0 && (
                           <button onClick={() => setActiveImage(i => i - 1)} style={{ position: 'absolute', left: '0.7rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: 36, height: 36, color: '#fff', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
                         )}
-                        {activeImage < images.length - 1 && (
+                        {activeImage < resolvedImages.length - 1 && (
                           <button onClick={() => setActiveImage(i => i + 1)} style={{ position: 'absolute', right: '0.7rem', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', width: 36, height: 36, color: '#fff', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
                         )}
                       </>
                     )}
                   </div>
-                  {images.length > 1 && (
+                  {resolvedImages.length > 1 && (
                     <div className="pd-thumbs">
-                      {images.map((img, i) => (
-                        <Image key={i} src={img.url} alt="" width={80} height={60} unoptimized onClick={() => setActiveImage(i)}
+                      {resolvedImages.map((img, i) => (
+                        <Image key={i} src={img.resolvedUrl} alt="" width={80} height={60} unoptimized onClick={() => setActiveImage(i)}
                           className={`pd-thumb${activeImage === i ? ' active' : ''}`}
                         />
                       ))}
@@ -415,12 +420,12 @@ export default function PropertyDetailPage() {
       </div>
 
       {/* Fullscreen Lightbox */}
-      {lightboxOpen && images.length > 0 && (
+      {lightboxOpen && resolvedImages.length > 0 && (
         <Lightbox
           open={lightboxOpen}
           close={() => setLightboxOpen(false)}
           index={lightboxIndex}
-          slides={images.map(img => ({ src: img.url, alt: property.Title }))}
+          slides={resolvedImages.map((img) => ({ src: img.resolvedUrl, alt: property.Title }))}
           plugins={[Thumbnails, Zoom]}
           thumbnails={{
             position: 'bottom',

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Cookies from 'js-cookie';
+import { getStrapiMediaUrl } from '@/lib/strapi';
 
 const STATUS_OPTIONS = ['Live', 'Rented Out', 'Sold'];
 const LISTING_TYPE_OPTIONS = ['For Rent', 'For Sale', 'For Rent and For Sale'];
@@ -448,7 +449,7 @@ export default function AgentDashboard() {
     const token = Cookies.get('agent_token');
 
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/enquiries/${enquiryId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/enquiries/${enquiryId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -456,6 +457,12 @@ export default function AgentDashboard() {
         },
         body: JSON.stringify({ data: { Client_Status: newStatus } }),
       });
+
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(parseApiError(payload, 'Unable to update enquiry status right now.'));
+      }
 
       setEnquiries((previous) =>
         previous.map((enquiry) =>
@@ -1029,7 +1036,7 @@ export default function AgentDashboard() {
                 </div>
               ) : (
                 filteredProperties.map((property) => {
-                  const imageUrl = property.Images?.[0]?.url;
+                  const imageUrl = getStrapiMediaUrl(property.Images?.[0]?.url);
 
                   return (
                     <div key={property.id} className="prop-row">
@@ -1613,7 +1620,7 @@ export default function AgentDashboard() {
                             <div
                               style={{
                                 aspectRatio: '4 / 3',
-                                backgroundImage: `url(${image.url})`,
+                                backgroundImage: `url(${getStrapiMediaUrl(image.url)})`,
                                 backgroundSize: 'cover',
                                 backgroundPosition: 'center',
                               }}

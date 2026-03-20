@@ -489,6 +489,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     Description: Schema.Attribute.Blocks;
+    Directions: Schema.Attribute.String;
     Featured_Property: Schema.Attribute.Boolean;
     Features: Schema.Attribute.JSON &
       Schema.Attribute.CustomField<
@@ -547,7 +548,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
       'api::property.property'
     > &
       Schema.Attribute.Private;
-    Neighborhood: Schema.Attribute.JSON &
+    Neighbourhood: Schema.Attribute.JSON &
       Schema.Attribute.Required &
       Schema.Attribute.CustomField<
         'plugin::multi-select.multi-select',
@@ -605,6 +606,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
         number
       > &
       Schema.Attribute.DefaultTo<'[]'>;
+    Parking: Schema.Attribute.Integer;
     Price: Schema.Attribute.Decimal;
     Property_Address: Schema.Attribute.Text &
       Schema.Attribute.Required &
@@ -625,6 +627,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
       ]
     >;
     publishedAt: Schema.Attribute.DateTime;
+    Rooms: Schema.Attribute.Integer;
     Title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

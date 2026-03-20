@@ -25,8 +25,17 @@ const PROPERTY_TYPES = [
   'Farm House',
 ];
 
+function getListingTypeFromParams(searchParams) {
+  return searchParams.get('type') === 'sale'
+    ? 'For Sale'
+    : searchParams.get('type') === 'rent'
+      ? 'For Rent'
+      : 'All';
+}
+
 function PropertiesPageContent() {
   const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,15 +43,18 @@ function PropertiesPageContent() {
   const [page, setPage] = useState(1);
 
   // Filter state — initialize from URL params
-  const [listingType, setListingType] = useState(
-    searchParams.get('type') === 'sale' ? 'For Sale' :
-    searchParams.get('type') === 'rent' ? 'For Rent' : 'All'
-  );
+  const [listingType, setListingType] = useState(getListingTypeFromParams(searchParams));
   const [area, setArea] = useState(searchParams.get('area') || 'All Areas');
   const [propertyType, setPropertyType] = useState('All Types');
   const [sortBy, setSortBy] = useState('newest');
 
   const PAGE_SIZE = 12;
+
+  useEffect(() => {
+    setListingType(getListingTypeFromParams(searchParams));
+    setArea(searchParams.get('area') || 'All Areas');
+    setPage(1);
+  }, [queryString, searchParams]);
 
   useEffect(() => {
     let ignore = false;

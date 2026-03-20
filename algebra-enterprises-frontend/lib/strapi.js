@@ -1,6 +1,22 @@
 import axios from 'axios';
 
-const strapiURL = process.env.NEXT_PUBLIC_STRAPI_URL;
+const strapiURL = (process.env.NEXT_PUBLIC_STRAPI_URL || '').replace(/\/$/, '');
+
+export function getStrapiMediaUrl(url) {
+  if (!url) {
+    return null;
+  }
+
+  if (/^(https?:)?\/\//i.test(url) || url.startsWith('data:') || url.startsWith('blob:')) {
+    return url;
+  }
+
+  if (!strapiURL) {
+    return url;
+  }
+
+  return `${strapiURL}${url.startsWith('/') ? url : `/${url}`}`;
+}
 
 export async function getProperties(filters = {}) {
   let query = `${strapiURL}/api/properties?populate=Images`;

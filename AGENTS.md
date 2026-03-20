@@ -29,11 +29,11 @@ At the start of every session, do this in order:
 - Custom authenticated property routes to be aware of: `GET /api/properties/my-properties`, `POST /api/properties/my-properties`, and `PUT /api/properties/my-properties/:documentId`
 - When working on image rendering, support both Cloudinary URLs and local Strapi `/uploads/...` media paths
 
-## Current Known Risks
-- Frontend `package.json` currently uses `next@15.2.3`; treat framework version changes as high-risk and verify security implications before changing it
-- `app/(public)/properties/page.js` currently initializes filters from `useSearchParams()` once and does not resync on same-route query-string navigation
-- `components/PropertyCard.js` still uses raw `property.Images[0].url`; local Strapi `/uploads/...` paths must be normalized against `NEXT_PUBLIC_STRAPI_URL`
-- `app/agent/dashboard/page.js` still updates enquiry status local state without checking `response.ok`
+## Current Sensitive Areas
+- Frontend is now aligned to `next@16.1.6`; treat framework version changes as high-risk and keep `next` and `eslint-config-next` in a compatible line
+- Query-string-driven property filters were explicitly patched to resync on same-route navigation; preserve that behavior when editing `app/(public)/properties/page.js`
+- Media URLs should go through the shared helper in `algebra-enterprises-frontend/lib/strapi.js`; do not reintroduce raw `/uploads/...` paths into `next/image` or gallery UIs
+- Enquiry status changes must only update local UI state after a successful API response
 - `algebra-enterprises-backend/config/plugins.js` contains a Cloudinary IPv4-agent workaround required for successful uploads in this WSL/Node environment; preserve it unless replacing it with a verified alternative
 
 ## Build, Test, and Development Commands
@@ -80,4 +80,4 @@ Before ending a session:
 - Prefer commands that are safe inside WSL
 
 ## Default Instruction
-When resuming work, continue from the last unfinished item in `docs/todo.md`, use `docs/current-state.md` as the source of truth, and check the unresolved items in `Current Known Risks` before touching related files.
+When resuming work, continue from the last unfinished item in `docs/todo.md`, use `docs/current-state.md` as the source of truth, and review `Current Sensitive Areas` before touching related files.

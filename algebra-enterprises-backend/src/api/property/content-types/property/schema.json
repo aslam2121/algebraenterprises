@@ -128,7 +128,7 @@
         "Wide Road"
       ]
     },
-    "Neighborhood": {
+    "Neighbourhood": {
       "type": "customField",
       "customField": "plugin::multi-select.multi-select",
       "default": "[]",
@@ -191,6 +191,15 @@
       "type": "text",
       "private": true,
       "required": true
+    },
+    "Rooms": {
+      "type": "integer"
+    },
+    "Parking": {
+      "type": "integer"
+    },
+    "Directions": {
+      "type": "string"
     }
   }
 }

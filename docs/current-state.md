@@ -1,7 +1,7 @@
 # Current State
 
 ## Last Updated
-2026-03-19
+2026-03-20
 
 ## Completed
 - Agent dashboard property create flow is working through `POST /api/properties/my-properties`
@@ -12,27 +12,143 @@
 - `AGENTS.md` was tightened and the project memory files were initialized
 - The workspace was converted from a nested frontend-only git repo to a single root repo layout
 - The previous frontend `.git` history was backed up to `/tmp/algebra-enterprises-frontend.git-backup-20260319-125724`
+- Frontend was upgraded from `next@15.2.3` to `next@16.2.0` and the frontend lockfile was refreshed with `npm install`
+- Public property filters were patched to resync with `/properties` query-string navigation
+- Shared media URL normalization was added in `algebra-enterprises-frontend/lib/strapi.js` and wired into property cards, property detail, and dashboard image rendering
+- Agent dashboard enquiry status updates now wait for a successful API response before mutating local state
+- The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
+- Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
+- The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set
+- Frontend lint passes after these changes
+- Frontend production build passes on Next 16.2.0 in the sandbox
+- Frontend `npm audit` reports `0` vulnerabilities after the Next patch update
+- Verified live frontend and backend reachability outside the sandbox on `http://localhost:3000` and `http://localhost:1337`
+- Verified agent auth worked for `agenttest@example.com` during dashboard validation before the temporary test account was removed
+- Created a temporary enquiry for `agent-fix-20260319` and verified enquiry status update API behavior:
+  - authenticated `PUT /api/enquiries/:documentId` succeeds
+  - invalid credentials return `401`
+- Browser verification passed for the main frontend regression targets using Playwright against the live local app:
+  - `/properties?type=rent` to `/properties?type=sale` same-route navigation updates the heading and URL correctly
+  - a local Strapi-media detail page renders from `http://localhost:1337/uploads/...`
+  - a Cloudinary-backed detail page renders from `https://res.cloudinary.com/...`
+  - agent login reaches the dashboard successfully
+  - enquiry status UI stays unchanged when a forced failed response is returned
+  - agent property edit with replacement image upload returns `200` from `PUT /api/properties/my-properties/:documentId`
+  - a public property card with a visible local `/uploads/...` image is reproduced on `/properties?type=rent` after paging to the last rent page (`ag1753`)
+- Imported the root `algebra_properties_data.csv` dataset into Strapi by updating 264 existing property documents via a backend one-off importer
+- The property import populated `Property_Type`, `Bedrooms`, `Bathrooms`, `Rooms`, `Directions`, `Features`, `Neighborhood`, and `Listing_Type` from CSV while preserving existing non-CSV fields like images, assigned agent, description, price, and area values
+- The property import now also maps `Parking` from the new root `algebra_Parking.csv` overlay keyed by `Property_Code`
+- The property import now clears `Property_Address` to an empty string for imported properties instead of using placeholders
+- The property import derived the missing neighborhood for `ag1702` from its title (`G.K-1`) because both the CSV row and the stored record lacked a neighborhood value
+- The four unwanted mismatch records were removed from Strapi after the import update: `ag1373`, `ag1636`, `ag824`, and `ag1049`
+- Added a Strapi bulk-assignment script for assigning published properties to a selected agent by neighborhood with dry-run and apply modes
+- Applied the bulk-assignment script to assign all published `Anand Niketan` properties to Umar (`saifimdumar@gmail.com`)
+- Applied the bulk-assignment script to assign all published `Vasant Vihar` properties to Umar (`saifimdumar@gmail.com`)
+- Applied the bulk-assignment script to assign all published `Defence Colony` properties to Azhar (`mahmoodazharkhan@gmail.com`)
+- Applied the bulk-assignment script to assign published properties in `Bandh Road`, `Bijwasan`, `Chanakyapuri`, `Chattarpur`, `Dera Mandi`, `Gadaipur`, `Ghitorni`, `Golf Links`, `Jor Bagh`, `Kapashera`, `Pushpanjali`, `Radhey Mohan Drive`, `Satbari`, `Sultanpur`, `Sundar Nagar`, `Vasant Kunj Farms`, and `Westend Greens` to Nazish (`nazishbaleegh@gmail.com`)
+- Applied the bulk-assignment script to assign all published `Hauz Khas`, `Panchsheel Park`, `Safdarjung Enclave`, and `SDA` properties to Azhar (`mahmoodazharkhan@gmail.com`)
+- Applied the bulk-assignment script to assign all published `Shanti Niketan` and `Westend` properties to Umar (`saifimdumar@gmail.com`)
+- Added a dedicated backend one-off importer for the root `algebra-address-rent.csv` dataset and exposed it as `node scripts/import-address-rent.js`
+- Applied the address/rent importer to update 213 published properties by `Property_Code` with private `Property_Address` plus normalized `Price`
+- The address/rent importer now normalizes price strings before writing:
+  - `L` / `l` values stay in lakhs
+  - `K` / `k` values are converted to lakhs (`60K -> 0.6`)
+  - malformed double-decimal values like `1..7L` are normalized to `1.7`
+  - blank prices remain `null`
+  - placeholder address values like `\` are normalized to an empty string
+- Backend property write helpers now tolerate both `Neighborhood` and `Neighbourhood` schema keys so one-off scripts and agent-property helpers still load after the spelling change in `schema.json`
 
 ## In Progress
-- Hardening the frontend against the remaining review findings
-- Converting current project knowledge into durable handoff notes inside `docs/`
-- Creating the first commit in the new root repository
+- No active feature work in progress
 
 ## Open Issues / Risks
-- Frontend still uses `next@15.2.3`; review flagged this as a security regression
-- Public properties filters do not resync when the query string changes on the same route
-- Property cards still pass raw image URLs, so local Strapi media paths can break
-- Enquiry status updates in the agent dashboard still mutate UI state even when the API rejects the change
+- No open functional regression is currently tracked from the verified frontend/backend flows in this session
+- The WordPress CSV source still contains four rows that were deleted from Strapi and would come back on a future full import unless the source CSV is cleaned:
+  - row 34: `ag1373` with title `Dera Mandi (ag1374)`
+  - row 123: `ag1636` with title `SafdarJung Enclave (ag1635)`
+  - row 129: `ag824` with title `Jor Bagh (ag827)`
+  - row 131: `ag1049` with title `Sundar Nagar (ag1049-1)`
+- The address/rent CSV source still contains three property codes that were intentionally deleted from Strapi and will continue to show as unmatched on reruns unless the source file is cleaned:
+  - row 65: `ag1373`
+  - row 147: `ag1049`
+  - row 191: `ag824`
 
 ## Latest Verified Notes
 - Verified agent auth via `POST /api/auth/local`
 - Verified replacement-image upload on property `agent-test-20260318-b`
 - Verified a create-path image upload using temporary property code `agent-fix-20260319`
+- Verified `npm audit` returns `0` vulnerabilities in `algebra-enterprises-frontend`
+- Verified `npm run build` succeeds on `next@16.2.0` without the previous multiple-lockfile warning
+- Verified the backend watermark fallback constant now matches the documented `ALGEBRA ENTERPRISES` default again
+- Verified live localhost responses from the existing frontend and backend processes outside the sandbox
+- Verified temporary enquiry `ry5dnrz06navyvhtj3xf0two` can be updated to `Contacted` with a valid token and rejects invalid tokens
+- Verified browser-side same-route `/properties` navigation from `type=rent` to `type=sale`
+- Verified browser-side property detail rendering for both local Strapi media and Cloudinary media
+- Verified browser-side agent dashboard login, enquiry failure handling, and edit-form replacement upload response
+- Verified the agent token cannot delete the temporary verification enquiry or property through the default `DELETE` endpoints (`403 Forbidden`)
+- Verified from SQLite that `agenttest@example.com` no longer exists in `up_users`
+- Verified from SQLite and the public property API that `agent-fix-20260319` and `agent-test-20260318-b` are gone
+- Verified from SQLite that enquiry rows for `ry5dnrz06navyvhtj3xf0two` are now gone
+- Verified a public card for `Vasant Vihar (ag1753)` renders with `http://localhost:1337/uploads/ag1753_15_fca146a64a.jpeg` after paging through `/properties?type=rent`
+- Verified the new importer updates the existing 264 property documents by `Property_Code` rather than creating duplicates
+- Verified sample imported records through Strapi after the write pass:
+  - `ag1033` now has `Property_Type=Farm House`, `Bedrooms=4`, `Bathrooms=4`, and `Features=["Swimming Pool"]`
+  - `ag1702` now has derived neighborhood `G.K-1` plus imported apartment/features data
+  - `ag661-2` now has `Rooms=20`, `Bathrooms=20`, and `Property_Type=Entire Building`
+  - `ag1148` preserved its existing assigned agent and images while now carrying an empty private `Property_Address`
+- Verified the parking overlay import after adding the `Parking` field:
+  - `ag1033` now has `Parking=1`
+  - `ag852` now has `Parking=2`
+  - `ag303` normalized parking source value `yes` to `Parking=1`
+  - blank parking cells remain `null` for rows like `ag907` and `ag1148`
+- Verified the four removed properties no longer exist in SQLite: `ag1373`, `ag1636`, `ag824`, and `ag1049`
+- Verified post-update published-property coverage in SQLite:
+  - 261 published rows remain after deleting the four unwanted records
+  - 260 published rows have empty private `Property_Address`
+  - 169 published rows have a non-null `Parking` value
+- Verified the new bulk-assignment script can target agent `id=1` and preview `Anand Niketan` assignments without writing changes:
+  - 20 published properties matched
+  - dry-run sample included `ag470`, `ag1745`, `ag485-1`, `ag1412`, and `ag1562`
+- Verified the `Anand Niketan` assignment to Umar after the apply pass:
+  - the script updated 20 published properties for target agent `id=3`
+  - direct document lookup for `ag470` now shows `Assigned_Agent.id=3` / `saifimdumar@gmail.com`
+  - Umar's populated `properties` relation now includes the assigned `Anand Niketan` documentIds
+- Verified the `Vasant Vihar` assignment to Umar after the apply pass:
+  - the script updated 56 published properties for target agent `id=3`
+  - Umar's populated `properties` relation now contains 56 unique `Vasant Vihar` documentIds
+  - direct populated property lookup for `ag1753` now shows `Assigned_Agent.id=3` / `saifimdumar@gmail.com`
+- Verified the `Defence Colony` assignment to Azhar after the apply pass:
+  - the script updated 33 published properties for target agent `id=4`
+  - Azhar's populated `properties` relation now contains 33 unique `Defence Colony` documentIds
+  - direct populated property lookup for `ag1750` now shows `Assigned_Agent.id=4` / `mahmoodazharkhan@gmail.com`
+- Verified the multi-neighborhood assignment to Nazish after the apply pass:
+  - the script updated 83 published properties for target agent `id=5`
+  - direct populated property lookup for `ag1743` now shows `Assigned_Agent.id=5` / `nazishbaleegh@gmail.com`
+  - direct property query across the requested neighborhoods confirms 83 matched published properties and 83 assigned to Nazish
+- Verified the `Hauz Khas` / `Panchsheel Park` / `Safdarjung Enclave` / `SDA` assignment to Azhar after the apply pass:
+  - the script matched 26 published properties
+  - an initial parallel write attempt hit `SQLITE_BUSY`, then the same command succeeded on retry
+  - final direct property query confirms 26 matched published properties and 26 assigned to Azhar
+  - direct populated property lookup for `ag1752` now shows `Assigned_Agent.id=4` / `mahmoodazharkhan@gmail.com`
+- Verified the `Shanti Niketan` / `Westend` assignment to Umar after the apply pass:
+  - the script updated 13 published properties for target agent `id=3`
+  - direct property query confirms 13 matched published properties and 13 assigned to Umar
+  - dry-run sample included `ag1715`, `ag1749`, `ag1748`, `ag140`, and `ag1738`
+- Verified the new address/rent importer after the apply pass:
+  - the script processed 216 CSV rows after skipping the trailing `Total,,216,` summary row
+  - the script updated 213 matching published properties and only missed the three deleted property codes `ag1373`, `ag1049`, and `ag824`
+  - a repeat dry-run now reports `wouldUpdate=0` and `unchanged=213`
+  - direct Strapi verification confirms:
+    - `ag1745` now has `Property_Address=D 54 SF` and `Price=3.2`
+    - `ag406` now has `Property_Address=D 143 GF` and `Price=0.6` from CSV `60K`
+    - `ag1225` now has `Property_Address=D 123 FF` and `Price=1.7` from CSV `1..7L`
+    - `ag1033` now has `Property_Address=F 38` while keeping `Price=null`
+    - `ag1080` kept an empty `Property_Address` because the CSV placeholder `\` is normalized to blank
+    - `ag1753` now has `Property_Address=D 6/23 SF` and `Price=4.5`
 
 ## Cleanup Candidates
-- Temporary property: `agent-fix-20260319`
-- Existing debug records noted earlier: `control-test-20260318`, `agent-test-20260318-b`, `agenttest@example.com`
+- Existing debug records noted earlier: `control-test-20260318`
 
 ## Blockers
 - No hard blocker for local development
-- Main constraint is that unresolved frontend review findings still need code changes before the patch is safe to merge
+- Main remaining work is source-data cleanup and optional housekeeping
