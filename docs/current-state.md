@@ -6,7 +6,7 @@
 ## Completed
 - Agent dashboard property create flow is working through `POST /api/properties/my-properties`
 - Agent dashboard property edit flow is working through `PUT /api/properties/my-properties/:documentId`
-- Server-side property image processing is in place: max 12 images, max 15MB each, image-only MIME types, resize/optimize, and watermarking
+- Server-side property image processing is in place: max 50 images, max 15MB each, image-only MIME types, resize/optimize, and watermarking
 - Cloudinary upload failures in the WSL/Node environment were investigated and a backend fix was added in `algebra-enterprises-backend/config/plugins.js`
 - Cloudinary upload fix was verified against both update and create routes with live API calls
 - `AGENTS.md` was tightened and the project memory files were initialized
@@ -57,6 +57,7 @@
   - blank prices remain `null`
   - placeholder address values like `\` are normalized to an empty string
 - Backend property write helpers now tolerate both `Neighborhood` and `Neighbourhood` schema keys so one-off scripts and agent-property helpers still load after the spelling change in `schema.json`
+- Increased the per-property image upload limit from 12 to 50 in both backend validation and the agent dashboard UI
 
 ## In Progress
 - No active feature work in progress
@@ -145,6 +146,7 @@
     - `ag1033` now has `Property_Address=F 38` while keeping `Price=null`
     - `ag1080` kept an empty `Property_Address` because the CSV placeholder `\` is normalized to blank
     - `ag1753` now has `Property_Address=D 6/23 SF` and `Price=4.5`
+- Verified the new 50-image limit is aligned in both the backend helper and the agent dashboard client validation/copy
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

@@ -9,7 +9,7 @@ const propertySchema = require('../content-types/property/schema.json');
 
 const MAX_IMAGE_WIDTH = 2400;
 const MAX_IMAGE_HEIGHT = 2400;
-const MAX_IMAGE_FILES = 12;
+const MAX_IMAGE_FILES = 50;
 const MAX_IMAGE_FILE_SIZE_BYTES = 15 * 1024 * 1024;
 const JPEG_QUALITY = 82;
 const PNG_QUALITY = 82;

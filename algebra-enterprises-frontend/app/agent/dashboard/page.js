@@ -102,7 +102,7 @@ const FEATURE_OPTIONS = [
   'UPVC Window',
   'Wide Road',
 ];
-const MAX_IMAGE_FILES = 12;
+const MAX_IMAGE_FILES = 50;
 const MAX_IMAGE_FILE_SIZE_BYTES = 15 * 1024 * 1024;
 const STATUS_COLORS = { Live: '#22c55e', 'Rented Out': '#f59e0b', Sold: '#ef4444' };
 const STATUS_BG = {
@@ -1310,7 +1310,7 @@ export default function AgentDashboard() {
               {!createError && createSuccess ? <p className="info-note success-note">{createSuccess}</p> : null}
               <p className="info-note helper-note" style={{ marginBottom: '1rem' }}>
                 Required fields: Title, Property Code, Neighborhood, and Private Address. Images are
-                optional. Upload up to 12 JPG, PNG, or WebP files, with a 15MB limit per image.
+                optional. Upload up to 50 JPG, PNG, or WebP files, with a 15MB limit per image.
                 {isEditingProperty ? ' Leave the image picker empty to keep the current gallery.' : ''}
               </p>
 

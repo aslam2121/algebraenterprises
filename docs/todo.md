@@ -24,6 +24,7 @@
 - Re-run `node scripts/import-wordpress-properties.js` in `algebra-enterprises-backend` as a dry-run before any future CSV apply pass
 - Re-run `node scripts/import-address-rent.js` in `algebra-enterprises-backend` as a dry-run before any future address/rent apply pass
 - Re-run `node scripts/bulk-assign-properties.js ...` without `--apply` before any future bulk assignment
+- Re-verify the agent image upload flow if you decide to test near the new 50-image ceiling, because the processing path now allows substantially larger batches
 - If `algebra_Parking.csv` changes again, rerun the same importer because it now reads the parking overlay automatically
 - If `algebra-address-rent.csv` changes again, rerun `node scripts/import-address-rent.js --apply` because it now owns the private-address and rent refresh path
 - Browser verification completed for:

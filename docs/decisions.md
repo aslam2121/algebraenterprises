@@ -84,3 +84,8 @@
 - `schema.json` currently exposes the field as `Neighbourhood`, while older scripts and stored data previously used `Neighborhood`
 - The shared property helper and the WordPress importer now resolve either spelling so backend scripts keep loading after the schema spelling change
 - Until the spelling is standardized end-to-end, future script work should continue to support both keys when reading or writing neighborhood values
+
+### Per-property image uploads now allow up to 50 files
+- The backend image validation limit and the agent dashboard client-side limit were both raised from `12` to `50`
+- The 15MB-per-file cap, resize/optimization, and watermarking behavior remain unchanged
+- Future upload testing should account for the heavier batch size because a 50-image submission puts much more load on Sharp processing and Cloudinary upload time than the old 12-image ceiling
