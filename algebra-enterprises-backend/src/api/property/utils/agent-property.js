@@ -342,7 +342,7 @@ function validateImageFiles(files) {
   }
 }
 
-async function processPropertyImages(files) {
+async function processPropertyImages(files, propertyCode) {
   if (!files.length) {
     return { processedFiles: [], cleanup: async () => {} };
   }
@@ -351,13 +351,14 @@ async function processPropertyImages(files) {
 
   const workingDirectory = await fs.mkdtemp(path.join(os.tmpdir(), 'agent-property-'));
   const processedFiles = [];
+  const imageBaseName = sanitizeFileBaseName(propertyCode, 'property-image');
 
   try {
     for (const [index, file] of files.entries()) {
       const metadata = await sharp(file.filepath).metadata();
       const spec = getOutputSpec(metadata);
-      const fileBaseName = sanitizeFileBaseName(file.originalFilename, `property-image-${index + 1}`);
-      const outputPath = path.join(workingDirectory, `${fileBaseName}-${Date.now()}-${index}${spec.extension}`);
+      const fileBaseName = `${imageBaseName}-${index + 1}`;
+      const outputPath = path.join(workingDirectory, `${fileBaseName}-${Date.now()}${spec.extension}`);
       const watermark = buildWatermarkSvg(spec.width, spec.height);
 
       let pipeline = sharp(file.filepath)

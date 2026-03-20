@@ -58,6 +58,7 @@
   - placeholder address values like `\` are normalized to an empty string
 - Backend property write helpers now tolerate both `Neighborhood` and `Neighbourhood` schema keys so one-off scripts and agent-property helpers still load after the spelling change in `schema.json`
 - Increased the per-property image upload limit from 12 to 50 in both backend validation and the agent dashboard UI
+- Property image uploads are now renamed from the property code during backend processing, so uploaded media no longer keeps the original local file names
 
 ## In Progress
 - No active feature work in progress
@@ -147,6 +148,7 @@
     - `ag1080` kept an empty `Property_Address` because the CSV placeholder `\` is normalized to blank
     - `ag1753` now has `Property_Address=D 6/23 SF` and `Price=4.5`
 - Verified the new 50-image limit is aligned in both the backend helper and the agent dashboard client validation/copy
+- Verified the backend create/update property flow now passes `Property_Code` into the image processor so generated filenames follow the `property-code-N` pattern
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

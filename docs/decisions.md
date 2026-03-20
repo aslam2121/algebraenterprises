@@ -89,3 +89,7 @@
 - The backend image validation limit and the agent dashboard client-side limit were both raised from `12` to `50`
 - The 15MB-per-file cap, resize/optimization, and watermarking behavior remain unchanged
 - Future upload testing should account for the heavier batch size because a 50-image submission puts much more load on Sharp processing and Cloudinary upload time than the old 12-image ceiling
+
+### Uploaded property images should be renamed from the property code
+- The backend image processor now derives output filenames from `Property_Code` instead of the original local file names
+- Both create and edit property flows pass the normalized property code into the processor, so generated names follow a stable `property-code-N` pattern before upload

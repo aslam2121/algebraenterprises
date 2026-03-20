@@ -166,7 +166,7 @@ module.exports = createCoreController('api::property.property', ({ strapi }) => 
       }
 
       if (imageFiles.length > 0) {
-        const processed = await processPropertyImages(imageFiles);
+        const processed = await processPropertyImages(imageFiles, propertyData.Property_Code);
         cleanupProcessedImages = processed.cleanup;
 
         uploadedImages = await uploadProcessedImages(strapi, processed.processedFiles);
@@ -253,7 +253,7 @@ module.exports = createCoreController('api::property.property', ({ strapi }) => 
       }
 
       if (imageFiles.length > 0) {
-        const processed = await processPropertyImages(imageFiles);
+        const processed = await processPropertyImages(imageFiles, propertyData.Property_Code);
         cleanupProcessedImages = processed.cleanup;
 
         uploadedImages = await uploadProcessedImages(strapi, processed.processedFiles);
