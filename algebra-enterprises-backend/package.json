@@ -10,6 +10,7 @@
     "dev": "strapi develop",
     "develop": "strapi develop",
     "assign:properties": "node scripts/bulk-assign-properties.js",
+    "backfill:neighbourhood-from-title": "node scripts/backfill-neighbourhood-from-title.js",
     "import:address-rent": "node scripts/import-address-rent.js",
     "import:wordpress-properties": "node scripts/import-wordpress-properties.js",
     "start": "strapi start",

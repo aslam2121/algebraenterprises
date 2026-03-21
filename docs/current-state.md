@@ -60,6 +60,8 @@
 - Increased the per-property image upload limit from 12 to 50 in both backend validation and the agent dashboard UI
 - Property image uploads are now renamed from the property code during backend processing, so uploaded media no longer keeps the original local file names
 - Cloudinary property uploads now retry per image instead of retrying one large multi-file batch, and partial uploads are cleaned up if a later image fails
+- Added a one-off backend backfill script to derive missing property neighbourhood values from the neighbourhood mentioned in each property title
+- Applied the neighbourhood-title backfill to 48 published properties that were missing `Neighbourhood`
 
 ## In Progress
 - No active feature work in progress
@@ -151,6 +153,14 @@
 - Verified the new 50-image limit is aligned in both the backend helper and the agent dashboard client validation/copy
 - Verified the backend create/update property flow now passes `Property_Code` into the image processor so generated filenames follow the `property-code-N` pattern
 - Verified the Cloudinary upload controller still loads after moving to per-image retries and retryable message matching for errors like `read ECONNRESET`
+- Verified the neighbourhood-title backfill after the apply pass:
+  - published properties with missing `Neighbourhood` are now `0`
+  - a repeat dry-run of `node scripts/backfill-neighbourhood-from-title.js` now reports `processed=0`
+  - direct Strapi verification confirms alias normalization cases were stored in schema-valid form:
+    - `ag1218` / `ag1422`: `Panchsheel Enclave` title mapped to `Pansheel Enclave`
+    - `ag1358`: `G.K 2` title mapped to `G.K-2`
+    - `ag1632`: `SafdarJung Enclave` title mapped to `Safdarjung Enclave`
+    - `ag815` / `ag830`: `GulMohar Park` title mapped to `Gulmohar Park`
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

@@ -98,3 +98,11 @@
 - The previous upload path retried a single large multi-file request, which still left bigger image batches exposed to connection resets like `read ECONNRESET`
 - The backend now uploads processed property images one at a time with retries per file, and it removes already-uploaded partial files if a later upload still fails
 - Retry detection now also checks error messages, not just nested error codes, so Cloudinary failures that only surface as message text still follow the retry path
+
+### Missing neighbourhood values should be backfilled from property titles
+- `algebra-enterprises-backend/scripts/backfill-neighbourhood-from-title.js` is the one-off path for filling blank `Neighbourhood` values from the title prefix before the `(property-code)` suffix
+- The script updates only rows where neighbourhood is blank and leaves existing neighbourhood values untouched
+- It first tries an exact title-to-schema match, then normalized matching, then explicit aliases for schema spelling drift
+- Current explicit alias handling includes:
+  - `Panchsheel Enclave` title -> `Pansheel Enclave` schema value
+  - normalized cases like `G.K 2` -> `G.K-2`, `SafdarJung Enclave` -> `Safdarjung Enclave`, and `GulMohar Park` -> `Gulmohar Park`
