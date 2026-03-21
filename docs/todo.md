@@ -26,6 +26,7 @@
 - Re-run `node scripts/bulk-assign-properties.js ...` without `--apply` before any future bulk assignment
 - Re-verify the agent image upload flow if you decide to test near the new 50-image ceiling, because the processing path now allows substantially larger batches
 - Re-verify a live image upload if you want to confirm the uploaded asset names in Cloudinary/storage now follow the property-code-based naming pattern
+- Re-verify a live Cloudinary upload after the latest backend patch if you want to confirm `read ECONNRESET` is now absorbed by the per-image retry path
 - If `algebra_Parking.csv` changes again, rerun the same importer because it now reads the parking overlay automatically
 - If `algebra-address-rent.csv` changes again, rerun `node scripts/import-address-rent.js --apply` because it now owns the private-address and rent refresh path
 - Browser verification completed for:

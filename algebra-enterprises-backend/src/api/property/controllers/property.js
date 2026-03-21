@@ -11,6 +11,7 @@ const {
 
 const { ValidationError } = errors;
 const CLOUDINARY_RETRYABLE_CODES = new Set(['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'ENETUNREACH']);
+const CLOUDINARY_RETRYABLE_MESSAGE_FRAGMENTS = ['ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED', 'ENETUNREACH'];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -22,10 +23,26 @@ function flattenErrorCodes(error) {
   return [...new Set(codes)];
 }
 
-function getReadableUploadErrorMessage(error) {
+function flattenErrorMessages(error) {
   const nestedErrors = Array.isArray(error?.errors) ? error.errors : [];
-  const nestedMessages = nestedErrors.map((nestedError) => nestedError?.message).filter(Boolean);
+  const messages = [error?.message, ...nestedErrors.map((nestedError) => nestedError?.message)]
+    .filter((message) => typeof message === 'string')
+    .map((message) => message.trim())
+    .filter(Boolean);
+  return [...new Set(messages)];
+}
+
+function getReadableUploadErrorMessage(error) {
+  const nestedMessages = flattenErrorMessages(error).filter((message) => message !== error?.message?.trim());
   const primaryMessage = typeof error?.message === 'string' ? error.message.trim() : '';
+
+  if (
+    flattenErrorMessages(error).some((message) => (
+      CLOUDINARY_RETRYABLE_MESSAGE_FRAGMENTS.some((fragment) => message.includes(fragment))
+    ))
+  ) {
+    return 'Cloudinary connection was reset during upload. Please try again.';
+  }
 
   if (
     primaryMessage === 'Error uploading to cloudinary:' ||
@@ -46,31 +63,51 @@ function getReadableUploadErrorMessage(error) {
 }
 
 function isRetryableUploadError(error) {
-  return flattenErrorCodes(error).some((code) => CLOUDINARY_RETRYABLE_CODES.has(code));
+  return flattenErrorCodes(error).some((code) => CLOUDINARY_RETRYABLE_CODES.has(code))
+    || flattenErrorMessages(error).some((message) => (
+      CLOUDINARY_RETRYABLE_MESSAGE_FRAGMENTS.some((fragment) => message.includes(fragment))
+    ));
 }
 
 async function uploadProcessedImages(strapi, processedFiles, maxAttempts = 3) {
-  let lastError;
+  const uploadedFiles = [];
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    try {
-      return await strapi.plugin('upload').service('upload').upload({
-        data: {},
-        files: processedFiles,
-      });
-    } catch (error) {
-      lastError = error;
+  try {
+    for (const file of processedFiles) {
+      let lastError;
 
-      if (!isRetryableUploadError(error) || attempt === maxAttempts) {
-        break;
+      for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+        try {
+          const uploadedBatch = await strapi.plugin('upload').service('upload').upload({
+            data: {},
+            files: [file],
+          });
+          uploadedFiles.push(...uploadedBatch);
+          lastError = null;
+          break;
+        } catch (error) {
+          lastError = error;
+
+          if (!isRetryableUploadError(error) || attempt === maxAttempts) {
+            throw error;
+          }
+
+          await sleep(500 * attempt);
+        }
       }
-
-      await sleep(400 * attempt);
     }
-  }
 
-  const readableMessage = getReadableUploadErrorMessage(lastError);
-  throw new Error(`Cloudinary upload failed: ${readableMessage}`);
+    return uploadedFiles;
+  } catch (error) {
+    if (uploadedFiles.length > 0) {
+      await Promise.allSettled(
+        uploadedFiles.map((file) => strapi.plugin('upload').service('upload').remove(file))
+      );
+    }
+
+    const readableMessage = getReadableUploadErrorMessage(error);
+    throw new Error(`Cloudinary upload failed: ${readableMessage}`);
+  }
 }
 
 async function getAssignedPropertyForUser(strapi, userId, documentId) {

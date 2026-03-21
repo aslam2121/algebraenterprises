@@ -1,7 +1,7 @@
 # Current State
 
 ## Last Updated
-2026-03-20
+2026-03-21
 
 ## Completed
 - Agent dashboard property create flow is working through `POST /api/properties/my-properties`
@@ -59,6 +59,7 @@
 - Backend property write helpers now tolerate both `Neighborhood` and `Neighbourhood` schema keys so one-off scripts and agent-property helpers still load after the spelling change in `schema.json`
 - Increased the per-property image upload limit from 12 to 50 in both backend validation and the agent dashboard UI
 - Property image uploads are now renamed from the property code during backend processing, so uploaded media no longer keeps the original local file names
+- Cloudinary property uploads now retry per image instead of retrying one large multi-file batch, and partial uploads are cleaned up if a later image fails
 
 ## In Progress
 - No active feature work in progress
@@ -149,6 +150,7 @@
     - `ag1753` now has `Property_Address=D 6/23 SF` and `Price=4.5`
 - Verified the new 50-image limit is aligned in both the backend helper and the agent dashboard client validation/copy
 - Verified the backend create/update property flow now passes `Property_Code` into the image processor so generated filenames follow the `property-code-N` pattern
+- Verified the Cloudinary upload controller still loads after moving to per-image retries and retryable message matching for errors like `read ECONNRESET`
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

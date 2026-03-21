@@ -93,3 +93,8 @@
 ### Uploaded property images should be renamed from the property code
 - The backend image processor now derives output filenames from `Property_Code` instead of the original local file names
 - Both create and edit property flows pass the normalized property code into the processor, so generated names follow a stable `property-code-N` pattern before upload
+
+### Cloudinary uploads should retry one processed image at a time
+- The previous upload path retried a single large multi-file request, which still left bigger image batches exposed to connection resets like `read ECONNRESET`
+- The backend now uploads processed property images one at a time with retries per file, and it removes already-uploaded partial files if a later upload still fails
+- Retry detection now also checks error messages, not just nested error codes, so Cloudinary failures that only surface as message text still follow the retry path
