@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import Cookies from 'js-cookie';
-import { getStrapiMediaUrl } from '@/lib/strapi';
+import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
 
 const STATUS_OPTIONS = ['Live', 'Rented Out', 'Sold'];
 const LISTING_TYPE_OPTIONS = ['For Rent', 'For Sale', 'For Rent and For Sale'];
@@ -239,12 +239,12 @@ function normalizeListValue(value) {
 }
 
 function propertyToForm(property) {
+  const neighborhood = getPropertyNeighbourhood(property);
+
   return {
     Title: property.Title || '',
     Property_Code: property.Property_Code || '',
-    Neighborhood: Array.isArray(property.Neighborhood)
-      ? property.Neighborhood[0] || ''
-      : property.Neighborhood || '',
+    Neighborhood: neighborhood,
     Listing_Type: property.Listing_Type || 'For Rent',
     Property_Type: property.Property_Type || 'Apartment',
     Property_Status: property.Property_Status || 'Live',
@@ -315,9 +315,7 @@ function matchesPropertySearch(property, searchTerm) {
     return true;
   }
 
-  const neighborhood = Array.isArray(property.Neighborhood)
-    ? property.Neighborhood.join(' ')
-    : property.Neighborhood || '';
+  const neighborhood = getPropertyNeighbourhood(property);
 
   return (
     property.Title?.toLowerCase().includes(query) ||
@@ -1092,7 +1090,7 @@ export default function AgentDashboard() {
                           {property.Title}
                         </div>
                         <div style={{ fontSize: '0.75rem', color: '#8a9bb5', marginBottom: '0.2rem' }}>
-                          {property.Neighborhood ? `📍 ${property.Neighborhood} · ` : ''}
+                          {getPropertyNeighbourhood(property) ? `📍 ${getPropertyNeighbourhood(property)} · ` : ''}
                           {property.Listing_Type} · {property.Property_Code}
                         </div>
                         {property.Property_Address ? (

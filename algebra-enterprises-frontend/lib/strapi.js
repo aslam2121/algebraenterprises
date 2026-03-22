@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const strapiURL = (process.env.NEXT_PUBLIC_STRAPI_URL || '').replace(/\/$/, '');
+export const PROPERTY_NEIGHBOURHOOD_FILTER_KEY = 'Neighbourhood';
 
 export function getStrapiMediaUrl(url) {
   if (!url) {
@@ -18,6 +19,16 @@ export function getStrapiMediaUrl(url) {
   return `${strapiURL}${url.startsWith('/') ? url : `/${url}`}`;
 }
 
+export function getPropertyNeighbourhood(property) {
+  const value = property?.Neighbourhood ?? property?.Neighborhood;
+
+  if (Array.isArray(value)) {
+    return value[0] || '';
+  }
+
+  return typeof value === 'string' ? value : '';
+}
+
 export async function getProperties(filters = {}) {
   let query = `${strapiURL}/api/properties?populate=Images`;
 
@@ -28,7 +39,7 @@ export async function getProperties(filters = {}) {
     query += `&filters[Listing_Type][$eq]=${filters.listing_type}`;
   }
   if (filters.neighborhood) {
-    query += `&filters[Neighborhood][$eq]=${filters.neighborhood}`;
+    query += `&filters[${PROPERTY_NEIGHBOURHOOD_FILTER_KEY}][$eq]=${encodeURIComponent(filters.neighborhood)}`;
   }
   if (filters.featured) {
     query += `&filters[Featured_Property][$eq]=true`;

@@ -2,10 +2,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getStrapiMediaUrl } from '@/lib/strapi';
+import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
 
 export default function PropertyCard({ property }) {
   const [hovered, setHovered] = useState(false);
+  const neighbourhood = getPropertyNeighbourhood(property);
 
   const img = property.Images?.length > 0
     ? getStrapiMediaUrl(property.Images[0].url)
@@ -92,7 +93,7 @@ export default function PropertyCard({ property }) {
         <div style={{ padding: '1.2rem' }}>
           {/* Area */}
           <div style={{ fontSize: '0.75rem', color: 'var(--gold)', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500, marginBottom: '0.4rem' }}>
-            📍 {property.Neighborhood || 'Delhi'}
+            📍 {neighbourhood || 'Delhi'}
           </div>
 
           {/* Title */}

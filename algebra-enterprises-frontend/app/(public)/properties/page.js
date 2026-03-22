@@ -3,6 +3,7 @@ import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/PropertyCard';
 import Link from 'next/link';
+import { PROPERTY_NEIGHBOURHOOD_FILTER_KEY } from '@/lib/strapi';
 
 const AREAS = [
   'All Areas', 'Vasant Vihar', 'Defence Colony', 'Anand Niketan',
@@ -69,7 +70,7 @@ function PropertiesPageContent() {
           url += `&filters[Listing_Type][$eq]=${encodeURIComponent(listingType)}`;
         }
         if (area !== 'All Areas') {
-          url += `&filters[Neighborhood][$eq]=${encodeURIComponent(area)}`;
+          url += `&filters[${PROPERTY_NEIGHBOURHOOD_FILTER_KEY}][$eq]=${encodeURIComponent(area)}`;
         }
         if (propertyType !== 'All Types') {
           url += `&filters[Property_Type][$eq]=${encodeURIComponent(propertyType)}`;

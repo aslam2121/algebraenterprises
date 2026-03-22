@@ -106,3 +106,8 @@
 - Current explicit alias handling includes:
   - `Panchsheel Enclave` title -> `Pansheel Enclave` schema value
   - normalized cases like `G.K 2` -> `G.K-2`, `SafdarJung Enclave` -> `Safdarjung Enclave`, and `GulMohar Park` -> `Gulmohar Park`
+
+### Frontend neighbourhood reads should normalize both spellings
+- Live Strapi property payloads now expose `Neighbourhood`, while older frontend code paths still expected `Neighborhood`
+- Frontend rendering and filter code should use the shared normalizer in `algebra-enterprises-frontend/lib/strapi.js` so UI components stay tolerant of both spellings
+- Public property filtering should target the live REST filter key `Neighbourhood`

@@ -1,7 +1,7 @@
 # Current State
 
 ## Last Updated
-2026-03-21
+2026-03-22
 
 ## Completed
 - Agent dashboard property create flow is working through `POST /api/properties/my-properties`
@@ -62,6 +62,7 @@
 - Cloudinary property uploads now retry per image instead of retrying one large multi-file batch, and partial uploads are cleaned up if a later image fails
 - Added a one-off backend backfill script to derive missing property neighbourhood values from the neighbourhood mentioned in each property title
 - Applied the neighbourhood-title backfill to 48 published properties that were missing `Neighbourhood`
+- Frontend property rendering and neighbourhood filters now read the live `Neighbourhood` field while remaining tolerant of legacy `Neighborhood` payloads
 
 ## In Progress
 - No active feature work in progress
@@ -161,6 +162,7 @@
     - `ag1358`: `G.K 2` title mapped to `G.K-2`
     - `ag1632`: `SafdarJung Enclave` title mapped to `Safdarjung Enclave`
     - `ag815` / `ag830`: `GulMohar Park` title mapped to `Gulmohar Park`
+- Verified the frontend neighbourhood normalization change passes `npm run lint`
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

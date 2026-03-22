@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
-import { getStrapiMediaUrl } from '@/lib/strapi';
+import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
 
 export default function PropertyDetailPage() {
   const { code } = useParams();
@@ -111,6 +111,7 @@ export default function PropertyDetailPage() {
   const images = property.Images || [];
   const description = getDescription(property.Description);
   const statusColor = { 'Live': '#22c55e', 'Rented Out': '#f59e0b', 'Sold': '#ef4444' };
+  const neighbourhood = getPropertyNeighbourhood(property);
   const resolvedImages = images.map((image) => ({
     ...image,
     resolvedUrl: getStrapiMediaUrl(image.url),
@@ -293,7 +294,7 @@ export default function PropertyDetailPage() {
               {' › '}
               <Link href="/properties">Properties</Link>
               {' › '}
-              <span className="active">{property.Neighborhood || property.Title}</span>
+              <span className="active">{neighbourhood || property.Title}</span>
             </span>
           </div>
         </div>
@@ -321,8 +322,8 @@ export default function PropertyDetailPage() {
                 <h1 style={{ fontSize: 'clamp(1.3rem, 4vw, 2rem)', lineHeight: 1.25, color: '#fff', fontFamily: 'Playfair Display, serif', marginBottom: '0.4rem', wordBreak: 'break-word' }}>
                   {property.Title}
                 </h1>
-                {property.Neighborhood && (
-                  <p style={{ color: '#8a9bb5', fontSize: '0.88rem' }}>📍 {property.Neighborhood}, Delhi</p>
+                {neighbourhood && (
+                  <p style={{ color: '#8a9bb5', fontSize: '0.88rem' }}>📍 {neighbourhood}, Delhi</p>
                 )}
               </div>
 
