@@ -111,3 +111,8 @@
 - Live Strapi property payloads now expose `Neighbourhood`, while older frontend code paths still expected `Neighborhood`
 - Frontend rendering and filter code should use the shared normalizer in `algebra-enterprises-frontend/lib/strapi.js` so UI components stay tolerant of both spellings
 - Public property filtering should target the live REST filter key `Neighbourhood`
+
+### Strapi neighbourhood values must be stored as JSON arrays
+- The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
+- Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty
+- Backend property writes now store neighbourhood as a one-item array, and `algebra-enterprises-backend/scripts/normalize-neighbourhood-json.js` is the one-off repair path for converting legacy string values to valid JSON arrays

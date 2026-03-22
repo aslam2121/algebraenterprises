@@ -174,7 +174,7 @@ function normalizeNeighborhood(value) {
     throw new Error('Neighborhood is invalid.');
   }
 
-  return neighborhood;
+  return [neighborhood];
 }
 
 function toDescriptionBlocks(value) {

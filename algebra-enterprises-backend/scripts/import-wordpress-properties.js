@@ -81,8 +81,16 @@ function getNeighborhoodValue(source) {
     return '';
   }
 
+  if (Array.isArray(source.Neighborhood)) {
+    return typeof source.Neighborhood[0] === 'string' ? source.Neighborhood[0].trim() : '';
+  }
+
   if (typeof source.Neighborhood === 'string') {
     return source.Neighborhood.trim();
+  }
+
+  if (Array.isArray(source.Neighbourhood)) {
+    return typeof source.Neighbourhood[0] === 'string' ? source.Neighbourhood[0].trim() : '';
   }
 
   if (typeof source.Neighbourhood === 'string') {

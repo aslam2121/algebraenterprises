@@ -22,9 +22,11 @@
 ## Validation
 - Re-run `npm run lint` and `npm run build` in `algebra-enterprises-frontend` after any further frontend edits
 - If neighbourhoods ever look blank again in the UI, check for new code reading `Neighborhood` directly instead of using the shared frontend normalizer
+- If neighbourhoods ever look blank again in Strapi admin, verify the DB still stores valid JSON arrays for `neighbourhood` instead of plain text
 - Re-run `node scripts/import-wordpress-properties.js` in `algebra-enterprises-backend` as a dry-run before any future CSV apply pass
 - Re-run `node scripts/import-address-rent.js` in `algebra-enterprises-backend` as a dry-run before any future address/rent apply pass
 - Re-run `node scripts/backfill-neighbourhood-from-title.js` in `algebra-enterprises-backend` as a dry-run if future imports leave neighbourhood values blank again
+- Re-run `node scripts/normalize-neighbourhood-json.js` in `algebra-enterprises-backend` if older string-shaped neighbourhood data ever gets reintroduced
 - Re-run `node scripts/bulk-assign-properties.js ...` without `--apply` before any future bulk assignment
 - Re-verify the agent image upload flow if you decide to test near the new 50-image ceiling, because the processing path now allows substantially larger batches
 - Re-verify a live image upload if you want to confirm the uploaded asset names in Cloudinary/storage now follow the property-code-based naming pattern

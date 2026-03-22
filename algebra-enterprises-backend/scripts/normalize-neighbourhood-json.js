@@ -4,14 +4,9 @@ const { createStrapi } = require('@strapi/strapi');
 
 const propertySchema = require('../src/api/property/content-types/property/schema.json');
 
-const TITLE_CODE_PATTERN = /\s*\([^)]+\)\s*$/;
 const NEIGHBOURHOOD_ATTRIBUTE_KEY = propertySchema.attributes.Neighborhood
   ? 'Neighborhood'
   : 'Neighbourhood';
-const NEIGHBOURHOOD_OPTIONS = propertySchema.attributes[NEIGHBOURHOOD_ATTRIBUTE_KEY]?.options || [];
-const TITLE_ALIASES = new Map([
-  ['panchsheel enclave', 'Pansheel Enclave'],
-]);
 
 function parseArgs(argv) {
   const options = {
@@ -46,45 +41,28 @@ function parseArgs(argv) {
   return options;
 }
 
-function normalizeTitleValue(value) {
-  return String(value || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
-    .replace(/\s+/g, ' ');
-}
-
 function getCurrentNeighbourhood(row) {
   const value = row?.Neighbourhood ?? row?.Neighborhood;
 
   if (Array.isArray(value)) {
-    return typeof value[0] === 'string' ? value[0].trim() : '';
+    return {
+      normalized: value.map((item) => String(item || '').trim()).filter(Boolean),
+      shape: 'array',
+    };
   }
 
-  return typeof value === 'string' ? value.trim() : '';
-}
-
-function getTitlePrefix(title) {
-  return String(title || '').replace(TITLE_CODE_PATTERN, '').trim();
-}
-
-function resolveNeighbourhoodFromTitle(titlePrefix) {
-  if (!titlePrefix) {
-    return '';
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return {
+      normalized: trimmed ? [trimmed] : [],
+      shape: 'string',
+    };
   }
 
-  const exactMatch = NEIGHBOURHOOD_OPTIONS.find((option) => option === titlePrefix);
-  if (exactMatch) {
-    return exactMatch;
-  }
-
-  const normalizedTitle = normalizeTitleValue(titlePrefix);
-
-  if (TITLE_ALIASES.has(normalizedTitle)) {
-    return TITLE_ALIASES.get(normalizedTitle);
-  }
-
-  return NEIGHBOURHOOD_OPTIONS.find((option) => normalizeTitleValue(option) === normalizedTitle) || '';
+  return {
+    normalized: [],
+    shape: 'empty',
+  };
 }
 
 async function run(options) {
@@ -92,7 +70,8 @@ async function run(options) {
   const summary = {
     processed: 0,
     updated: 0,
-    unresolved: [],
+    alreadyNormalized: 0,
+    emptyValues: 0,
     sample: [],
   };
 
@@ -108,29 +87,27 @@ async function run(options) {
       },
     });
 
-    const missingRows = rows.filter((row) => !getCurrentNeighbourhood(row));
-    const limitedRows = options.limit ? missingRows.slice(0, options.limit) : missingRows;
-
+    const limitedRows = options.limit ? rows.slice(0, options.limit) : rows;
     summary.processed = limitedRows.length;
 
     for (const row of limitedRows) {
-      const titlePrefix = getTitlePrefix(row.Title);
-      const resolvedNeighbourhood = resolveNeighbourhoodFromTitle(titlePrefix);
+      const { normalized, shape } = getCurrentNeighbourhood(row);
 
-      if (!resolvedNeighbourhood) {
-        summary.unresolved.push({
-          propertyCode: row.Property_Code,
-          title: row.Title,
-          titlePrefix,
-        });
+      if (normalized.length === 0) {
+        summary.emptyValues += 1;
+        continue;
+      }
+
+      if (shape === 'array') {
+        summary.alreadyNormalized += 1;
         continue;
       }
 
       if (summary.sample.length < 20) {
         summary.sample.push({
           propertyCode: row.Property_Code,
-          titlePrefix,
-          neighbourhood: resolvedNeighbourhood,
+          from: row.Neighbourhood ?? row.Neighborhood,
+          to: normalized,
         });
       }
 
@@ -142,7 +119,7 @@ async function run(options) {
         documentId: row.documentId,
         status: 'published',
         data: {
-          [NEIGHBOURHOOD_ATTRIBUTE_KEY]: [resolvedNeighbourhood],
+          [NEIGHBOURHOOD_ATTRIBUTE_KEY]: normalized,
         },
       });
 

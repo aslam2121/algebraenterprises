@@ -63,6 +63,7 @@
 - Added a one-off backend backfill script to derive missing property neighbourhood values from the neighbourhood mentioned in each property title
 - Applied the neighbourhood-title backfill to 48 published properties that were missing `Neighbourhood`
 - Frontend property rendering and neighbourhood filters now read the live `Neighbourhood` field while remaining tolerant of legacy `Neighborhood` payloads
+- Backend property writes now store `Neighbourhood` in JSON-array form, and existing property rows were normalized so the Strapi admin multi-select can render the saved values
 
 ## In Progress
 - No active feature work in progress
@@ -163,6 +164,11 @@
     - `ag1632`: `SafdarJung Enclave` title mapped to `Safdarjung Enclave`
     - `ag815` / `ag830`: `GulMohar Park` title mapped to `Gulmohar Park`
 - Verified the frontend neighbourhood normalization change passes `npm run lint`
+- Verified the backend/admin neighbourhood normalization fix:
+  - `node scripts/normalize-neighbourhood-json.js --apply` converted all `260` published property documents from plain-text neighbourhood values to one-item JSON arrays
+  - SQLite now reports `json_valid(neighbourhood)=1` for all `520` property rows (draft + published)
+  - direct Strapi reads now return array values like `["Anand Niketan"]`, `["Pansheel Enclave"]`, and `["Vasant Vihar"]`
+  - a repeat dry-run now reports `alreadyNormalized=260` and `updated=0`
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

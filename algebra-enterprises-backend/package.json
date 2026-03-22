@@ -13,6 +13,7 @@
     "backfill:neighbourhood-from-title": "node scripts/backfill-neighbourhood-from-title.js",
     "import:address-rent": "node scripts/import-address-rent.js",
     "import:wordpress-properties": "node scripts/import-wordpress-properties.js",
+    "normalize:neighbourhood-json": "node scripts/normalize-neighbourhood-json.js",
     "start": "strapi start",
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
