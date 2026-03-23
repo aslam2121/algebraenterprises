@@ -1,7 +1,7 @@
 # Current State
 
 ## Last Updated
-2026-03-22
+2026-03-23
 
 ## Completed
 - Agent dashboard property create flow is working through `POST /api/properties/my-properties`
@@ -64,6 +64,9 @@
 - Applied the neighbourhood-title backfill to 48 published properties that were missing `Neighbourhood`
 - Frontend property rendering and neighbourhood filters now read the live `Neighbourhood` field while remaining tolerant of legacy `Neighborhood` payloads
 - Backend property writes now store `Neighbourhood` in JSON-array form, and existing property rows were normalized so the Strapi admin multi-select can render the saved values
+- Added a dedicated `Available_Floors` importer for the root `properties_available_floors.xlsx` workbook and exposed it as `python3 scripts/import-available-floors.py`
+- Applied the available-floors importer to update 177 published property documents by `Property_Code`
+- Backend property write helpers now preserve `Available_Floors` when that field is passed through future backend-side property updates
 
 ## In Progress
 - No active feature work in progress
@@ -79,6 +82,9 @@
   - row 65: `ag1373`
   - row 147: `ag1049`
   - row 191: `ag824`
+- The available-floors workbook still contains seven unmatched property codes that will continue to show on reruns unless the source file is cleaned:
+  - deleted rows: `ag1373`, `ag1636`, `ag824`, `ag1049`
+  - non-existent rows in the current published dataset: `ag1665`, `ag1195`, `ag675-1`
 
 ## Latest Verified Notes
 - Verified agent auth via `POST /api/auth/local`
@@ -169,6 +175,15 @@
   - SQLite now reports `json_valid(neighbourhood)=1` for all `520` property rows (draft + published)
   - direct Strapi reads now return array values like `["Anand Niketan"]`, `["Pansheel Enclave"]`, and `["Vasant Vihar"]`
   - a repeat dry-run now reports `alreadyNormalized=260` and `updated=0`
+- Verified the new available-floors importer after the apply pass:
+  - the script processed 267 workbook rows, merged the duplicate blank `ag1373` entry, and applied 177 updates
+  - a repeat dry-run now reports `wouldUpdate=0` and `unchanged=259`
+  - direct SQLite verification confirms both draft and published rows now carry imported values for samples like:
+    - `ag837`: `Ground`
+    - `ag831`: `Third`
+    - `ag852`: `Ground+Basement`
+    - `ag1616`: `Ground, First, Second and Third`
+    - `ag1033`: remains blank as intended
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

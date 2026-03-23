@@ -11,6 +11,7 @@
     "develop": "strapi develop",
     "assign:properties": "node scripts/bulk-assign-properties.js",
     "backfill:neighbourhood-from-title": "node scripts/backfill-neighbourhood-from-title.js",
+    "import:available-floors": "python3 scripts/import-available-floors.py",
     "import:address-rent": "node scripts/import-address-rent.js",
     "import:wordpress-properties": "node scripts/import-wordpress-properties.js",
     "normalize:neighbourhood-json": "node scripts/normalize-neighbourhood-json.js",

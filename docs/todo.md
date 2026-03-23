@@ -10,6 +10,9 @@
   - `ag1373`
   - `ag1049`
   - `ag824`
+- Remove the seven unmatched property codes from `properties_available_floors.xlsx` if future Available_Floors refreshes should stay clean:
+  - deleted rows: `ag1373`, `ag1636`, `ag824`, `ag1049`
+  - non-existent rows: `ag1665`, `ag1195`, `ag675-1`
 - Use `node scripts/bulk-assign-properties.js` in `algebra-enterprises-backend` when you want to assign neighborhoods to an agent:
   - dry-run first, then rerun with `--apply`
   - target agent by `--agent-id` or `--agent-email`
@@ -33,6 +36,7 @@
 - Re-verify a live Cloudinary upload after the latest backend patch if you want to confirm `read ECONNRESET` is now absorbed by the per-image retry path
 - If `algebra_Parking.csv` changes again, rerun the same importer because it now reads the parking overlay automatically
 - If `algebra-address-rent.csv` changes again, rerun `node scripts/import-address-rent.js --apply` because it now owns the private-address and rent refresh path
+- If `properties_available_floors.xlsx` changes again, rerun `python3 scripts/import-available-floors.py` as a dry-run first, then rerun with `--apply`
 - Browser verification completed for:
   - `/properties?type=rent` to `/properties?type=sale` navigation on the same page
   - property detail pages with both Cloudinary and local Strapi media

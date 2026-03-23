@@ -483,6 +483,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+    Available_Floors: Schema.Attribute.String;
     Bathrooms: Schema.Attribute.Integer;
     Bedrooms: Schema.Attribute.Integer;
     createdAt: Schema.Attribute.DateTime;
@@ -608,11 +609,11 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'[]'>;
     Parking: Schema.Attribute.Integer;
     Price: Schema.Attribute.Decimal;
-    Property_Address: Schema.Attribute.Text &
+    Property_Address: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Private;
     Property_Age: Schema.Attribute.Integer;
-    Property_Code: Schema.Attribute.UID;
+    Property_Code: Schema.Attribute.UID & Schema.Attribute.Required;
     Property_Status: Schema.Attribute.Enumeration<
       ['Live', 'Rented Out', 'Sold']
     >;

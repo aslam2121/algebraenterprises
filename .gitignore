@@ -16,6 +16,10 @@ yarn-error.log*
 .pnpm-debug.log*
 .node_history
 
+# Python
+__pycache__/
+*.pyc
+
 # Frontend
 algebra-enterprises-frontend/.next/
 algebra-enterprises-frontend/out/
@@ -38,3 +42,6 @@ algebra-enterprises-backend/coverage/
 algebra-enterprises-backend/*.log
 algebra-enterprises-backend/*.sqlite
 algebra-enterprises-backend/*.sqlite3
+
+# Windows metadata copied from Explorer downloads
+*:Zone.Identifier

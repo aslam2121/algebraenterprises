@@ -116,3 +116,9 @@
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty
 - Backend property writes now store neighbourhood as a one-item array, and `algebra-enterprises-backend/scripts/normalize-neighbourhood-json.js` is the one-off repair path for converting legacy string values to valid JSON arrays
+
+### Available_Floors workbook imports should use a dedicated Python updater
+- `algebra-enterprises-backend/scripts/import-available-floors.py` is the one-off path for syncing the root `properties_available_floors.xlsx` workbook into Strapi by `Property_Code`
+- The workbook is read directly with Python standard-library XLSX parsing so the importer does not need a new npm dependency just to handle a simple two-column spreadsheet
+- The updater writes `Available_Floors` to both draft and published rows for the matching `document_id`, keeping Strapi admin and published data aligned
+- Duplicate workbook rows for the same `Property_Code` are merged by taking the later non-empty `Available_Floors` value

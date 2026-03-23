@@ -257,6 +257,7 @@ function buildPropertyData(body, agentId, imageIds = [], options = {}) {
     [NEIGHBORHOOD_ATTRIBUTE_KEY]: normalizeNeighborhood(neighborhoodValue),
     Assigned_Agent: agentId,
     Property_Address: allowEmptyAddress && !propertyAddress ? '' : propertyAddress,
+    Available_Floors: normalizeOptionalString(body.Available_Floors),
     Rooms: normalizeInteger(body.Rooms, 'Rooms'),
     Parking: normalizeInteger(body.Parking, 'Parking'),
     Directions: normalizeOptionalString(body.Directions),
