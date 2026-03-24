@@ -40,6 +40,18 @@ function normalizeListValue(value) {
     .filter(Boolean);
 }
 
+function hasDisplayValue(value) {
+  if (value === null || value === undefined) {
+    return false;
+  }
+
+  if (typeof value === 'string') {
+    return value.trim().length > 0;
+  }
+
+  return true;
+}
+
 export default function PropertyDetailPage() {
   const { code } = useParams();
   const [property, setProperty] = useState(null);
@@ -151,15 +163,16 @@ export default function PropertyDetailPage() {
   }));
   const detailItems = [
     { icon: '💰', label: 'Price', value: formatPrice(property.Price, property.Listing_Type) },
-    { icon: '🏠', label: 'Property Type', value: property.Property_Type || '—' },
-    { icon: '🏢', label: 'Available Floors', value: property.Available_Floors || '—' },
-    { icon: '🛏', label: 'Bedrooms', value: property.Bedrooms ? `${property.Bedrooms} BHK` : '—' },
-    { icon: '🚿', label: 'Bathrooms', value: property.Bathrooms || '—' },
-    { icon: '📐', label: 'Area (sqm)', value: property.Area_Sqm ? `${property.Area_Sqm} sqm` : '—' },
-    { icon: '🚗', label: 'Parking', value: property.Parking || '—' },
-    { icon: '🧭', label: 'Direction', value: property.Directions || '—' },
-    { icon: '🏷', label: 'Code', value: property.Property_Code || '—' },
-  ];
+    { icon: '🏠', label: 'Property Type', value: property.Property_Type },
+    { icon: '🏢', label: 'Available Floors', value: property.Available_Floors },
+    { icon: '🛏', label: 'Bedrooms', value: property.Bedrooms ? `${property.Bedrooms} BHK` : null },
+    { icon: '🚿', label: 'Bathrooms', value: property.Bathrooms },
+    { icon: '📐', label: 'Area (sqm)', value: property.Area_Sqm ? `${property.Area_Sqm} sqm` : null },
+    { icon: '🏗', label: 'Property Age', value: property.Property_Age ? `${property.Property_Age} yrs` : null },
+    { icon: '🚗', label: 'Parking', value: property.Parking },
+    { icon: '🧭', label: 'Direction', value: property.Directions },
+    { icon: '🏷', label: 'Code', value: property.Property_Code },
+  ].filter((item) => hasDisplayValue(item.value));
 
   return (
     <>
@@ -256,6 +269,37 @@ export default function PropertyDetailPage() {
           letter-spacing: 0.1em;
           text-transform: uppercase;
           margin-bottom: 1rem;
+        }
+        .pd-feature-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+          gap: 0.7rem;
+        }
+        .pd-feature-chip {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          padding: 0.8rem 0.95rem;
+          border-radius: 12px;
+          background:
+            linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04)),
+            rgba(10,22,40,0.55);
+          border: 1px solid rgba(201,168,76,0.16);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+        .pd-feature-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 999px;
+          flex-shrink: 0;
+          background: radial-gradient(circle at 30% 30%, #f7e7b6, #c9a84c 70%);
+          box-shadow: 0 0 0 4px rgba(201,168,76,0.08);
+        }
+        .pd-feature-text {
+          color: #fff4d2;
+          font-size: 0.86rem;
+          line-height: 1.35;
+          font-weight: 500;
         }
 
         /* Sidebar card */
@@ -426,54 +470,37 @@ export default function PropertyDetailPage() {
               </div>
 
               {/* Property Details */}
-              <div className="pd-card">
-                <p className="pd-card-label">Property Details</p>
-                <div className="pd-details-grid">
-                  {detailItems.map(({ icon, label, value }) => (
-                    <div key={label} style={{ padding: '0.85rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ fontSize: '1rem', marginBottom: '0.3rem' }}>{icon}</div>
-                      <div style={{ fontSize: '0.65rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.2rem' }}>{label}</div>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#fff', wordBreak: 'break-word' }}>{value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {(features.length > 0 || property.Rooms || property.Property_Age) && (
+              {detailItems.length > 0 && (
                 <div className="pd-card">
-                  <p className="pd-card-label">Layout & Features</p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: features.length > 0 ? '1rem' : 0 }}>
-                    {property.Rooms ? (
-                      <div style={{ padding: '0.9rem 1rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                        <div style={{ fontSize: '0.68rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.25rem' }}>Rooms</div>
-                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Rooms}</div>
+                  <p className="pd-card-label">Property Details</p>
+                  <div className="pd-details-grid">
+                    {detailItems.map(({ icon, label, value }) => (
+                      <div key={label} style={{ padding: '0.85rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ fontSize: '1rem', marginBottom: '0.3rem' }}>{icon}</div>
+                        <div style={{ fontSize: '0.65rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.2rem' }}>{label}</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#fff', wordBreak: 'break-word' }}>{value}</div>
                       </div>
-                    ) : null}
-                    {property.Property_Age ? (
-                      <div style={{ padding: '0.9rem 1rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                        <div style={{ fontSize: '0.68rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.25rem' }}>Property Age</div>
-                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Property_Age} yrs</div>
-                      </div>
-                    ) : null}
+                    ))}
                   </div>
+                </div>
+              )}
 
+              {(features.length > 0 || property.Rooms) && (
+                <div className="pd-card">
+                  <p className="pd-card-label">Features</p>
+                  {property.Rooms ? (
+                    <div style={{ marginBottom: features.length > 0 ? '1rem' : 0, padding: '0.95rem 1rem', background: 'rgba(10,22,40,0.5)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div style={{ fontSize: '0.68rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.25rem' }}>Rooms</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Rooms}</div>
+                    </div>
+                  ) : null}
                   {features.length > 0 && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                    <div className="pd-feature-grid">
                       {features.map((feature) => (
-                        <span
-                          key={feature}
-                          style={{
-                            padding: '0.45rem 0.8rem',
-                            borderRadius: '999px',
-                            background: 'rgba(201,168,76,0.12)',
-                            border: '1px solid rgba(201,168,76,0.25)',
-                            color: '#f4e4b3',
-                            fontSize: '0.82rem',
-                            lineHeight: 1.2,
-                          }}
-                        >
-                          {feature}
-                        </span>
+                        <div key={feature} className="pd-feature-chip">
+                          <span className="pd-feature-dot" />
+                          <span className="pd-feature-text">{feature}</span>
+                        </div>
                       ))}
                     </div>
                   )}
