@@ -54,6 +54,12 @@
   - uploads from the Properties editor now run watermarking
   - uploaded files are renamed from the property code
   - processed images are resized/optimized before storage
+- Local rate-limit verification is complete against the live frontend/backend processes:
+  - frontend `POST /api/agent/login` returned `401` for attempts `1-5` and `429` on attempt `6`
+  - backend `POST /api/auth/local` returned `400` for attempts `1-5` and `429` on attempt `6`
+  - backend `POST /api/enquiries` returned `400` for attempts `1-5` with an invalid email payload and `429` on attempt `6`
+  - backend `POST /api/properties/my-properties` returned `403` for attempts `1-12` without auth and `429` on attempt `13`
+  - backend `PUT /api/properties/my-properties/:documentId` returned `403` for attempts `1-12` without auth and `429` on attempt `13`
 - Imported the root `algebra_properties_data.csv` dataset into Strapi by updating 264 existing property documents via a backend one-off importer
 - The property import populated `Property_Type`, `Bedrooms`, `Bathrooms`, `Rooms`, `Directions`, `Features`, `Neighborhood`, and `Listing_Type` from CSV while preserving existing non-CSV fields like images, assigned agent, description, price, and area values
 - The property import now also maps `Parking` from the new root `algebra_Parking.csv` overlay keyed by `Property_Code`

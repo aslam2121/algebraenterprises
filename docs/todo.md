@@ -32,6 +32,7 @@
   - production `NEXT_PUBLIC_STRAPI_URL` must also be HTTPS
   - recheck Next image loading and CSP after the final production domains are chosen
 - Before production, confirm the new rate limits behave correctly behind the real proxy/CDN headers:
+  - local verification is complete; only the deployed-header behavior remains
   - repeated bad agent logins should return `429`
   - rapid public enquiry spam should return `429`
   - repeated agent property create/update bursts should return `429` without breaking normal edits
