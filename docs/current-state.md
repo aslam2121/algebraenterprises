@@ -86,6 +86,7 @@
   - temporary upload to R2 succeeded
   - the generated URL on `*.r2.cloudflarestorage.com/<bucket>/<key>` returned `400 Bad Request` for both `HEAD` and `GET`
   - production delivery still needs either an R2 public/custom domain or another correct public media URL wired into `R2_PUBLIC_URL`
+  - production-facing media and app traffic must remain HTTPS-only; the current local `http://localhost` allowances are development-only and must not be treated as production-ready
 - The WordPress CSV source still contains four rows that were deleted from Strapi and would come back on a future full import unless the source CSV is cleaned:
   - row 34: `ag1373` with title `Dera Mandi (ag1374)`
   - row 123: `ag1636` with title `SafdarJung Enclave (ag1635)`

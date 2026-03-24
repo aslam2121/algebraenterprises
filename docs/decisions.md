@@ -148,3 +148,9 @@
 - The default S3 client transport produced intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during larger concurrent Strapi admin upload batches
 - The backend now configures the R2 S3 client with an explicit AWS SDK `NodeHttpHandler`, IPv4 DNS lookup, no keep-alive socket reuse, bounded socket concurrency, and explicit timeouts
 - This transport hardening cleared a 22-file concurrent upload stress run against Strapi's upload service without changing any property or media-model behavior
+
+### Production traffic must use HTTPS-only public hosts
+- Local `http://localhost` hosts are allowed only for development and verification inside this workspace
+- Production app traffic should use an HTTPS `NEXT_PUBLIC_STRAPI_URL`
+- Production media traffic should use an HTTPS `R2_PUBLIC_URL` backed by the real public/custom delivery domain, not the raw R2 upload API endpoint
+- Any final production rollout should include one explicit verification pass that no user-facing asset or API URL falls back to plain HTTP

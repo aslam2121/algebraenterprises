@@ -25,6 +25,10 @@
 ## Validation
 - Use the root `project-stack-and-media-plugins.txt` summary as the quick reference before evaluating or swapping media providers like Cloudinary
 - After setting real R2 credentials, configure a real public R2 delivery domain or public bucket URL in `R2_PUBLIC_URL`, then rerun one live create/update/delete image pass to confirm both upload/cleanup and browser-accessible delivery
+- Before production, set HTTPS-only public URLs for both the app and media delivery:
+  - `R2_PUBLIC_URL` must be an HTTPS public/custom delivery domain, not the raw upload API endpoint
+  - production `NEXT_PUBLIC_STRAPI_URL` must also be HTTPS
+  - recheck Next image loading and CSP after the final production domains are chosen
 - Re-verify the Strapi admin multi-image upload flow in the browser after the latest R2 transport hardening if you want a manual UI confirmation in addition to the 22-file service-level stress test
 - Rotate the currently pasted R2 credentials before production use, because they were exposed in chat during setup
 - Re-run `npm run lint` and `npm run build` in `algebra-enterprises-frontend` after any further frontend edits
