@@ -71,6 +71,7 @@
 - Backend property write helpers now preserve `Available_Floors` when that field is passed through future backend-side property updates
 - Frontend neighbourhood filters now use the JSON-array-compatible Strapi operator for `Neighbourhood` again
 - Backend upload config now targets Cloudflare R2 through `aws-s3`, backend CSP accepts env-driven R2 hosts, and Next image remotePatterns accept env-driven R2 hosts while still allowing legacy Cloudinary URLs
+- Local development env files are now configured for the real Cloudflare R2 endpoint and bucket, with backend secrets kept in `algebra-enterprises-backend/.env` and only the public R2 endpoint placed in `algebra-enterprises-frontend/.env.local`
 
 ## In Progress
 - No active feature work in progress
@@ -78,6 +79,7 @@
 ## Open Issues / Risks
 - No open functional regression is currently tracked from the verified frontend/backend flows in this session
 - The R2 migration is configuration-complete but still needs one live upload/delete verification pass with real Cloudflare R2 credentials and a real public/base URL before it should be treated as fully proven in this environment
+- The latest R2 credentials were pasted into chat during setup, so they should be rotated before production use even though they were only written to ignored local env files
 - The WordPress CSV source still contains four rows that were deleted from Strapi and would come back on a future full import unless the source CSV is cleaned:
   - row 34: `ag1373` with title `Dera Mandi (ag1374)`
   - row 123: `ag1636` with title `SafdarJung Enclave (ag1635)`
@@ -199,6 +201,11 @@
   - backend plugin config resolves to `provider: aws-s3` with `R2_ENDPOINT`, `R2_BUCKET`, `R2_REGION=auto`, optional `R2_PUBLIC_URL`, and blank `R2_ACL` omitted from upload params
   - frontend `npm run build` passes with the new env-driven remote image hosts
   - backend `npm run build` passes with placeholder R2 env values, aside from the existing sandbox-only Strapi config write warning under `~/.config/com.strapi/config.json`
+- Verified the local secret-safe R2 env setup:
+  - `algebra-enterprises-backend/.env` now resolves to `provider: aws-s3` with endpoint, bucket, access key, secret key, and `region=auto`
+  - `R2_ACL` remains omitted so no ACL header is forced for R2
+  - `algebra-enterprises-frontend/.env.local` only contains the public R2 endpoint for Next image host allowlisting
+  - local env files now use `0600` permissions
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`
