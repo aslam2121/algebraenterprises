@@ -160,6 +160,7 @@
 - The upload plugin is now wrapped during app bootstrap so uploads linked directly to `ref=api::property.property` and `field=Images` are preprocessed through that same helper before Strapi stores them
 - This keeps the Strapi admin property edit flow aligned with the agent flow for existing-property uploads, without changing unrelated uploads in the general Media Library
 - Strapi 5 admin uploads can arrive through both `admin-upload.uploadFiles` and `admin-upload.unstable_uploadFilesStream`, so both handlers must stay wrapped or property uploads from the editor can bypass processing
+- The content-manager media field upload dialog does not include property `ref` / `refId` / `field` metadata in its upload request, so existing-property uploads from the Strapi editor must also be detected from the content-manager `Referer` URL
 
 ### Concurrent admin uploads need a hardened R2 HTTP transport
 - The default S3 client transport produced intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during larger concurrent Strapi admin upload batches

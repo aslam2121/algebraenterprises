@@ -56,6 +56,7 @@
   - agent enquiry status failure handling
   - agent property edit with replacement image upload still working after frontend fixes
 - Re-verify from the Strapi admin Properties editor that uploading replacement images to an existing property like `ag1412` now runs watermarking, optimization, and property-code renaming after the stream-handler hook fix
+- Re-verify from the Strapi admin Properties editor that uploading replacement images to an existing property like `ag1412` now runs watermarking, optimization, and property-code renaming after the new content-manager `Referer` fallback fix
 
 ## Cleanup / Follow-Up
 - Keep `docs/current-state.md`, `docs/todo.md`, and `docs/decisions.md` updated after each meaningful task

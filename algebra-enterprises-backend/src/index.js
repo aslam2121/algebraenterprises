@@ -12,7 +12,7 @@ function wrapPropertyImageUploadMethod(strapi, controller, methodName) {
   controller[methodName] = async function wrappedPropertyImageUpload(ctx) {
     const originalBody = ctx.request?.body || {};
     const originalFiles = ctx.request?.files?.files;
-    const prepared = await preparePropertyImageUpload(strapi, originalBody, originalFiles);
+    const prepared = await preparePropertyImageUpload(strapi, ctx);
 
     if (!prepared) {
       return originalHandler.call(this, ctx);

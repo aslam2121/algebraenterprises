@@ -4,6 +4,7 @@ const { processPropertyImages } = require('../api/property/utils/agent-property'
 
 const PROPERTY_UID = 'api::property.property';
 const PROPERTY_IMAGE_FIELD = 'images';
+const CONTENT_MANAGER_PROPERTY_ROUTE_TYPES = new Set(['collection-types', 'single-types']);
 
 function toFilesArray(files) {
   if (!files) {
@@ -19,6 +20,14 @@ function normalizeString(value) {
 
 function normalizeFieldName(value) {
   return normalizeString(value).toLowerCase();
+}
+
+function safeDecodeURIComponent(value) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
 }
 
 function parseFileInfo(value) {
@@ -57,13 +66,63 @@ function withProcessedNames(fileInfo, processedFiles) {
   };
 }
 
-function isPropertyImageUpload(body, files) {
-  if (toFilesArray(files).length === 0) {
-    return false;
+function getPathSegments(urlLike) {
+  const normalized = normalizeString(urlLike);
+
+  if (!normalized) {
+    return [];
   }
 
-  return normalizeString(body?.ref) === PROPERTY_UID
-    && normalizeFieldName(body?.field) === PROPERTY_IMAGE_FIELD;
+  try {
+    const pathname = new URL(normalized, 'http://localhost').pathname || '';
+
+    return pathname
+      .split('/')
+      .map((segment) => safeDecodeURIComponent(segment))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function getPropertyUploadContext(body, headers, files) {
+  if (toFilesArray(files).length === 0) {
+    return null;
+  }
+
+  if (
+    normalizeString(body?.ref) === PROPERTY_UID
+    && normalizeFieldName(body?.field) === PROPERTY_IMAGE_FIELD
+  ) {
+    return {
+      refId: normalizeString(body?.refId),
+      source: 'request-body',
+    };
+  }
+
+  const segments = getPathSegments(headers?.referer || headers?.referrer);
+  const contentManagerIndex = segments.indexOf('content-manager');
+
+  if (contentManagerIndex === -1) {
+    return null;
+  }
+
+  const routeType = segments[contentManagerIndex + 1];
+  const slug = segments[contentManagerIndex + 2];
+  const entryId = segments[contentManagerIndex + 3];
+
+  if (!CONTENT_MANAGER_PROPERTY_ROUTE_TYPES.has(routeType) || slug !== PROPERTY_UID) {
+    return null;
+  }
+
+  if (!entryId || entryId === 'clone' || entryId === 'configurations') {
+    return null;
+  }
+
+  return {
+    refId: entryId,
+    source: 'referer',
+  };
 }
 
 async function resolvePropertyCode(strapi, refId) {
@@ -90,12 +149,17 @@ async function resolvePropertyCode(strapi, refId) {
   return property?.Property_Code || null;
 }
 
-async function preparePropertyImageUpload(strapi, body, files) {
-  if (!isPropertyImageUpload(body, files)) {
+async function preparePropertyImageUpload(strapi, ctx) {
+  const body = ctx?.request?.body || {};
+  const files = ctx?.request?.files?.files;
+  const headers = ctx?.request?.headers || {};
+  const uploadContext = getPropertyUploadContext(body, headers, files);
+
+  if (!uploadContext?.refId) {
     return null;
   }
 
-  const propertyCode = await resolvePropertyCode(strapi, body.refId);
+  const propertyCode = await resolvePropertyCode(strapi, uploadContext.refId);
 
   if (!propertyCode) {
     return null;

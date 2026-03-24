@@ -82,6 +82,7 @@
 - Repaired the eight newly uploaded `ag1225` media rows that were created before that restart, so `Anand Niketan (ag1225)` now also returns public `r2.dev` image URLs
 - Strapi admin uploads linked directly to a property's `Images` field now run through the same property-image processor as the custom agent routes, so they inherit watermarking, resize/optimization, and property-code-based renaming before upload
 - The Strapi admin property-image hook now wraps both the classic upload handler and the streaming upload handler, so existing-property uploads from the Properties editor no longer bypass processing when the admin UI uses the stream endpoint
+- The Strapi content-manager media dialog was confirmed to upload property images without `ref` / `refId` / `field` metadata, so the admin property-image hook now falls back to the property editor `Referer` URL to resolve the current property when processing existing-property uploads
 - Reprocessed the existing `ag1225` images through that same property-image pipeline, replacing the raw originals with watermarked, resized, code-based uploads on public `r2.dev` URLs
 
 ## In Progress
