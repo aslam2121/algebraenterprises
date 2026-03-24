@@ -26,6 +26,7 @@
 - Use the refreshed root `project-stack-and-media-plugins.txt` summary as the quick reference before evaluating or swapping media providers
 - After changing `R2_PUBLIC_URL` again in the future, rewrite existing stored `files.url` / `files.formats.*.url` values or reupload the affected assets so older media rows do not keep pointing at the old host
 - After changing backend R2 env values like `R2_PUBLIC_URL`, restart Strapi before doing new uploads; otherwise newly created file rows can keep using the old host until the backend process is refreshed
+- If you upload images to the standalone Media Library first and only attach them to a property later, the property-image processor still will not know the property code at upload time; upload directly through the property's `Images` field if you want watermarking, resize/optimization, and code-based naming
 - Before production, set HTTPS-only public URLs for both the app and media delivery:
   - `R2_PUBLIC_URL` must be an HTTPS public/custom delivery domain, not the raw upload API endpoint
   - production `NEXT_PUBLIC_STRAPI_URL` must also be HTTPS

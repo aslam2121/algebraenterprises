@@ -80,6 +80,8 @@
 - Rewrote the existing `aws-s3` media rows in SQLite from the raw `*.r2.cloudflarestorage.com/<bucket>/...` upload endpoint to the working public `r2.dev` base URL, including image format URLs stored inside the `files.formats` JSON column
 - Restarted the backend after the `R2_PUBLIC_URL` change and confirmed that new uploads now save directly with the public `r2.dev` host instead of the raw upload endpoint
 - Repaired the eight newly uploaded `ag1225` media rows that were created before that restart, so `Anand Niketan (ag1225)` now also returns public `r2.dev` image URLs
+- Strapi admin uploads linked directly to a property's `Images` field now run through the same property-image processor as the custom agent routes, so they inherit watermarking, resize/optimization, and property-code-based renaming before upload
+- Reprocessed the existing `ag1225` images through that same property-image pipeline, replacing the raw originals with watermarked, resized, code-based uploads on public `r2.dev` URLs
 
 ## In Progress
 - No active feature work in progress
@@ -236,6 +238,11 @@
   - before restart, `ag1225` uploads created as file ids `218-225` still saved raw `cloudflarestorage.com` URLs even though `R2_PUBLIC_URL` was already present in `.env`
   - after restarting Strapi from the updated env, a fresh temporary upload saved `url` plus all `formats.*.url` values directly on the public `r2.dev` host
   - those eight `ag1225` file rows were then rewritten to the same public host, and the live `ag1225` property payload now returns `r2.dev` URLs for every attached image
+- Verified admin-linked property uploads now use the property image processor:
+  - the upload plugin now intercepts uploads only when they target `ref=api::property.property` and `field=Images`
+  - a controller-level property upload test now routes those files through the shared property processor before they reach Strapi's upload service
+  - the shared processor still proves all three expected behaviors on a synthetic image: renamed output `ag1225-1.jpg`, resized output `2400x1800`, and watermark detection `changedPixels=151206`
+  - the repaired `ag1225` property now returns processed image rows like `ag1225-1.jpg`, `ag1225-2.jpg`, and `ag1225-3.jpg` with public `r2.dev` URLs and resized dimensions
   - a generated `3200x2400` JPEG was processed through `processPropertyImages()` and uploaded through Strapi's upload service
   - processed output was resized to `2400x1800`
   - processed filename followed the property-code pattern: `r2-upload-check-20260324-1.jpg`

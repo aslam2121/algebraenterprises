@@ -154,6 +154,11 @@
 - In this project, `ag1225` images uploaded before the backend restart still saved raw `cloudflarestorage.com` URLs even though the env file had been updated
 - After restarting Strapi, new uploads immediately saved `url` and `formats.*.url` values on the public `r2.dev` host
 
+### Strapi admin property-image uploads should reuse the shared property processor
+- Watermarking, the 2400px resize/optimization step, and property-code-based renaming already lived in `processPropertyImages()` for the custom agent routes
+- The upload plugin is now wrapped during app bootstrap so uploads linked directly to `ref=api::property.property` and `field=Images` are preprocessed through that same helper before Strapi stores them
+- This keeps the Strapi admin property edit flow aligned with the agent flow for existing-property uploads, without changing unrelated uploads in the general Media Library
+
 ### Concurrent admin uploads need a hardened R2 HTTP transport
 - The default S3 client transport produced intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during larger concurrent Strapi admin upload batches
 - The backend now configures the R2 S3 client with an explicit AWS SDK `NodeHttpHandler`, IPv4 DNS lookup, no keep-alive socket reuse, bounded socket concurrency, and explicit timeouts
