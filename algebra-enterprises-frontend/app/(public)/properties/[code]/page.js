@@ -8,6 +8,38 @@ import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
 
+function normalizeListValue(value) {
+  if (Array.isArray(value)) {
+    return value.filter((item) => typeof item === 'string' && item.trim());
+  }
+
+  if (typeof value !== 'string') {
+    return [];
+  }
+
+  const trimmedValue = value.trim();
+
+  if (!trimmedValue) {
+    return [];
+  }
+
+  if (trimmedValue.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(trimmedValue);
+      return Array.isArray(parsed)
+        ? parsed.filter((item) => typeof item === 'string' && item.trim())
+        : [];
+    } catch {
+      return [];
+    }
+  }
+
+  return trimmedValue
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 export default function PropertyDetailPage() {
   const { code } = useParams();
   const [property, setProperty] = useState(null);
@@ -112,10 +144,22 @@ export default function PropertyDetailPage() {
   const description = getDescription(property.Description);
   const statusColor = { 'Live': '#22c55e', 'Rented Out': '#f59e0b', 'Sold': '#ef4444' };
   const neighbourhood = getPropertyNeighbourhood(property);
+  const features = normalizeListValue(property.Features);
   const resolvedImages = images.map((image) => ({
     ...image,
     resolvedUrl: getStrapiMediaUrl(image.url),
   }));
+  const detailItems = [
+    { icon: '💰', label: 'Price', value: formatPrice(property.Price, property.Listing_Type) },
+    { icon: '🏠', label: 'Property Type', value: property.Property_Type || '—' },
+    { icon: '🏢', label: 'Available Floors', value: property.Available_Floors || '—' },
+    { icon: '🛏', label: 'Bedrooms', value: property.Bedrooms ? `${property.Bedrooms} BHK` : '—' },
+    { icon: '🚿', label: 'Bathrooms', value: property.Bathrooms || '—' },
+    { icon: '📐', label: 'Area (sqm)', value: property.Area_Sqm ? `${property.Area_Sqm} sqm` : '—' },
+    { icon: '🚗', label: 'Parking', value: property.Parking || '—' },
+    { icon: '🧭', label: 'Direction', value: property.Directions || '—' },
+    { icon: '🏷', label: 'Code', value: property.Property_Code || '—' },
+  ];
 
   return (
     <>
@@ -385,14 +429,7 @@ export default function PropertyDetailPage() {
               <div className="pd-card">
                 <p className="pd-card-label">Property Details</p>
                 <div className="pd-details-grid">
-                  {[
-                    { icon: '💰', label: 'Price',      value: formatPrice(property.Price, property.Listing_Type) },
-                    { icon: '🛏', label: 'Bedrooms',   value: property.Bedrooms  ? `${property.Bedrooms} BHK` : '—' },
-                    { icon: '🚿', label: 'Bathrooms',  value: property.Bathrooms || '—' },
-                    { icon: '📐', label: 'Area (sqm)', value: property.Area_Sqm  ? `${property.Area_Sqm} sqm` : '—' },
-                    { icon: '🏗',  label: 'Age',        value: property.Property_Age ? `${property.Property_Age} yrs` : '—' },
-                    { icon: '🏷', label: 'Code',       value: property.Property_Code || '—' },
-                  ].map(({ icon, label, value }) => (
+                  {detailItems.map(({ icon, label, value }) => (
                     <div key={label} style={{ padding: '0.85rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
                       <div style={{ fontSize: '1rem', marginBottom: '0.3rem' }}>{icon}</div>
                       <div style={{ fontSize: '0.65rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.2rem' }}>{label}</div>
@@ -401,6 +438,47 @@ export default function PropertyDetailPage() {
                   ))}
                 </div>
               </div>
+
+              {(features.length > 0 || property.Rooms || property.Property_Age) && (
+                <div className="pd-card">
+                  <p className="pd-card-label">Layout & Features</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: features.length > 0 ? '1rem' : 0 }}>
+                    {property.Rooms ? (
+                      <div style={{ padding: '0.9rem 1rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ fontSize: '0.68rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.25rem' }}>Rooms</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Rooms}</div>
+                      </div>
+                    ) : null}
+                    {property.Property_Age ? (
+                      <div style={{ padding: '0.9rem 1rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ fontSize: '0.68rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.25rem' }}>Property Age</div>
+                        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Property_Age} yrs</div>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {features.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                      {features.map((feature) => (
+                        <span
+                          key={feature}
+                          style={{
+                            padding: '0.45rem 0.8rem',
+                            borderRadius: '999px',
+                            background: 'rgba(201,168,76,0.12)',
+                            border: '1px solid rgba(201,168,76,0.25)',
+                            color: '#f4e4b3',
+                            fontSize: '0.82rem',
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Description */}
               {description && (

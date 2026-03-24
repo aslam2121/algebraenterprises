@@ -24,6 +24,7 @@
 - Added deployment-focused rate limiting for the abuse-prone paths:
   - frontend `POST /api/agent/login` now enforces an in-memory per-IP login window before proxying to Strapi
   - backend now applies an in-memory global limiter to `POST /api/auth/local`, `POST /api/enquiries`, `POST /api/properties/my-properties`, and `PUT /api/properties/my-properties/:documentId`
+- Public property detail pages now show the missing metadata blocks for `Property_Type`, `Available_Floors`, and `Features`, with tolerant frontend normalization for multi-select feature values
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
 - The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set

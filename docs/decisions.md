@@ -125,6 +125,10 @@
 - Frontend rendering and filter code should use the shared normalizer in `algebra-enterprises-frontend/lib/strapi.js` so UI components stay tolerant of both spellings
 - Public property filtering should target the live REST filter key `Neighbourhood`
 
+### Public property detail pages should normalize multi-select features before rendering
+- Strapi custom-field data such as `Features` can arrive as arrays, stringified JSON arrays, or comma-delimited strings depending on source/history
+- The public property detail page should normalize that value before rendering chips so `Features`, `Property_Type`, and `Available_Floors` do not disappear from the UI because of minor payload-shape drift
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty
