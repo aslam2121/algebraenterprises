@@ -73,9 +73,11 @@
 - Frontend neighbourhood filters now use the JSON-array-compatible Strapi operator for `Neighbourhood` again
 - Backend upload config now targets Cloudflare R2 through `aws-s3`, backend CSP accepts env-driven R2 hosts, and Next image remotePatterns accept env-driven R2 hosts while still allowing legacy Cloudinary URLs
 - Local development env files are now configured for the real Cloudflare R2 endpoint and bucket, with backend secrets kept in `algebra-enterprises-backend/.env` and only the public R2 endpoint placed in `algebra-enterprises-frontend/.env.local`
+- Local development env files now also include the Cloudflare public bucket URL so frontend image allowlisting can use the browser-facing `r2.dev` host during local verification
 - Restarted the local backend and frontend after the R2 env change and ran a real temporary upload through the Sharp processing path plus Strapi upload service
 - Hardened the R2 transport in `config/plugins.js` for concurrent Strapi admin uploads by using an explicit AWS SDK `NodeHttpHandler`, IPv4 lookup, bounded sockets, and request timeouts
 - Further hardened the R2 admin-upload transport by serializing socket use and raising retry/timeout ceilings so larger concurrent Strapi admin batches can finish without dropping the property-media attach step
+- Rewrote the existing `aws-s3` media rows in SQLite from the raw `*.r2.cloudflarestorage.com/<bucket>/...` upload endpoint to the working public `r2.dev` base URL, including image format URLs stored inside the `files.formats` JSON column
 
 ## In Progress
 - No active feature work in progress
@@ -224,6 +226,10 @@
   - an initial out-of-sandbox 22-file upload test still showed connection timeouts with `maxSockets=1`, `maxAttempts=8`, and `connectionTimeout=30000`
   - after increasing the connection timeout to `120000` and request timeout to `600000`, the same out-of-sandbox 22-file test completed successfully
   - the verification created a temporary published property, uploaded 22 files through Strapi's upload service, attached all 22 file IDs to the property, confirmed `attachedCount=22`, and then cleaned up the temporary property and uploaded media
+- Verified the R2 public media URL repair after setting `R2_PUBLIC_URL`:
+  - the Cloudflare public bucket host `https://pub-25be15a906b740739e1eac69d54aba5e.r2.dev/<key>` returns `200 OK` for existing uploaded images, while the old raw upload endpoint continued to return `400 Bad Request`
+  - 92 existing `aws-s3` file rows were rewritten in SQLite from the raw upload endpoint to the public `r2.dev` base, including nested `formats.*.url` values
+  - the live Strapi property payload now returns public `r2.dev` URLs for both the main image URL and generated formats such as `thumbnail`, `small`, `medium`, and `large`
   - a generated `3200x2400` JPEG was processed through `processPropertyImages()` and uploaded through Strapi's upload service
   - processed output was resized to `2400x1800`
   - processed filename followed the property-code pattern: `r2-upload-check-20260324-1.jpg`

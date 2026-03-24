@@ -24,7 +24,7 @@
 
 ## Validation
 - Use the refreshed root `project-stack-and-media-plugins.txt` summary as the quick reference before evaluating or swapping media providers
-- After setting real R2 credentials, configure a real public R2 delivery domain or public bucket URL in `R2_PUBLIC_URL`, then rerun one live create/update/delete image pass to confirm both upload/cleanup and browser-accessible delivery
+- After changing `R2_PUBLIC_URL` again in the future, rewrite existing stored `files.url` / `files.formats.*.url` values or reupload the affected assets so older media rows do not keep pointing at the old host
 - Before production, set HTTPS-only public URLs for both the app and media delivery:
   - `R2_PUBLIC_URL` must be an HTTPS public/custom delivery domain, not the raw upload API endpoint
   - production `NEXT_PUBLIC_STRAPI_URL` must also be HTTPS

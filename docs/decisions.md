@@ -144,6 +144,11 @@
 - Keep `R2_ENDPOINT` for backend upload API access, but set a real public delivery host in `R2_PUBLIC_URL` for production-facing image URLs
 - Frontend image allowlisting and backend CSP should continue to derive from the public delivery host once that domain is chosen
 
+### Switching the R2 public host requires rewriting older file URLs
+- Once a working public host is added in `R2_PUBLIC_URL`, new uploads can use that base URL, but older `files.url` values already saved in Strapi still keep their previous host
+- The same applies to responsive image URLs nested inside the `files.formats` JSON column
+- In this project, the existing `aws-s3` file rows were rewritten from the raw upload endpoint to the working `r2.dev` public bucket host after `R2_PUBLIC_URL` was added
+
 ### Concurrent admin uploads need a hardened R2 HTTP transport
 - The default S3 client transport produced intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during larger concurrent Strapi admin upload batches
 - The backend now configures the R2 S3 client with an explicit AWS SDK `NodeHttpHandler`, IPv4 DNS lookup, no keep-alive socket reuse, bounded socket concurrency, and explicit timeouts
