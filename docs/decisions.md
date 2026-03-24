@@ -149,6 +149,12 @@
 - The backend now configures the R2 S3 client with an explicit AWS SDK `NodeHttpHandler`, IPv4 DNS lookup, no keep-alive socket reuse, bounded socket concurrency, and explicit timeouts
 - This transport hardening cleared a 22-file concurrent upload stress run against Strapi's upload service without changing any property or media-model behavior
 
+### Large Strapi admin upload batches should favor serialized R2 sockets over aggressive concurrency
+- A later end-to-end check of the Strapi admin-style upload-and-attach flow showed that the remaining failure was still transport queueing, not the property `Images` relation itself
+- The R2 S3 client is now tuned more conservatively in `algebra-enterprises-backend/config/plugins.js` with `maxSockets=1`, `maxAttempts=8`, `connectionTimeout=120000`, and `requestTimeout=600000`
+- This slower but safer profile cleared a real out-of-sandbox 22-file upload-and-attach test where all uploaded media IDs were successfully assigned to the temporary property
+- Keep this conservative transport profile unless a future production/staging verification proves a faster setting is equally stable
+
 ### Production traffic must use HTTPS-only public hosts
 - Local `http://localhost` hosts are allowed only for development and verification inside this workspace
 - Production app traffic should use an HTTPS `NEXT_PUBLIC_STRAPI_URL`

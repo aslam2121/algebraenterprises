@@ -2,13 +2,15 @@ Algebra Enterprises Project Stack and Media Plugin Summary
 Generated: 2026-03-24
 
 Purpose
-- This file summarizes the current project stack, installed plugins, and media-related constraints so we can evaluate media services similar to Cloudinary.
-- The active media setup is Strapi + Cloudflare R2 through Strapi's official AWS S3 upload provider, while the frontend and backend still tolerate legacy Cloudinary URLs and local Strapi /uploads/... paths.
+- This file summarizes the current project stack, installed plugins, and media-related constraints for the Algebra Enterprises real estate app.
+- The active media setup is now Strapi + Cloudflare R2 through Strapi's official AWS S3 upload provider.
+- The app still needs to remain tolerant of legacy Cloudinary URLs and local Strapi /uploads/... paths during transition and mixed-data states.
 
 Project Structure
 - Frontend: algebra-enterprises-frontend/
 - Backend: algebra-enterprises-backend/
 - Docs and project memory: docs/
+- Public app routes live under app/(public)/ and the private portal lives under app/agent/
 
 Core Stack
 - Frontend framework: Next.js 16.2.0
@@ -16,11 +18,14 @@ Core Stack
 - Frontend HTTP client: axios 1.13.6
 - Frontend auth helper: js-cookie 3.0.5
 - Frontend gallery: yet-another-react-lightbox 3.29.1
+- Frontend linting: eslint 9 + eslint-config-next 16.2.0
+- Installed but not used as the main styling system: tailwindcss 4 / @tailwindcss/postcss 4
 - Backend CMS: Strapi 5.39.0
 - Backend database: better-sqlite3 12.6.2 (SQLite in local/dev workflow)
 - Backend image processing: sharp 0.33.5
 - Data import tooling: csv-parse 6.1.0 plus custom Node/Python scripts
 - Backend runtime requirement: Node >=20.0.0 <=24.x.x
+- Backend admin/runtime packages also include react 18, react-dom 18, react-router-dom 6, and styled-components 6 through Strapi/admin tooling
 
 Installed Backend Plugins and Related Packages
 - @strapi/plugin-cloud 5.39.0
@@ -32,15 +37,23 @@ Installed Backend Plugins and Related Packages
 Current Media Setup
 - Strapi upload provider is configured in algebra-enterprises-backend/config/plugins.js
 - Active provider: aws-s3
-- Credentials come from:
+- Storage target: Cloudflare R2 through the S3-compatible provider path
+- Main backend env variables:
   - R2_ENDPOINT
   - R2_ACCESS_KEY_ID
   - R2_SECRET_ACCESS_KEY
   - R2_BUCKET
   - R2_REGION
   - optional R2_PUBLIC_URL / R2_ROOT_PATH / R2_ACL
-- Cloudflare R2 is used through the provider's S3 client with region `auto` and the account-scoped `https://<ACCOUNT_ID>.r2.cloudflarestorage.com` endpoint.
+- Cloudflare R2 is configured through the provider's S3 client with region `auto` and the account-scoped `https://<ACCOUNT_ID>.r2.cloudflarestorage.com` endpoint.
 - The provider config intentionally allows `R2_ACL` to stay blank so ACL headers can be omitted for R2 compatibility.
+- The backend transport is hardened with:
+  - @smithy/node-http-handler NodeHttpHandler
+  - IPv4 DNS lookup
+  - keepAlive disabled
+  - maxSockets limited to 1 for safer large admin upload batches
+  - retry attempts raised to 8
+  - explicit connection/request timeouts currently tuned to 120000ms / 600000ms
 - Agent property create/edit flows already do:
   - image validation
   - resize/optimization
@@ -56,10 +69,12 @@ Frontend Media Handling
   - https://res.cloudinary.com
   - env-driven R2 hosts derived from R2_PUBLIC_URL and R2_ENDPOINT
 - Shared media URL normalization lives in algebra-enterprises-frontend/lib/strapi.js
+- Shared neighborhood normalization also lives in algebra-enterprises-frontend/lib/strapi.js and the public property filters use the live Neighbourhood field with $contains
 - The frontend intentionally supports:
   - full remote URLs
   - local Strapi /uploads/... paths
   - data: and blob: URLs when needed
+- Public pages and the agent dashboard both depend on this shared media normalization behavior
 
 Backend Security / CSP Expectations
 - algebra-enterprises-backend/config/middlewares.js currently whitelists:
@@ -67,6 +82,7 @@ Backend Security / CSP Expectations
   - media-src
   - res.cloudinary.com for legacy media
   - env-driven R2_PUBLIC_URL / R2_ENDPOINT hosts for new uploads
+- Any future provider/domain change must keep Next image host allowlisting and Strapi CSP host allowlisting in sync
 
 What a Replacement Media Service Should Support
 - Works with Strapi 5, ideally through an upload provider or a custom provider path.
@@ -82,7 +98,8 @@ Project-Specific Media Constraints
 - Public property endpoints must not expose private Property_Address data.
 - Frontend code should keep using the shared Strapi media helper instead of raw media paths in components.
 - Any media provider change should preserve existing dashboard create/edit image behavior.
-- If the R2 public host/domain changes, Next.js image config and Strapi CSP settings must still be updated together through the matching env vars.
+- If the public media host/domain changes, Next.js image config and Strapi CSP settings must still be updated together through the matching env vars.
+- The app must continue supporting both new provider-hosted assets and old stored Cloudinary/local Strapi asset URLs unless the dataset is fully migrated.
 
 Likely Candidate Categories
 - Strapi upload providers with CDN delivery
@@ -92,6 +109,8 @@ Likely Candidate Categories
 
 Current Baseline for Comparison
 - Cloudflare R2 via Strapi's official AWS S3 provider is the active implementation.
+- The previous implementation was Cloudinary, and legacy Cloudinary media is still allowed in frontend/backend host allowlists.
+- The current known caution is that the raw R2 S3 endpoint is not the final public website delivery URL, so production still needs a correct HTTPS public/custom media domain wired into R2_PUBLIC_URL.
 - A suitable alternative should match or improve on:
   - upload reliability
   - public image delivery

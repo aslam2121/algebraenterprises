@@ -5,6 +5,7 @@
 
 ## Completed
 - Added a new root documentation file `project-stack-and-media-plugins.txt` that summarizes the current stack, installed plugins, active Cloudinary integration, and the media-service compatibility requirements for evaluating alternatives
+- Refreshed `project-stack-and-media-plugins.txt` to match the current repo state after the Cloudflare R2 migration, including the active `aws-s3` provider, env-driven media host allowlists, and the hardened R2 transport details
 - Migrated the Strapi upload provider from Cloudinary to Cloudflare R2 using Strapi's official AWS S3 upload provider
 - Agent dashboard property create flow is working through `POST /api/properties/my-properties`
 - Agent dashboard property edit flow is working through `PUT /api/properties/my-properties/:documentId`
@@ -74,6 +75,7 @@
 - Local development env files are now configured for the real Cloudflare R2 endpoint and bucket, with backend secrets kept in `algebra-enterprises-backend/.env` and only the public R2 endpoint placed in `algebra-enterprises-frontend/.env.local`
 - Restarted the local backend and frontend after the R2 env change and ran a real temporary upload through the Sharp processing path plus Strapi upload service
 - Hardened the R2 transport in `config/plugins.js` for concurrent Strapi admin uploads by using an explicit AWS SDK `NodeHttpHandler`, IPv4 lookup, bounded sockets, and request timeouts
+- Further hardened the R2 admin-upload transport by serializing socket use and raising retry/timeout ceilings so larger concurrent Strapi admin batches can finish without dropping the property-media attach step
 
 ## In Progress
 - No active feature work in progress
@@ -87,6 +89,7 @@
   - the generated URL on `*.r2.cloudflarestorage.com/<bucket>/<key>` returned `400 Bad Request` for both `HEAD` and `GET`
   - production delivery still needs either an R2 public/custom domain or another correct public media URL wired into `R2_PUBLIC_URL`
   - production-facing media and app traffic must remain HTTPS-only; the current local `http://localhost` allowances are development-only and must not be treated as production-ready
+- The Strapi admin browser flow should now be materially safer for large image batches after the transport changes, but the only unresolved media risk is still public delivery configuration rather than property-media attachment
 - The WordPress CSV source still contains four rows that were deleted from Strapi and would come back on a future full import unless the source CSV is cleaned:
   - row 34: `ag1373` with title `Dera Mandi (ag1374)`
   - row 123: `ag1636` with title `SafdarJung Enclave (ag1635)`
@@ -102,6 +105,7 @@
 
 ## Latest Verified Notes
 - Verified the new root `project-stack-and-media-plugins.txt` file reflects the current frontend/backend package stack, the Cloudinary-to-R2 migration surface, Next.js image host rules, and CSP/media constraints for provider changes
+- Verified the refreshed root `project-stack-and-media-plugins.txt` now matches the live `package.json`, `config/plugins.js`, `config/middlewares.js`, `next.config.mjs`, and shared frontend media helper state
 - Verified agent auth via `POST /api/auth/local`
 - Verified replacement-image upload on property `agent-test-20260318-b`
 - Verified a create-path image upload using temporary property code `agent-fix-20260319`
@@ -216,6 +220,10 @@
 - Verified the R2 upload pipeline end to end with a temporary upload:
   - local backend restarted successfully on `http://localhost:1337`
   - local frontend restarted successfully on `http://localhost:3000`
+- Verified the Strapi admin-style R2 upload-and-attach path after the latest transport hardening:
+  - an initial out-of-sandbox 22-file upload test still showed connection timeouts with `maxSockets=1`, `maxAttempts=8`, and `connectionTimeout=30000`
+  - after increasing the connection timeout to `120000` and request timeout to `600000`, the same out-of-sandbox 22-file test completed successfully
+  - the verification created a temporary published property, uploaded 22 files through Strapi's upload service, attached all 22 file IDs to the property, confirmed `attachedCount=22`, and then cleaned up the temporary property and uploaded media
   - a generated `3200x2400` JPEG was processed through `processPropertyImages()` and uploaded through Strapi's upload service
   - processed output was resized to `2400x1800`
   - processed filename followed the property-code pattern: `r2-upload-check-20260324-1.jpg`

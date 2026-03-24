@@ -4,7 +4,7 @@ const { NodeHttpHandler } = require('@smithy/node-http-handler');
 
 const r2HttpsAgent = new https.Agent({
   keepAlive: false,
-  maxSockets: 8,
+  maxSockets: 1,
   lookup(hostname, options, callback) {
     const wantsAll = typeof options === 'object' && options?.all === true;
     const hints = typeof options === 'object' && typeof options?.hints === 'number' ? options.hints : 0;
@@ -35,12 +35,12 @@ module.exports = ({ env }) => ({
           },
           region: env('R2_REGION', 'auto'),
           endpoint: env('R2_ENDPOINT'),
-          maxAttempts: env.int('R2_MAX_ATTEMPTS', 3),
+          maxAttempts: env.int('R2_MAX_ATTEMPTS', 8),
           forcePathStyle: env.bool('R2_FORCE_PATH_STYLE', true),
           requestHandler: new NodeHttpHandler({
             httpsAgent: r2HttpsAgent,
-            connectionTimeout: env.int('R2_CONNECTION_TIMEOUT_MS', 10000),
-            requestTimeout: env.int('R2_REQUEST_TIMEOUT_MS', 120000),
+            connectionTimeout: env.int('R2_CONNECTION_TIMEOUT_MS', 120000),
+            requestTimeout: env.int('R2_REQUEST_TIMEOUT_MS', 600000),
           }),
           params: {
             Bucket: env('R2_BUCKET'),
