@@ -72,6 +72,7 @@
 - Frontend neighbourhood filters now use the JSON-array-compatible Strapi operator for `Neighbourhood` again
 - Backend upload config now targets Cloudflare R2 through `aws-s3`, backend CSP accepts env-driven R2 hosts, and Next image remotePatterns accept env-driven R2 hosts while still allowing legacy Cloudinary URLs
 - Local development env files are now configured for the real Cloudflare R2 endpoint and bucket, with backend secrets kept in `algebra-enterprises-backend/.env` and only the public R2 endpoint placed in `algebra-enterprises-frontend/.env.local`
+- Restarted the local backend and frontend after the R2 env change and ran a real temporary upload through the Sharp processing path plus Strapi upload service
 
 ## In Progress
 - No active feature work in progress
@@ -80,6 +81,10 @@
 - No open functional regression is currently tracked from the verified frontend/backend flows in this session
 - The R2 migration is configuration-complete but still needs one live upload/delete verification pass with real Cloudflare R2 credentials and a real public/base URL before it should be treated as fully proven in this environment
 - The latest R2 credentials were pasted into chat during setup, so they should be rotated before production use even though they were only written to ignored local env files
+- The raw R2 S3 endpoint is currently not a valid public delivery URL for the website in this setup:
+  - temporary upload to R2 succeeded
+  - the generated URL on `*.r2.cloudflarestorage.com/<bucket>/<key>` returned `400 Bad Request` for both `HEAD` and `GET`
+  - production delivery still needs either an R2 public/custom domain or another correct public media URL wired into `R2_PUBLIC_URL`
 - The WordPress CSV source still contains four rows that were deleted from Strapi and would come back on a future full import unless the source CSV is cleaned:
   - row 34: `ag1373` with title `Dera Mandi (ag1374)`
   - row 123: `ag1636` with title `SafdarJung Enclave (ag1635)`
@@ -206,6 +211,15 @@
   - `R2_ACL` remains omitted so no ACL header is forced for R2
   - `algebra-enterprises-frontend/.env.local` only contains the public R2 endpoint for Next image host allowlisting
   - local env files now use `0600` permissions
+- Verified the R2 upload pipeline end to end with a temporary upload:
+  - local backend restarted successfully on `http://localhost:1337`
+  - local frontend restarted successfully on `http://localhost:3000`
+  - a generated `3200x2400` JPEG was processed through `processPropertyImages()` and uploaded through Strapi's upload service
+  - processed output was resized to `2400x1800`
+  - processed filename followed the property-code pattern: `r2-upload-check-20260324-1.jpg`
+  - watermark detection on the bottom-right crop showed strong pixel differences versus the no-watermark control image (`changedChannels=192753`)
+  - the temporary upload row was successfully removed from Strapi afterward
+  - the resulting raw R2 endpoint URL returned `400 Bad Request`, confirming the upload API endpoint is not yet the right public asset delivery URL
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

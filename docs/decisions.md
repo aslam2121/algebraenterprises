@@ -138,3 +138,8 @@
 - Real Cloudflare R2 access keys should only live in ignored backend env files such as `algebra-enterprises-backend/.env`
 - Frontend env files may only receive the non-secret public delivery host or endpoint needed for `next/image` host allowlisting
 - If credentials are ever pasted into chat or otherwise exposed during setup, they should be rotated before production use
+
+### The raw R2 S3 endpoint should not be treated as the final public asset URL
+- Uploading to Cloudflare R2 through the Strapi S3 provider works with the account-scoped `R2_ENDPOINT`, but the resulting raw `*.r2.cloudflarestorage.com/<bucket>/<key>` URL returned `400 Bad Request` in live checks
+- Keep `R2_ENDPOINT` for backend upload API access, but set a real public delivery host in `R2_PUBLIC_URL` for production-facing image URLs
+- Frontend image allowlisting and backend CSP should continue to derive from the public delivery host once that domain is chosen
