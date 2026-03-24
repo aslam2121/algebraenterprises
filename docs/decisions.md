@@ -17,6 +17,13 @@
 - The frontend now logs agents in through Next route handlers under `app/api/agent/*`, stores only the JWT in an HttpOnly cookie, and proxies authenticated agent-side API calls through those route handlers
 - Future agent dashboard work should keep auth on that server-side cookie path instead of reintroducing direct bearer-token reads in browser JavaScript
 
+### Deployment hardening should include targeted in-memory rate limiting
+- The highest-risk request paths in the current app are login, public enquiry creation, and the authenticated property create/update endpoints that can carry large image batches
+- The project now uses a small in-memory limiter instead of adding a heavier dependency or a distributed store at this stage:
+  - frontend `POST /api/agent/login` is limited per IP before it proxies to Strapi
+  - backend `POST /api/auth/local`, `POST /api/enquiries`, `POST /api/properties/my-properties`, and `PUT /api/properties/my-properties/:documentId` are limited in a global middleware
+- This is acceptable for the current single-instance deployment plan, but it is not cross-instance shared state. If the app is later scaled horizontally, move these counters to a shared store such as Redis
+
 ### Preserve backend data and relation constraints
 - `Property_Address` remains private and should only be available through authenticated/custom flows
 - Assigned properties should continue to be resolved from the user side and deduplicated by `documentId` because direct REST filtering on the relation is unreliable

@@ -46,6 +46,7 @@ module.exports = ({ env }) => {
       },
     },
     'strapi::cors',
+    'global::rate-limit',
     'strapi::poweredBy',
     'strapi::query',
     'strapi::body',

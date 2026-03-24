@@ -1,14 +1,6 @@
 # TODO
 
 ## Highest Priority
-- Manually verify the agent portal after the new HttpOnly-cookie auth change:
-  - login
-  - dashboard load
-  - property create/edit
-  - enquiry status update
-  - logout
-- Add rate limiting or equivalent abuse protection before deployment for login, enquiry creation, and image-upload-heavy endpoints
-- Restart Strapi and re-test the existing-property admin upload flow on `ag1412` to confirm the stream-handler image-processing fix behaves correctly in the Strapi Properties editor
 - Remove the four deleted mismatch rows from the source WordPress CSV if future full imports should stay aligned:
   - `ag1373` / `Dera Mandi (ag1374)`
   - `ag1636` / `SafdarJung Enclave (ag1635)`
@@ -39,6 +31,10 @@
   - `R2_PUBLIC_URL` must be an HTTPS public/custom delivery domain, not the raw upload API endpoint
   - production `NEXT_PUBLIC_STRAPI_URL` must also be HTTPS
   - recheck Next image loading and CSP after the final production domains are chosen
+- Before production, confirm the new rate limits behave correctly behind the real proxy/CDN headers:
+  - repeated bad agent logins should return `429`
+  - rapid public enquiry spam should return `429`
+  - repeated agent property create/update bursts should return `429` without breaking normal edits
 - Optionally spot-check the Strapi admin multi-image upload flow in the browser if you want manual UI confirmation in addition to the now-passing 22-file upload-and-attach stress test
 - Rotate the currently pasted R2 credentials before production use, because they were exposed in chat during setup
 - Re-run `npm run lint` and `npm run build` in `algebra-enterprises-frontend` after any further frontend edits
@@ -62,8 +58,5 @@
   - a public property card with a local `/uploads/...` image (`ag1753`) in the rent listings
   - agent enquiry status failure handling
   - agent property edit with replacement image upload still working after frontend fixes
-- Re-verify from the Strapi admin Properties editor that uploading replacement images to an existing property like `ag1412` now runs watermarking, optimization, and property-code renaming after the stream-handler hook fix
-- Re-verify from the Strapi admin Properties editor that uploading replacement images to an existing property like `ag1412` now runs watermarking, optimization, and property-code renaming after the new content-manager `Referer` fallback fix
-
 ## Cleanup / Follow-Up
 - Keep `docs/current-state.md`, `docs/todo.md`, and `docs/decisions.md` updated after each meaningful task

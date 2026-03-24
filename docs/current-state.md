@@ -21,11 +21,15 @@
 - Agent portal auth now uses a server-set HttpOnly cookie through frontend route handlers under `app/api/agent/*`, so the browser no longer stores the Strapi JWT in readable client-side cookies
 - Agent dashboard browser requests for profile, dashboard data, property create/update, property status updates, and enquiry status updates now proxy through frontend route handlers instead of sending the Strapi bearer token directly from client-side JavaScript
 - Agent dashboard enquiry status updates now wait for a successful API response before mutating local state
+- Added deployment-focused rate limiting for the abuse-prone paths:
+  - frontend `POST /api/agent/login` now enforces an in-memory per-IP login window before proxying to Strapi
+  - backend now applies an in-memory global limiter to `POST /api/auth/local`, `POST /api/enquiries`, `POST /api/properties/my-properties`, and `PUT /api/properties/my-properties/:documentId`
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
 - The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set
 - Frontend lint passes after these changes
 - Frontend production build passes on Next 16.2.0 in the sandbox
+- Backend admin build passes after adding the rate-limit middleware
 - Frontend `npm audit` reports `0` vulnerabilities after the Next patch update
 - Verified live frontend and backend reachability outside the sandbox on `http://localhost:3000` and `http://localhost:1337`
 - Verified agent auth worked for `agenttest@example.com` during dashboard validation before the temporary test account was removed
@@ -40,6 +44,16 @@
   - enquiry status UI stays unchanged when a forced failed response is returned
   - agent property edit with replacement image upload returns `200` from `PUT /api/properties/my-properties/:documentId`
   - a public property card with a visible local `/uploads/...` image is reproduced on `/properties?type=rent` after paging to the last rent page (`ag1753`)
+- Manual verification is complete for the agent portal HttpOnly-cookie auth flow:
+  - login
+  - dashboard load
+  - property create/edit
+  - enquiry status update
+  - logout
+- Manual verification is complete for the Strapi admin existing-property upload flow on `ag1412`:
+  - uploads from the Properties editor now run watermarking
+  - uploaded files are renamed from the property code
+  - processed images are resized/optimized before storage
 - Imported the root `algebra_properties_data.csv` dataset into Strapi by updating 264 existing property documents via a backend one-off importer
 - The property import populated `Property_Type`, `Bedrooms`, `Bathrooms`, `Rooms`, `Directions`, `Features`, `Neighborhood`, and `Listing_Type` from CSV while preserving existing non-CSV fields like images, assigned agent, description, price, and area values
 - The property import now also maps `Parking` from the new root `algebra_Parking.csv` overlay keyed by `Property_Code`

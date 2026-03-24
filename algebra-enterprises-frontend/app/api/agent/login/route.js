@@ -6,8 +6,32 @@ import {
   getAgentCookieOptions,
   parseJsonSafely,
 } from '@/lib/agent-auth';
+import { checkRateLimit, getRequestIp } from '@/lib/rate-limit';
+
+const LOGIN_LIMIT = 5;
+const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 
 export async function POST(request) {
+  const rateLimitState = checkRateLimit({
+    key: `agent-login:${getRequestIp(request)}`,
+    limit: LOGIN_LIMIT,
+    windowMs: LOGIN_WINDOW_MS,
+  });
+
+  if (!rateLimitState.allowed) {
+    return NextResponse.json(
+      { message: 'Too many login attempts. Please wait before trying again.' },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(rateLimitState.retryAfterSeconds),
+          'X-RateLimit-Limit': String(LOGIN_LIMIT),
+          'X-RateLimit-Remaining': '0',
+        },
+      }
+    );
+  }
+
   let body;
 
   try {
@@ -35,11 +59,22 @@ export async function POST(request) {
   });
 
   const payload = await parseJsonSafely(response);
+  const responseHeaders = {
+    'Retry-After': String(rateLimitState.retryAfterSeconds),
+    'X-RateLimit-Limit': String(LOGIN_LIMIT),
+    'X-RateLimit-Remaining': String(rateLimitState.remaining),
+  };
 
   if (!response.ok || !payload?.jwt) {
     return NextResponse.json(
       { message: 'Invalid email or password. Please try again.' },
-      { status: response.status === 400 ? 401 : response.status }
+      {
+        status: response.status === 400 ? 401 : response.status,
+        headers: response.status === 429 ? {
+          ...responseHeaders,
+          'Retry-After': response.headers.get('retry-after') || responseHeaders['Retry-After'],
+        } : responseHeaders,
+      }
     );
   }
 
@@ -47,7 +82,10 @@ export async function POST(request) {
     {
       user: payload.user || null,
     },
-    { status: 200 }
+    {
+      status: 200,
+      headers: responseHeaders,
+    }
   );
 
   nextResponse.cookies.set(AGENT_TOKEN_COOKIE, payload.jwt, getAgentCookieOptions());
