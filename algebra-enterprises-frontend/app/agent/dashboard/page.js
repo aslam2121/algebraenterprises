@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import Cookies from 'js-cookie';
 import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
 
 const STATUS_OPTIONS = ['Live', 'Rented Out', 'Sold'];
@@ -264,48 +263,20 @@ function propertyToForm(property) {
   };
 }
 
-async function fetchDashboardData(token) {
-  const headers = { Authorization: `Bearer ${token}` };
+async function fetchDashboardData() {
+  const response = await fetch('/api/agent/dashboard', { cache: 'no-store' });
 
-  const meRes = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/users/me`, { headers });
-  if (!meRes.ok) {
-    throw new Error('Unable to load agent profile.');
+  if (response.status === 401) {
+    const error = new Error('Unauthorized');
+    error.code = 'UNAUTHORIZED';
+    throw error;
   }
 
-  const me = await meRes.json();
-
-  const propertiesRes = await fetch(
-    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties/my-properties`,
-    { headers }
-  );
-
-  if (!propertiesRes.ok) {
-    throw new Error('Unable to load properties.');
+  if (!response.ok) {
+    throw new Error('Unable to load dashboard data.');
   }
 
-  const propertiesPayload = await propertiesRes.json();
-  const properties = propertiesPayload.data || [];
-  const propertyCodes = properties.map((property) => property.Property_Code).filter(Boolean);
-
-  if (propertyCodes.length === 0) {
-    return { agent: me, properties, enquiries: [] };
-  }
-
-  const enquiriesRes = await fetch(
-    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/enquiries?pagination[limit]=100&sort=createdAt:desc`,
-    { headers }
-  );
-
-  if (!enquiriesRes.ok) {
-    throw new Error('Unable to load enquiries.');
-  }
-
-  const enquiriesPayload = await enquiriesRes.json();
-  const enquiries = (enquiriesPayload.data || []).filter((enquiry) =>
-    propertyCodes.includes(enquiry.Property_Code)
-  );
-
-  return { agent: me, properties, enquiries };
+  return response.json();
 }
 
 function matchesPropertySearch(property, searchTerm) {
@@ -345,28 +316,12 @@ export default function AgentDashboard() {
 
   useEffect(() => {
     let ignore = false;
-    const token = Cookies.get('agent_token');
-    const user = Cookies.get('agent_user');
-
-    if (!token || !user) {
-      router.push('/agent/login');
-      return undefined;
-    }
-
-    try {
-      setAgent(JSON.parse(user));
-    } catch (error) {
-      Cookies.remove('agent_token');
-      Cookies.remove('agent_user');
-      router.push('/agent/login');
-      return undefined;
-    }
 
     async function loadDashboard() {
       setLoading(true);
 
       try {
-        const data = await fetchDashboardData(token);
+        const data = await fetchDashboardData();
 
         if (ignore) {
           return;
@@ -376,7 +331,9 @@ export default function AgentDashboard() {
         setProperties(data.properties);
         setEnquiries(data.enquiries);
       } catch (error) {
-        if (!ignore) {
+        if (!ignore && error?.code === 'UNAUTHORIZED') {
+          router.replace('/agent/login');
+        } else if (!ignore) {
           console.error(error);
         }
       } finally {
@@ -412,20 +369,15 @@ export default function AgentDashboard() {
 
   async function updateStatus(propertyId, newStatus) {
     setUpdating(propertyId);
-    const token = Cookies.get('agent_token');
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties/${propertyId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ data: { Property_Status: newStatus } }),
-        }
-      );
+      const response = await fetch(`/api/agent/properties/${propertyId}/status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
       if (response.ok) {
         setProperties((previous) =>
@@ -444,16 +396,13 @@ export default function AgentDashboard() {
   }
 
   async function updateEnquiryStatus(enquiryId, newStatus) {
-    const token = Cookies.get('agent_token');
-
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/enquiries/${enquiryId}`, {
+      const response = await fetch(`/api/agent/enquiries/${enquiryId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ data: { Client_Status: newStatus } }),
+        body: JSON.stringify({ status: newStatus }),
       });
 
       const payload = await response.json().catch(() => null);
@@ -474,9 +423,15 @@ export default function AgentDashboard() {
     }
   }
 
-  function handleLogout() {
-    Cookies.remove('agent_token');
-    Cookies.remove('agent_user');
+  async function handleLogout() {
+    try {
+      await fetch('/api/agent/logout', {
+        method: 'POST',
+      });
+    } catch {
+      // Ignore logout cleanup failures and continue redirecting.
+    }
+
     router.push('/agent/login');
   }
 
@@ -533,7 +488,6 @@ export default function AgentDashboard() {
       return;
     }
 
-    const token = Cookies.get('agent_token');
     const formData = new FormData();
 
     formData.append('Title', createForm.Title);
@@ -561,11 +515,10 @@ export default function AgentDashboard() {
 
     try {
       const endpoint = isEditingProperty
-        ? `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties/my-properties/${editingProperty.documentId}`
-        : `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties/my-properties`;
+        ? `/api/agent/properties/${editingProperty.documentId}`
+        : '/api/agent/properties';
       const response = await fetch(endpoint, {
         method: isEditingProperty ? 'PUT' : 'POST',
-        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
 

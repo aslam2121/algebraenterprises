@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Cookies from 'js-cookie';
 
 export default function AgentLogin() {
   const router = useRouter();
@@ -11,9 +10,25 @@ export default function AgentLogin() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (Cookies.get('agent_token')) {
-      router.push('/agent/dashboard');
+    let ignore = false;
+
+    async function loadSession() {
+      try {
+        const response = await fetch('/api/agent/session', { cache: 'no-store' });
+
+        if (response.ok && !ignore) {
+          router.replace('/agent/dashboard');
+        }
+      } catch {
+        // Ignore passive session check failures on the login screen.
+      }
     }
+
+    loadSession();
+
+    return () => {
+      ignore = true;
+    };
   }, [router]);
 
   const handleLogin = async (e) => {
@@ -21,15 +36,13 @@ export default function AgentLogin() {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/auth/local`, {
+      const res = await fetch('/api/agent/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: form.identifier, password: form.password }),
       });
-      const data = await res.json();
+
       if (res.ok) {
-        Cookies.set('agent_token', data.jwt, { expires: 7 });
-        Cookies.set('agent_user', JSON.stringify(data.user), { expires: 7 });
         router.push('/agent/dashboard');
       } else {
         setError('Invalid email or password. Please try again.');

@@ -1,6 +1,13 @@
 # TODO
 
 ## Highest Priority
+- Manually verify the agent portal after the new HttpOnly-cookie auth change:
+  - login
+  - dashboard load
+  - property create/edit
+  - enquiry status update
+  - logout
+- Add rate limiting or equivalent abuse protection before deployment for login, enquiry creation, and image-upload-heavy endpoints
 - Restart Strapi and re-test the existing-property admin upload flow on `ag1412` to confirm the stream-handler image-processing fix behaves correctly in the Strapi Properties editor
 - Remove the four deleted mismatch rows from the source WordPress CSV if future full imports should stay aligned:
   - `ag1373` / `Dera Mandi (ag1374)`

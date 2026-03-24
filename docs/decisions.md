@@ -12,6 +12,11 @@
 - Reuse the existing inline-style plus `globals.css` approach unless a task explicitly requires a styling-system change
 - Preserve Strapi JWT cookie auth on the frontend unless the task is specifically about auth redesign
 
+### Agent portal auth should use a server-set HttpOnly cookie
+- The previous browser-readable `js-cookie` storage for the Strapi JWT was acceptable for local development but is too weak for production because any XSS in the frontend could read the token
+- The frontend now logs agents in through Next route handlers under `app/api/agent/*`, stores only the JWT in an HttpOnly cookie, and proxies authenticated agent-side API calls through those route handlers
+- Future agent dashboard work should keep auth on that server-side cookie path instead of reintroducing direct bearer-token reads in browser JavaScript
+
 ### Preserve backend data and relation constraints
 - `Property_Address` remains private and should only be available through authenticated/custom flows
 - Assigned properties should continue to be resolved from the user side and deduplicated by `documentId` because direct REST filtering on the relation is unreliable

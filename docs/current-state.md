@@ -18,6 +18,8 @@
 - Frontend was upgraded from `next@15.2.3` to `next@16.2.0` and the frontend lockfile was refreshed with `npm install`
 - Public property filters were patched to resync with `/properties` query-string navigation
 - Shared media URL normalization was added in `algebra-enterprises-frontend/lib/strapi.js` and wired into property cards, property detail, and dashboard image rendering
+- Agent portal auth now uses a server-set HttpOnly cookie through frontend route handlers under `app/api/agent/*`, so the browser no longer stores the Strapi JWT in readable client-side cookies
+- Agent dashboard browser requests for profile, dashboard data, property create/update, property status updates, and enquiry status updates now proxy through frontend route handlers instead of sending the Strapi bearer token directly from client-side JavaScript
 - Agent dashboard enquiry status updates now wait for a successful API response before mutating local state
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
