@@ -23,6 +23,8 @@
 - Confirm the new root repo commit was created successfully and use it as the base for future changes
 
 ## Validation
+- Use the root `project-stack-and-media-plugins.txt` summary as the quick reference before evaluating or swapping media providers like Cloudinary
+- After setting real R2 credentials, run one live create/update/delete image pass to confirm Cloudflare R2 upload and cleanup behavior end to end
 - Re-run `npm run lint` and `npm run build` in `algebra-enterprises-frontend` after any further frontend edits
 - If neighbourhoods ever look blank again in the UI, check for new code reading `Neighborhood` directly instead of using the shared frontend normalizer
 - If neighbourhood filters stop working again, verify the frontend is not using `$eq` against the JSON-array `Neighbourhood` field; public filters should use `$contains`

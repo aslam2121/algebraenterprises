@@ -1,0 +1,100 @@
+Algebra Enterprises Project Stack and Media Plugin Summary
+Generated: 2026-03-24
+
+Purpose
+- This file summarizes the current project stack, installed plugins, and media-related constraints so we can evaluate media services similar to Cloudinary.
+- The active media setup is Strapi + Cloudflare R2 through Strapi's official AWS S3 upload provider, while the frontend and backend still tolerate legacy Cloudinary URLs and local Strapi /uploads/... paths.
+
+Project Structure
+- Frontend: algebra-enterprises-frontend/
+- Backend: algebra-enterprises-backend/
+- Docs and project memory: docs/
+
+Core Stack
+- Frontend framework: Next.js 16.2.0
+- Frontend runtime: React 19.2.3 / react-dom 19.2.3
+- Frontend HTTP client: axios 1.13.6
+- Frontend auth helper: js-cookie 3.0.5
+- Frontend gallery: yet-another-react-lightbox 3.29.1
+- Backend CMS: Strapi 5.39.0
+- Backend database: better-sqlite3 12.6.2 (SQLite in local/dev workflow)
+- Backend image processing: sharp 0.33.5
+- Data import tooling: csv-parse 6.1.0 plus custom Node/Python scripts
+- Backend runtime requirement: Node >=20.0.0 <=24.x.x
+
+Installed Backend Plugins and Related Packages
+- @strapi/plugin-cloud 5.39.0
+- @strapi/plugin-users-permissions 5.39.0
+- @strapi/provider-upload-aws-s3 5.39.0
+- strapi-plugin-multi-select ^2.1.1
+- strapi-csv-import-export ^0.0.6
+
+Current Media Setup
+- Strapi upload provider is configured in algebra-enterprises-backend/config/plugins.js
+- Active provider: aws-s3
+- Credentials come from:
+  - R2_ENDPOINT
+  - R2_ACCESS_KEY_ID
+  - R2_SECRET_ACCESS_KEY
+  - R2_BUCKET
+  - R2_REGION
+  - optional R2_PUBLIC_URL / R2_ROOT_PATH / R2_ACL
+- Cloudflare R2 is used through the provider's S3 client with region `auto` and the account-scoped `https://<ACCOUNT_ID>.r2.cloudflarestorage.com` endpoint.
+- The provider config intentionally allows `R2_ACL` to stay blank so ACL headers can be omitted for R2 compatibility.
+- Agent property create/edit flows already do:
+  - image validation
+  - resize/optimization
+  - watermarking
+  - upload to the configured media provider
+  - cleanup on partial upload failure
+- Upload volume currently supports up to 50 images per property.
+
+Frontend Media Handling
+- Next.js remote image hosts currently allow:
+  - http://localhost:1337
+  - http://127.0.0.1:1337
+  - https://res.cloudinary.com
+  - env-driven R2 hosts derived from R2_PUBLIC_URL and R2_ENDPOINT
+- Shared media URL normalization lives in algebra-enterprises-frontend/lib/strapi.js
+- The frontend intentionally supports:
+  - full remote URLs
+  - local Strapi /uploads/... paths
+  - data: and blob: URLs when needed
+
+Backend Security / CSP Expectations
+- algebra-enterprises-backend/config/middlewares.js currently whitelists:
+  - img-src
+  - media-src
+  - res.cloudinary.com for legacy media
+  - env-driven R2_PUBLIC_URL / R2_ENDPOINT hosts for new uploads
+
+What a Replacement Media Service Should Support
+- Works with Strapi 5, ideally through an upload provider or a custom provider path.
+- Accepts server-side uploads from the backend after Sharp processing.
+- Supports reliable upload and delete operations from Node in this WSL environment.
+- Returns stable HTTPS asset URLs that can be added to Next.js image remotePatterns.
+- Allows public delivery for property images used on the public website.
+- Handles multiple images per property and larger upload batches.
+- Plays well with the existing backend flow that renames files from Property_Code and may retry per image.
+- Does not break support for local Strapi /uploads/... media during development or mixed-data states.
+
+Project-Specific Media Constraints
+- Public property endpoints must not expose private Property_Address data.
+- Frontend code should keep using the shared Strapi media helper instead of raw media paths in components.
+- Any media provider change should preserve existing dashboard create/edit image behavior.
+- If the R2 public host/domain changes, Next.js image config and Strapi CSP settings must still be updated together through the matching env vars.
+
+Likely Candidate Categories
+- Strapi upload providers with CDN delivery
+- S3-compatible object storage plus a CDN
+- Image CDN platforms with direct server-side upload APIs
+- Media services that allow easy Node upload/delete integration and predictable public asset URLs
+
+Current Baseline for Comparison
+- Cloudflare R2 via Strapi's official AWS S3 provider is the active implementation.
+- A suitable alternative should match or improve on:
+  - upload reliability
+  - public image delivery
+  - delete support
+  - compatibility with Next.js image loading
+  - compatibility with Strapi backend upload workflows

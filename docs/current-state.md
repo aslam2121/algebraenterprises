@@ -1,9 +1,11 @@
 # Current State
 
 ## Last Updated
-2026-03-23
+2026-03-24
 
 ## Completed
+- Added a new root documentation file `project-stack-and-media-plugins.txt` that summarizes the current stack, installed plugins, active Cloudinary integration, and the media-service compatibility requirements for evaluating alternatives
+- Migrated the Strapi upload provider from Cloudinary to Cloudflare R2 using Strapi's official AWS S3 upload provider
 - Agent dashboard property create flow is working through `POST /api/properties/my-properties`
 - Agent dashboard property edit flow is working through `PUT /api/properties/my-properties/:documentId`
 - Server-side property image processing is in place: max 50 images, max 15MB each, image-only MIME types, resize/optimize, and watermarking
@@ -68,12 +70,14 @@
 - Applied the available-floors importer to update 177 published property documents by `Property_Code`
 - Backend property write helpers now preserve `Available_Floors` when that field is passed through future backend-side property updates
 - Frontend neighbourhood filters now use the JSON-array-compatible Strapi operator for `Neighbourhood` again
+- Backend upload config now targets Cloudflare R2 through `aws-s3`, backend CSP accepts env-driven R2 hosts, and Next image remotePatterns accept env-driven R2 hosts while still allowing legacy Cloudinary URLs
 
 ## In Progress
 - No active feature work in progress
 
 ## Open Issues / Risks
 - No open functional regression is currently tracked from the verified frontend/backend flows in this session
+- The R2 migration is configuration-complete but still needs one live upload/delete verification pass with real Cloudflare R2 credentials and a real public/base URL before it should be treated as fully proven in this environment
 - The WordPress CSV source still contains four rows that were deleted from Strapi and would come back on a future full import unless the source CSV is cleaned:
   - row 34: `ag1373` with title `Dera Mandi (ag1374)`
   - row 123: `ag1636` with title `SafdarJung Enclave (ag1635)`
@@ -88,6 +92,7 @@
   - non-existent rows in the current published dataset: `ag1665`, `ag1195`, `ag675-1`
 
 ## Latest Verified Notes
+- Verified the new root `project-stack-and-media-plugins.txt` file reflects the current frontend/backend package stack, the Cloudinary-to-R2 migration surface, Next.js image host rules, and CSP/media constraints for provider changes
 - Verified agent auth via `POST /api/auth/local`
 - Verified replacement-image upload on property `agent-test-20260318-b`
 - Verified a create-path image upload using temporary property code `agent-fix-20260319`
@@ -189,6 +194,11 @@
   - live local Strapi returns `0` rows for `filters[Neighbourhood][$eq]=Vasant Vihar`
   - live local Strapi returns matching rows for `filters[Neighbourhood][$contains]=Vasant Vihar`
   - frontend lint still passes after switching the public filter builders to `$contains`
+- Verified the Cloudflare R2 migration wiring:
+  - backend `npm install` replaced the Cloudinary provider dependency with `@strapi/provider-upload-aws-s3@5.39.0`
+  - backend plugin config resolves to `provider: aws-s3` with `R2_ENDPOINT`, `R2_BUCKET`, `R2_REGION=auto`, optional `R2_PUBLIC_URL`, and blank `R2_ACL` omitted from upload params
+  - frontend `npm run build` passes with the new env-driven remote image hosts
+  - backend `npm run build` passes with placeholder R2 env values, aside from the existing sandbox-only Strapi config write warning under `~/.config/com.strapi/config.json`
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

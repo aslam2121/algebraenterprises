@@ -127,3 +127,9 @@
 - The Strapi `Neighbourhood` field is stored as a JSON array because it is backed by the multi-select plugin, even though `max: 1`
 - Direct REST filtering with `filters[Neighbourhood][$eq]=...` returns zero rows against that stored shape
 - Public frontend filter builders should use `filters[Neighbourhood][$contains]=...` so the `/properties` area filter continues to work
+
+### Cloudflare R2 should be wired through Strapi's official `aws-s3` provider
+- The backend upload provider is being migrated from Cloudinary to Cloudflare R2 through `@strapi/provider-upload-aws-s3` to keep the change inside Strapi's supported provider path instead of adding a custom upload layer
+- R2 config should use the account-scoped `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_REGION=auto`, with optional `R2_PUBLIC_URL` / `R2_ROOT_PATH` for saved asset URLs
+- `R2_ACL` should be allowed to stay blank so the provider does not send ACL headers unless explicitly requested, which is safer for R2 compatibility
+- Frontend and backend host allowlists should keep legacy Cloudinary hosts during the transition so older stored media URLs continue to render while new uploads go to R2

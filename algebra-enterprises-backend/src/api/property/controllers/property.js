@@ -10,8 +10,8 @@ const {
 } = require('../utils/agent-property');
 
 const { ValidationError } = errors;
-const CLOUDINARY_RETRYABLE_CODES = new Set(['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'ENETUNREACH']);
-const CLOUDINARY_RETRYABLE_MESSAGE_FRAGMENTS = ['ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED', 'ENETUNREACH'];
+const RETRYABLE_UPLOAD_CODES = new Set(['ETIMEDOUT', 'ECONNRESET', 'ECONNREFUSED', 'ENETUNREACH']);
+const RETRYABLE_UPLOAD_MESSAGE_FRAGMENTS = ['ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED', 'ENETUNREACH'];
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -38,17 +38,10 @@ function getReadableUploadErrorMessage(error) {
 
   if (
     flattenErrorMessages(error).some((message) => (
-      CLOUDINARY_RETRYABLE_MESSAGE_FRAGMENTS.some((fragment) => message.includes(fragment))
+      RETRYABLE_UPLOAD_MESSAGE_FRAGMENTS.some((fragment) => message.includes(fragment))
     ))
   ) {
-    return 'Cloudinary connection was reset during upload. Please try again.';
-  }
-
-  if (
-    primaryMessage === 'Error uploading to cloudinary:' ||
-    primaryMessage === 'Error uploading to cloudinary:'
-  ) {
-    return 'Cloudinary could not be reached. The upload timed out. Please try again.';
+    return 'The media storage connection was interrupted during upload. Please try again.';
   }
 
   if (nestedMessages.length > 0) {
@@ -63,9 +56,9 @@ function getReadableUploadErrorMessage(error) {
 }
 
 function isRetryableUploadError(error) {
-  return flattenErrorCodes(error).some((code) => CLOUDINARY_RETRYABLE_CODES.has(code))
+  return flattenErrorCodes(error).some((code) => RETRYABLE_UPLOAD_CODES.has(code))
     || flattenErrorMessages(error).some((message) => (
-      CLOUDINARY_RETRYABLE_MESSAGE_FRAGMENTS.some((fragment) => message.includes(fragment))
+      RETRYABLE_UPLOAD_MESSAGE_FRAGMENTS.some((fragment) => message.includes(fragment))
     ));
 }
 
@@ -106,7 +99,7 @@ async function uploadProcessedImages(strapi, processedFiles, maxAttempts = 3) {
     }
 
     const readableMessage = getReadableUploadErrorMessage(error);
-    throw new Error(`Cloudinary upload failed: ${readableMessage}`);
+    throw new Error(`Media upload failed: ${readableMessage}`);
   }
 }
 
