@@ -67,6 +67,7 @@
 - Added a dedicated `Available_Floors` importer for the root `properties_available_floors.xlsx` workbook and exposed it as `python3 scripts/import-available-floors.py`
 - Applied the available-floors importer to update 177 published property documents by `Property_Code`
 - Backend property write helpers now preserve `Available_Floors` when that field is passed through future backend-side property updates
+- Frontend neighbourhood filters now use the JSON-array-compatible Strapi operator for `Neighbourhood` again
 
 ## In Progress
 - No active feature work in progress
@@ -184,6 +185,10 @@
     - `ag852`: `Ground+Basement`
     - `ag1616`: `Ground, First, Second and Third`
     - `ag1033`: remains blank as intended
+- Verified the frontend neighbourhood-filter regression fix:
+  - live local Strapi returns `0` rows for `filters[Neighbourhood][$eq]=Vasant Vihar`
+  - live local Strapi returns matching rows for `filters[Neighbourhood][$contains]=Vasant Vihar`
+  - frontend lint still passes after switching the public filter builders to `$contains`
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`

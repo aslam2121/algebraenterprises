@@ -39,7 +39,7 @@ export async function getProperties(filters = {}) {
     query += `&filters[Listing_Type][$eq]=${filters.listing_type}`;
   }
   if (filters.neighborhood) {
-    query += `&filters[${PROPERTY_NEIGHBOURHOOD_FILTER_KEY}][$eq]=${encodeURIComponent(filters.neighborhood)}`;
+    query += `&filters[${PROPERTY_NEIGHBOURHOOD_FILTER_KEY}][$contains]=${encodeURIComponent(filters.neighborhood)}`;
   }
   if (filters.featured) {
     query += `&filters[Featured_Property][$eq]=true`;

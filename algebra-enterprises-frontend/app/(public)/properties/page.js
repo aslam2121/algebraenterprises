@@ -70,7 +70,7 @@ function PropertiesPageContent() {
           url += `&filters[Listing_Type][$eq]=${encodeURIComponent(listingType)}`;
         }
         if (area !== 'All Areas') {
-          url += `&filters[${PROPERTY_NEIGHBOURHOOD_FILTER_KEY}][$eq]=${encodeURIComponent(area)}`;
+          url += `&filters[${PROPERTY_NEIGHBOURHOOD_FILTER_KEY}][$contains]=${encodeURIComponent(area)}`;
         }
         if (propertyType !== 'All Types') {
           url += `&filters[Property_Type][$eq]=${encodeURIComponent(propertyType)}`;

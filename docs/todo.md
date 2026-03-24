@@ -25,6 +25,7 @@
 ## Validation
 - Re-run `npm run lint` and `npm run build` in `algebra-enterprises-frontend` after any further frontend edits
 - If neighbourhoods ever look blank again in the UI, check for new code reading `Neighborhood` directly instead of using the shared frontend normalizer
+- If neighbourhood filters stop working again, verify the frontend is not using `$eq` against the JSON-array `Neighbourhood` field; public filters should use `$contains`
 - If neighbourhoods ever look blank again in Strapi admin, verify the DB still stores valid JSON arrays for `neighbourhood` instead of plain text
 - Re-run `node scripts/import-wordpress-properties.js` in `algebra-enterprises-backend` as a dry-run before any future CSV apply pass
 - Re-run `node scripts/import-address-rent.js` in `algebra-enterprises-backend` as a dry-run before any future address/rent apply pass

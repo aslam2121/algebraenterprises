@@ -122,3 +122,8 @@
 - The workbook is read directly with Python standard-library XLSX parsing so the importer does not need a new npm dependency just to handle a simple two-column spreadsheet
 - The updater writes `Available_Floors` to both draft and published rows for the matching `document_id`, keeping Strapi admin and published data aligned
 - Duplicate workbook rows for the same `Property_Code` are merged by taking the later non-empty `Available_Floors` value
+
+### Frontend neighbourhood filters must use `$contains` against `Neighbourhood`
+- The Strapi `Neighbourhood` field is stored as a JSON array because it is backed by the multi-select plugin, even though `max: 1`
+- Direct REST filtering with `filters[Neighbourhood][$eq]=...` returns zero rows against that stored shape
+- Public frontend filter builders should use `filters[Neighbourhood][$contains]=...` so the `/properties` area filter continues to work
