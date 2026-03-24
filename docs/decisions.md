@@ -143,3 +143,8 @@
 - Uploading to Cloudflare R2 through the Strapi S3 provider works with the account-scoped `R2_ENDPOINT`, but the resulting raw `*.r2.cloudflarestorage.com/<bucket>/<key>` URL returned `400 Bad Request` in live checks
 - Keep `R2_ENDPOINT` for backend upload API access, but set a real public delivery host in `R2_PUBLIC_URL` for production-facing image URLs
 - Frontend image allowlisting and backend CSP should continue to derive from the public delivery host once that domain is chosen
+
+### Concurrent admin uploads need a hardened R2 HTTP transport
+- The default S3 client transport produced intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during larger concurrent Strapi admin upload batches
+- The backend now configures the R2 S3 client with an explicit AWS SDK `NodeHttpHandler`, IPv4 DNS lookup, no keep-alive socket reuse, bounded socket concurrency, and explicit timeouts
+- This transport hardening cleared a 22-file concurrent upload stress run against Strapi's upload service without changing any property or media-model behavior

@@ -73,6 +73,7 @@
 - Backend upload config now targets Cloudflare R2 through `aws-s3`, backend CSP accepts env-driven R2 hosts, and Next image remotePatterns accept env-driven R2 hosts while still allowing legacy Cloudinary URLs
 - Local development env files are now configured for the real Cloudflare R2 endpoint and bucket, with backend secrets kept in `algebra-enterprises-backend/.env` and only the public R2 endpoint placed in `algebra-enterprises-frontend/.env.local`
 - Restarted the local backend and frontend after the R2 env change and ran a real temporary upload through the Sharp processing path plus Strapi upload service
+- Hardened the R2 transport in `config/plugins.js` for concurrent Strapi admin uploads by using an explicit AWS SDK `NodeHttpHandler`, IPv4 lookup, bounded sockets, and request timeouts
 
 ## In Progress
 - No active feature work in progress
@@ -220,6 +221,10 @@
   - watermark detection on the bottom-right crop showed strong pixel differences versus the no-watermark control image (`changedChannels=192753`)
   - the temporary upload row was successfully removed from Strapi afterward
   - the resulting raw R2 endpoint URL returned `400 Bad Request`, confirming the upload API endpoint is not yet the right public asset delivery URL
+- Verified the admin-style concurrent R2 upload fix:
+  - live Strapi logs previously showed intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during a 22-image admin upload batch
+  - after the transport hardening, a 22-file concurrent upload stress run against Strapi's upload service completed with `22/22` successes and `0` failures in about `9.8s`
+  - the temporary bulk-upload files were removed afterward and no matching rows remained in the `files` table
 
 ## Cleanup Candidates
 - Existing debug records noted earlier: `control-test-20260318`
