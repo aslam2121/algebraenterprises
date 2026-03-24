@@ -2,33 +2,39 @@
 
 const { preparePropertyImageUpload } = require('./utils/property-image-admin-upload');
 
-function wrapPropertyImageUploadController(strapi, controller) {
-  if (!controller || typeof controller.uploadFiles !== 'function') {
+function wrapPropertyImageUploadMethod(strapi, controller, methodName) {
+  if (!controller || typeof controller[methodName] !== 'function') {
     return;
   }
 
-  const originalUploadFiles = controller.uploadFiles;
+  const originalHandler = controller[methodName];
 
-  controller.uploadFiles = async function wrappedUploadFiles(ctx) {
+  controller[methodName] = async function wrappedPropertyImageUpload(ctx) {
     const originalBody = ctx.request?.body || {};
     const originalFiles = ctx.request?.files?.files;
     const prepared = await preparePropertyImageUpload(strapi, originalBody, originalFiles);
 
     if (!prepared) {
-      return originalUploadFiles.call(this, ctx);
+      return originalHandler.call(this, ctx);
     }
 
     ctx.request.body = prepared.body;
     ctx.request.files.files = prepared.files;
 
     try {
-      return await originalUploadFiles.call(this, ctx);
+      return await originalHandler.call(this, ctx);
     } finally {
       ctx.request.body = originalBody;
       ctx.request.files.files = originalFiles;
       await prepared.cleanup();
     }
   };
+}
+
+function wrapPropertyImageUploadController(strapi, controller, methodNames) {
+  for (const methodName of methodNames) {
+    wrapPropertyImageUploadMethod(strapi, controller, methodName);
+  }
 }
 
 module.exports = {
@@ -48,7 +54,15 @@ module.exports = {
    * run jobs, or perform some special logic.
    */
   bootstrap({ strapi }) {
-    wrapPropertyImageUploadController(strapi, strapi.plugin('upload').controller('admin-upload'));
-    wrapPropertyImageUploadController(strapi, strapi.plugin('upload').controller('content-api'));
+    wrapPropertyImageUploadController(
+      strapi,
+      strapi.plugin('upload').controller('admin-upload'),
+      ['uploadFiles', 'unstable_uploadFilesStream']
+    );
+    wrapPropertyImageUploadController(
+      strapi,
+      strapi.plugin('upload').controller('content-api'),
+      ['uploadFiles']
+    );
   },
 };

@@ -1,6 +1,7 @@
 # TODO
 
 ## Highest Priority
+- Restart Strapi and re-test the existing-property admin upload flow on `ag1412` to confirm the stream-handler image-processing fix behaves correctly in the Strapi Properties editor
 - Remove the four deleted mismatch rows from the source WordPress CSV if future full imports should stay aligned:
   - `ag1373` / `Dera Mandi (ag1374)`
   - `ag1636` / `SafdarJung Enclave (ag1635)`
@@ -54,6 +55,7 @@
   - a public property card with a local `/uploads/...` image (`ag1753`) in the rent listings
   - agent enquiry status failure handling
   - agent property edit with replacement image upload still working after frontend fixes
+- Re-verify from the Strapi admin Properties editor that uploading replacement images to an existing property like `ag1412` now runs watermarking, optimization, and property-code renaming after the stream-handler hook fix
 
 ## Cleanup / Follow-Up
 - Keep `docs/current-state.md`, `docs/todo.md`, and `docs/decisions.md` updated after each meaningful task

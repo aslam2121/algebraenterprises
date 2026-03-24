@@ -81,6 +81,7 @@
 - Restarted the backend after the `R2_PUBLIC_URL` change and confirmed that new uploads now save directly with the public `r2.dev` host instead of the raw upload endpoint
 - Repaired the eight newly uploaded `ag1225` media rows that were created before that restart, so `Anand Niketan (ag1225)` now also returns public `r2.dev` image URLs
 - Strapi admin uploads linked directly to a property's `Images` field now run through the same property-image processor as the custom agent routes, so they inherit watermarking, resize/optimization, and property-code-based renaming before upload
+- The Strapi admin property-image hook now wraps both the classic upload handler and the streaming upload handler, so existing-property uploads from the Properties editor no longer bypass processing when the admin UI uses the stream endpoint
 - Reprocessed the existing `ag1225` images through that same property-image pipeline, replacing the raw originals with watermarked, resized, code-based uploads on public `r2.dev` URLs
 
 ## In Progress

@@ -5,6 +5,7 @@
 ### Project memory files are the session source of truth
 - `docs/current-state.md`, `docs/todo.md`, and `docs/decisions.md` were initialized as the persistent handoff layer for Codex sessions
 - Future work should start from these files before editing code
+- When Codex makes repo changes requested by the user, those changes should be committed before handoff unless the user explicitly says not to commit
 
 ### Preserve the existing frontend architecture
 - Keep the current Next.js App Router split between `app/(public)/` and `app/agent/`
@@ -158,6 +159,7 @@
 - Watermarking, the 2400px resize/optimization step, and property-code-based renaming already lived in `processPropertyImages()` for the custom agent routes
 - The upload plugin is now wrapped during app bootstrap so uploads linked directly to `ref=api::property.property` and `field=Images` are preprocessed through that same helper before Strapi stores them
 - This keeps the Strapi admin property edit flow aligned with the agent flow for existing-property uploads, without changing unrelated uploads in the general Media Library
+- Strapi 5 admin uploads can arrive through both `admin-upload.uploadFiles` and `admin-upload.unstable_uploadFilesStream`, so both handlers must stay wrapped or property uploads from the editor can bypass processing
 
 ### Concurrent admin uploads need a hardened R2 HTTP transport
 - The default S3 client transport produced intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during larger concurrent Strapi admin upload batches
