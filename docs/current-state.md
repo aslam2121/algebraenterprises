@@ -78,6 +78,8 @@
 - Hardened the R2 transport in `config/plugins.js` for concurrent Strapi admin uploads by using an explicit AWS SDK `NodeHttpHandler`, IPv4 lookup, bounded sockets, and request timeouts
 - Further hardened the R2 admin-upload transport by serializing socket use and raising retry/timeout ceilings so larger concurrent Strapi admin batches can finish without dropping the property-media attach step
 - Rewrote the existing `aws-s3` media rows in SQLite from the raw `*.r2.cloudflarestorage.com/<bucket>/...` upload endpoint to the working public `r2.dev` base URL, including image format URLs stored inside the `files.formats` JSON column
+- Restarted the backend after the `R2_PUBLIC_URL` change and confirmed that new uploads now save directly with the public `r2.dev` host instead of the raw upload endpoint
+- Repaired the eight newly uploaded `ag1225` media rows that were created before that restart, so `Anand Niketan (ag1225)` now also returns public `r2.dev` image URLs
 
 ## In Progress
 - No active feature work in progress
@@ -230,6 +232,10 @@
   - the Cloudflare public bucket host `https://pub-25be15a906b740739e1eac69d54aba5e.r2.dev/<key>` returns `200 OK` for existing uploaded images, while the old raw upload endpoint continued to return `400 Bad Request`
   - 92 existing `aws-s3` file rows were rewritten in SQLite from the raw upload endpoint to the public `r2.dev` base, including nested `formats.*.url` values
   - the live Strapi property payload now returns public `r2.dev` URLs for both the main image URL and generated formats such as `thumbnail`, `small`, `medium`, and `large`
+- Verified the backend restart requirement for new R2 uploads:
+  - before restart, `ag1225` uploads created as file ids `218-225` still saved raw `cloudflarestorage.com` URLs even though `R2_PUBLIC_URL` was already present in `.env`
+  - after restarting Strapi from the updated env, a fresh temporary upload saved `url` plus all `formats.*.url` values directly on the public `r2.dev` host
+  - those eight `ag1225` file rows were then rewritten to the same public host, and the live `ag1225` property payload now returns `r2.dev` URLs for every attached image
   - a generated `3200x2400` JPEG was processed through `processPropertyImages()` and uploaded through Strapi's upload service
   - processed output was resized to `2400x1800`
   - processed filename followed the property-code pattern: `r2-upload-check-20260324-1.jpg`

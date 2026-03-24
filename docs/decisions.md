@@ -149,6 +149,11 @@
 - The same applies to responsive image URLs nested inside the `files.formats` JSON column
 - In this project, the existing `aws-s3` file rows were rewritten from the raw upload endpoint to the working `r2.dev` public bucket host after `R2_PUBLIC_URL` was added
 
+### Backend R2 env changes only affect new uploads after a Strapi restart
+- Updating `.env` with a working `R2_PUBLIC_URL` is not enough by itself if the backend process is already running
+- In this project, `ag1225` images uploaded before the backend restart still saved raw `cloudflarestorage.com` URLs even though the env file had been updated
+- After restarting Strapi, new uploads immediately saved `url` and `formats.*.url` values on the public `r2.dev` host
+
 ### Concurrent admin uploads need a hardened R2 HTTP transport
 - The default S3 client transport produced intermittent `ssl3_read_bytes:sslv3 alert bad record mac` failures during larger concurrent Strapi admin upload batches
 - The backend now configures the R2 S3 client with an explicit AWS SDK `NodeHttpHandler`, IPv4 DNS lookup, no keep-alive socket reuse, bounded socket concurrency, and explicit timeouts
