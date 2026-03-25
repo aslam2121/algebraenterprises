@@ -157,6 +157,7 @@
 - The website now has a dark/light toggle in the public navbar that persists the selected mode in `localStorage` and applies the theme before hydration by setting `document.documentElement.dataset.theme`
 - The implementation intentionally keeps the existing inline-style architecture and routes public colors through shared CSS variables in `app/globals.css` instead of adding a theming dependency or duplicating separate light-mode markup
 - The current scope is only the public website. Agent login/dashboard styling is unchanged and should only be themed later as a separate deliberate pass
+- The public navbar branding now uses the theme-appropriate company logo asset from `public/logo` instead of the temporary text mark, and the sub-`400px` header layout is explicitly constrained so the CTA does not wrap the header onto a second line
 
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`

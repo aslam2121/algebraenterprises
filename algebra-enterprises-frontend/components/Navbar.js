@@ -1,8 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const THEME_STORAGE_KEY = 'ae-public-theme';
+const DARK_THEME_LOGO_SRC = encodeURI('/logo/logo (white text).png');
+const LIGHT_THEME_LOGO_SRC = encodeURI('/logo/logo (black text).png');
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -28,6 +31,8 @@ export default function Navbar() {
     setTheme(nextTheme);
   }
 
+  const logoSrc = theme === 'light' ? LIGHT_THEME_LOGO_SRC : DARK_THEME_LOGO_SRC;
+
   return (
     <>
       <nav style={{
@@ -38,28 +43,19 @@ export default function Navbar() {
         borderBottom: scrolled ? '1px solid var(--line-gold)' : 'none',
         padding: scrolled ? '1rem 0' : '1.6rem 0',
       }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="container navbar-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
           {/* Logo */}
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <div style={{
-                width: 36, height: 36, borderRadius: '8px',
-                background: 'linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: 'Playfair Display, serif', fontWeight: 700,
-                fontSize: '1.1rem', color: 'var(--white)',
-                boxShadow: '0 4px 15px rgba(192,57,43,0.4)',
-              }}>A</div>
-              <div>
-                <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.1 }}>
-                  Algebra
-                </div>
-                <div style={{ fontSize: '0.6rem', letterSpacing: '0.18em', color: 'var(--gold)', textTransform: 'uppercase', fontWeight: 500 }}>
-                  Enterprises
-                </div>
-              </div>
-            </div>
+          <Link href="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', minWidth: 0 }} className="navbar-logo-link">
+            <Image
+              src={logoSrc}
+              alt="Algebra Enterprises"
+              width={148}
+              height={56}
+              priority
+              className="navbar-logo-image"
+              style={{ width: 'auto', height: '56px', objectFit: 'contain' }}
+            />
           </Link>
 
           {/* Desktop Nav */}
@@ -77,7 +73,7 @@ export default function Navbar() {
           </div>
 
           {/* CTA */}
-          <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center', flexShrink: 0 }} className="navbar-actions">
             <button
               type="button"
               onClick={toggleTheme}
@@ -106,10 +102,15 @@ export default function Navbar() {
               color: 'var(--gold)', fontSize: '0.85rem', fontWeight: 500,
               transition: 'all 0.25s',
               letterSpacing: '0.03em',
+              whiteSpace: 'nowrap',
             }}
+              className="navbar-contact-link"
               onMouseEnter={e => { e.currentTarget.style.background = 'var(--gold)'; e.currentTarget.style.color = 'var(--navy)'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--gold)'; }}
-            >Contact Us</Link>
+            >
+              <span className="contact-label-full">Contact Us</span>
+              <span className="contact-label-short">Contact</span>
+            </Link>
 
             {/* Hamburger */}
             <button
@@ -148,7 +149,30 @@ export default function Navbar() {
           .desktop-nav { display: none !important; }
           .hamburger { display: block !important; }
           .theme-toggle-label { display: none; }
+          .navbar-logo-image { height: 46px !important; width: auto !important; }
         }
+
+        @media (max-width: 480px) {
+          .navbar-shell { padding-left: 1rem !important; padding-right: 1rem !important; }
+          .navbar-actions { gap: 0.55rem !important; }
+          .navbar-logo-image { height: 40px !important; width: auto !important; }
+          .navbar-contact-link { padding: 0.5rem 0.95rem !important; font-size: 0.78rem !important; }
+        }
+
+        @media (max-width: 400px) {
+          .contact-label-full { display: none !important; }
+          .contact-label-short { display: inline !important; }
+          .navbar-contact-link { padding: 0.48rem 0.78rem !important; }
+          .navbar-logo-image { height: 36px !important; width: auto !important; }
+          .navbar-actions { gap: 0.45rem !important; }
+        }
+
+        @media (max-width: 360px) {
+          .navbar-contact-link { display: none !important; }
+          .navbar-logo-image { height: 34px !important; width: auto !important; }
+        }
+
+        .contact-label-short { display: none; }
       `}</style>
     </>
   );
