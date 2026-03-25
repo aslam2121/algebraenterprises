@@ -295,6 +295,110 @@ function matchesPropertySearch(property, searchTerm) {
   );
 }
 
+function AgentDashboardShell({ agent, onLogout, children }) {
+  return (
+    <div style={{ minHeight: '100vh', background: '#0a1628', display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          background: 'rgba(17,34,64,0.95)',
+          borderBottom: '1px solid rgba(201,168,76,0.15)',
+          padding: '1rem 0',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          backdropFilter: 'blur(10px)',
+        }}
+      >
+        <div
+          className="dash-wrap"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: '9px',
+                background: 'linear-gradient(135deg, #c0392b, #e74c3c)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'Playfair Display, serif',
+                fontWeight: 700,
+                fontSize: '1rem',
+                color: '#fff',
+              }}
+            >
+              A
+            </div>
+            <div>
+              <div
+                style={{
+                  fontFamily: 'Playfair Display, serif',
+                  fontSize: '0.95rem',
+                  color: '#fff',
+                  lineHeight: 1.1,
+                }}
+              >
+                Agent Dashboard
+              </div>
+              <div
+                style={{
+                  fontSize: '0.68rem',
+                  color: '#c9a84c',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Algebra Enterprises
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            {agent ? (
+              <span style={{ fontSize: '0.82rem', color: '#8a9bb5' }}>
+                👤 {agent.username || agent.email}
+              </span>
+            ) : null}
+            <Link
+              href="/"
+              style={{ fontSize: '0.8rem', color: '#8a9bb5', textDecoration: 'none' }}
+            >
+              Website ↗
+            </Link>
+            {onLogout ? (
+              <button
+                onClick={onLogout}
+                style={{
+                  padding: '0.4rem 0.9rem',
+                  borderRadius: '7px',
+                  border: '1px solid rgba(192,57,43,0.4)',
+                  background: 'transparent',
+                  color: '#e74c3c',
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  fontFamily: 'DM Sans, sans-serif',
+                }}
+              >
+                Log Out
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ flex: 1 }}>{children}</div>
+
+      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.07)', padding: '1.4rem 0 1.8rem', marginTop: '2rem' }}>
+        <div className="dash-wrap" style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '0.78rem', color: '#8a9bb5' }}>© 2026 Algebra Enterprises. Agent Workspace.</span>
+          <span style={{ fontSize: '0.78rem', color: '#8a9bb5' }}>Private dashboard for assigned properties and enquiries.</span>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
 export default function AgentDashboard() {
   const router = useRouter();
   const [agent, setAgent] = useState(null);
@@ -589,31 +693,32 @@ export default function AgentDashboard() {
 
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#0a1628',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <div style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              border: '3px solid rgba(201,168,76,0.2)',
-              borderTop: '3px solid #c9a84c',
-              borderRadius: '50%',
-              animation: 'spin 0.8s linear infinite',
-              margin: '0 auto 1rem',
-            }}
-          />
-          <p style={{ color: '#8a9bb5', fontFamily: 'DM Sans, sans-serif' }}>Loading dashboard...</p>
+      <AgentDashboardShell agent={agent}>
+        <div
+          style={{
+            minHeight: 'calc(100vh - 180px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                border: '3px solid rgba(201,168,76,0.2)',
+                borderTop: '3px solid #c9a84c',
+                borderRadius: '50%',
+                animation: 'spin 0.8s linear infinite',
+                margin: '0 auto 1rem',
+              }}
+            />
+            <p style={{ color: '#8a9bb5', fontFamily: 'DM Sans, sans-serif' }}>Loading dashboard...</p>
+          </div>
+          <style>{'@keyframes spin { to { transform: rotate(360deg); } }'}</style>
         </div>
-        <style>{'@keyframes spin { to { transform: rotate(360deg); } }'}</style>
-      </div>
+      </AgentDashboardShell>
     );
   }
 
@@ -757,93 +862,8 @@ export default function AgentDashboard() {
         }
       `}</style>
 
-      <div style={{ minHeight: '100vh', background: '#0a1628', paddingBottom: '3rem' }}>
-        <div
-          style={{
-            background: 'rgba(17,34,64,0.95)',
-            borderBottom: '1px solid rgba(201,168,76,0.15)',
-            padding: '1rem 0',
-            position: 'sticky',
-            top: 0,
-            zIndex: 100,
-            backdropFilter: 'blur(10px)',
-          }}
-        >
-          <div
-            className="dash-wrap"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
-              <div
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: '9px',
-                  background: 'linear-gradient(135deg, #c0392b, #e74c3c)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontFamily: 'Playfair Display, serif',
-                  fontWeight: 700,
-                  fontSize: '1rem',
-                  color: '#fff',
-                }}
-              >
-                A
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontFamily: 'Playfair Display, serif',
-                    fontSize: '0.95rem',
-                    color: '#fff',
-                    lineHeight: 1.1,
-                  }}
-                >
-                  Agent Dashboard
-                </div>
-                <div
-                  style={{
-                    fontSize: '0.68rem',
-                    color: '#c9a84c',
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Algebra Enterprises
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.82rem', color: '#8a9bb5' }}>
-                👤 {agent?.username || agent?.email}
-              </span>
-              <Link
-                href="/"
-                style={{ fontSize: '0.8rem', color: '#8a9bb5', textDecoration: 'none' }}
-              >
-                Website ↗
-              </Link>
-              <button
-                onClick={handleLogout}
-                style={{
-                  padding: '0.4rem 0.9rem',
-                  borderRadius: '7px',
-                  border: '1px solid rgba(192,57,43,0.4)',
-                  background: 'transparent',
-                  color: '#e74c3c',
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
-                Log Out
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="dash-wrap" style={{ paddingTop: '2rem' }}>
+      <AgentDashboardShell agent={agent} onLogout={handleLogout}>
+        <div className="dash-wrap" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
           <div
             className="stats-grid"
             style={{
@@ -1727,7 +1747,7 @@ export default function AgentDashboard() {
             </div>
           )}
         </div>
-      </div>
+      </AgentDashboardShell>
     </>
   );
 }

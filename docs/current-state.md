@@ -27,6 +27,8 @@
 - Public property detail pages now show the missing metadata blocks for `Property_Type`, `Available_Floors`, and `Features`, with tolerant frontend normalization for multi-select feature values
 - Public property detail pages now hide empty metadata fields instead of rendering placeholders, and `Property_Age` is included in the main property details section
 - Public property detail pages now include a `Similar Properties` section that reuses the shared property cards and prioritizes live properties with the same `Property_Type`, the same `Listing_Type`, and the nearest price band to the current property
+- Public pages now share a reusable site footer through the `(public)` layout, so the homepage, property listings, property detail, about, and contact pages all render the same footer
+- The agent dashboard now uses a consistent shell with a branded header and footer in both loading and loaded states
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
 - The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set

@@ -135,6 +135,11 @@
 - The recommendation pass first prefers roughly `±0.5L` around the current property price, then widens to about `±1.5L` if needed and sorts the merged result by nearest price
 - The UI should keep reusing the shared `PropertyCard` component so similar-property recommendations stay visually aligned with the main listings pages
 
+### Footer and dashboard chrome should live in shared shells
+- The public site footer now lives in a reusable frontend component and is rendered from `app/(public)/layout.js` so all public pages stay consistent
+- The homepage should not keep its own duplicate footer markup now that the public layout owns it
+- The agent dashboard should keep its own branded shell with a dashboard-specific header/footer instead of borrowing the public navbar layout
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty

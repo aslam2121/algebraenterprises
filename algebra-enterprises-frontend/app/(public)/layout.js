@@ -1,6 +1,7 @@
 import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 import Navbar from '@/components/Navbar';
+import SiteFooter from '@/components/SiteFooter';
 
 export const metadata = {
   title: 'Algebra Enterprises — Premium Real Estate Delhi',
@@ -12,6 +13,7 @@ export default function RootLayout({ children }) {
     <>
       <Navbar />
       {children}
+      <SiteFooter />
     </>
   );
 }
