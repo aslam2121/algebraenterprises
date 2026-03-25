@@ -154,6 +154,7 @@
 - When public search changes in the future, update the reusable search-bar component and the `/properties` page query parsing together so deep links and same-route navigation stay aligned
 - When syncing `/properties` local state from the URL, use the serialized query string as the stable dependency and parse a fresh `URLSearchParams` from that string instead of depending directly on the `useSearchParams()` object inside effects
 - The `/properties` URL-writeback effect must also wait until that same serialized query string has been applied into local state, otherwise a route change like `/properties` -> `/properties?type=rent` can still bounce back on the stale pre-navigation state and loop
+- On the property detail page, mobile should treat the price/actions block and the enquiry form as separate layout pieces so the enquiry form can stay below the main content without disturbing the desktop sidebar composition
 
 ### Public theme switching should stay token-based and public-only
 - The website now has a dark/light toggle in the public navbar that persists the selected mode in `localStorage` and applies the theme before hydration by setting `document.documentElement.dataset.theme`

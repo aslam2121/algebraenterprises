@@ -687,13 +687,8 @@ export default function PropertyDetailPage() {
                   property={property}
                   neighbourhood={neighbourhood}
                   formatPrice={formatPrice}
-                  enquiryForm={enquiryForm}
-                  setEnquiryForm={setEnquiryForm}
-                  submitted={submitted}
-                  handleEnquiry={handleEnquiry}
-                  submitting={submitting}
-                  submitError={submitError}
                   showSearchCard={mobileSearchOpen}
+                  showEnquiryCard={false}
                 />
               </div>
 
@@ -771,6 +766,17 @@ export default function PropertyDetailPage() {
                   )}
                 </div>
               )}
+
+              <div className="pd-sidebar-mobile">
+                <EnquiryCard
+                  enquiryForm={enquiryForm}
+                  setEnquiryForm={setEnquiryForm}
+                  submitted={submitted}
+                  handleEnquiry={handleEnquiry}
+                  submitting={submitting}
+                  submitError={submitError}
+                />
+              </div>
             </div>
 
             {/* ── RIGHT (desktop only) ── */}
@@ -786,6 +792,7 @@ export default function PropertyDetailPage() {
                 submitting={submitting}
                 submitError={submitError}
                 showSearchCard
+                showEnquiryCard
               />
             </div>
 
@@ -837,6 +844,7 @@ function SidebarContent({
   submitting,
   submitError,
   showSearchCard,
+  showEnquiryCard = true,
 }) {
   return (
     <>
@@ -873,45 +881,66 @@ function SidebarContent({
           💬 WhatsApp
         </a>
       </div>
+      {showEnquiryCard ? (
+        <EnquiryCard
+          enquiryForm={enquiryForm}
+          setEnquiryForm={setEnquiryForm}
+          submitted={submitted}
+          handleEnquiry={handleEnquiry}
+          submitting={submitting}
+          submitError={submitError}
+        />
+      ) : null}
+    </>
+  );
+}
 
-      <div className="pd-enquiry-card">
-        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', marginBottom: '1.1rem', color: 'var(--text-primary)' }}>Send Enquiry</h3>
-        {submitted ? (
-          <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
-            <div style={{ fontSize: '2.2rem', marginBottom: '0.6rem' }}>✅</div>
-            <p style={{ color: '#22c55e', fontWeight: 500, marginBottom: '0.3rem' }}>Enquiry Sent!</p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>We&apos;ll get back to you shortly.</p>
-          </div>
-        ) : (
-          <form onSubmit={handleEnquiry}>
-            {[
-              { key: 'name',  label: 'Your Name', type: 'text',  placeholder: 'John Smith' },
-              { key: 'phone', label: 'Phone',      type: 'tel',   placeholder: '+91 98765 43210' },
-              { key: 'email', label: 'Email',      type: 'email', placeholder: 'john@example.com' },
-            ].map(({ key, label, type, placeholder }) => (
-              <div key={key} style={{ marginBottom: '0.75rem' }}>
-                <label style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</label>
-                <input type={type} placeholder={placeholder} required className="pd-input"
-                  value={enquiryForm[key]} onChange={e => setEnquiryForm(f => ({ ...f, [key]: e.target.value }))}
-                />
-              </div>
-            ))}
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Message</label>
-              <textarea rows={3} placeholder="I'm interested in this property..." className="pd-input"
-                value={enquiryForm.message} onChange={e => setEnquiryForm(f => ({ ...f, message: e.target.value }))}
-                style={{ resize: 'vertical' }}
+function EnquiryCard({
+  enquiryForm,
+  setEnquiryForm,
+  submitted,
+  handleEnquiry,
+  submitting,
+  submitError,
+}) {
+  return (
+    <div className="pd-enquiry-card">
+      <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', marginBottom: '1.1rem', color: 'var(--text-primary)' }}>Send Enquiry</h3>
+      {submitted ? (
+        <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
+          <div style={{ fontSize: '2.2rem', marginBottom: '0.6rem' }}>✅</div>
+          <p style={{ color: '#22c55e', fontWeight: 500, marginBottom: '0.3rem' }}>Enquiry Sent!</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>We&apos;ll get back to you shortly.</p>
+        </div>
+      ) : (
+        <form onSubmit={handleEnquiry}>
+          {[
+            { key: 'name',  label: 'Your Name', type: 'text',  placeholder: 'John Smith' },
+            { key: 'phone', label: 'Phone',      type: 'tel',   placeholder: '+91 98765 43210' },
+            { key: 'email', label: 'Email',      type: 'email', placeholder: 'john@example.com' },
+          ].map(({ key, label, type, placeholder }) => (
+            <div key={key} style={{ marginBottom: '0.75rem' }}>
+              <label style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</label>
+              <input type={type} placeholder={placeholder} required className="pd-input"
+                value={enquiryForm[key]} onChange={e => setEnquiryForm(f => ({ ...f, [key]: e.target.value }))}
               />
             </div>
-            {submitError && (
-              <p style={{ color: '#ef4444', fontSize: '0.82rem', marginBottom: '0.75rem', textAlign: 'center' }}>{submitError}</p>
-            )}
-            <button type="submit" className="pd-btn-red" style={{ marginBottom: 0, opacity: submitting ? 0.7 : 1 }} disabled={submitting}>
-              {submitting ? 'Sending...' : 'Send Enquiry'}
-            </button>
-          </form>
-        )}
-      </div>
-    </>
+          ))}
+          <div style={{ marginBottom: '1rem' }}>
+            <label style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Message</label>
+            <textarea rows={3} placeholder="I'm interested in this property..." className="pd-input"
+              value={enquiryForm.message} onChange={e => setEnquiryForm(f => ({ ...f, message: e.target.value }))}
+              style={{ resize: 'vertical' }}
+            />
+          </div>
+          {submitError && (
+            <p style={{ color: '#ef4444', fontSize: '0.82rem', marginBottom: '0.75rem', textAlign: 'center' }}>{submitError}</p>
+          )}
+          <button type="submit" className="pd-btn-red" style={{ marginBottom: 0, opacity: submitting ? 0.7 : 1 }} disabled={submitting}>
+            {submitting ? 'Sending...' : 'Send Enquiry'}
+          </button>
+        </form>
+      )}
+    </div>
   );
 }

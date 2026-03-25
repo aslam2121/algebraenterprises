@@ -34,6 +34,7 @@
 - The homepage hero now uses a reusable property search bar with listing type, neighbourhood, and expanded bedroom filters
 - The public `/properties` page now supports additional filters for listing type, min price, max price, bedrooms, and property code while keeping area, property type, and sort controls
 - The public property detail page now includes the same search bar in the desktop sidebar, plus a mobile search-toggle button that reveals it on small screens
+- The mobile property detail layout now keeps the price/actions block near the gallery but moves the enquiry form to the bottom of the page, below the similar-properties section
 - The public `/properties` page query-sync was hardened again so `?type=rent` and `?type=sale` no longer replay state from the unstable `useSearchParams()` object and trigger the same-route navigation loop
 - The `/properties` page now also waits for the current URL query string to be fully applied into local filter state before it runs the URL-writeback effect, which closes the remaining `/properties` -> `?type=rent|sale` same-route navigation loop
 - The public website now has a light/dark theme toggle in the navbar that persists in `localStorage`, initializes before hydration, and switches the public pages through shared CSS theme variables instead of a second styling system

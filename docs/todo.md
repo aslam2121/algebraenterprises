@@ -50,6 +50,7 @@
 - If the theme bootstrap in `app/layout.js` changes again, keep it on the supported Next script path rather than reintroducing a raw `<script>` element inside the React tree
 - If light mode is ever extended to the agent portal, treat it as a separate task; the current toggle is intentionally scoped to the public site only
 - If property detail metadata ever looks incomplete again, check the public detail page for new fields that need to be rendered explicitly; `Property_Type`, `Available_Floors`, `Property_Age`, and `Features` are now shown there, and empty values are intentionally hidden
+- If the mobile property detail layout changes again, keep the enquiry form as a bottom-of-page block rather than reinserting it above the detail cards
 - If the new similar-properties recommendations ever feel too narrow or too broad, adjust the public detail-page matching window; it currently prioritizes same-`Property_Type`, same-`Listing_Type` properties within about `±0.5L`, then falls back to a wider `±1.5L` fetch and sorts by nearest price
 - If neighbourhoods ever look blank again in the UI, check for new code reading `Neighborhood` directly instead of using the shared frontend normalizer
 - If neighbourhood filters stop working again, verify the frontend is not using `$eq` against the JSON-array `Neighbourhood` field; public filters should use `$contains`
