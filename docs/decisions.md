@@ -130,6 +130,11 @@
 - The public property detail page should normalize that value before rendering chips so `Features`, `Property_Type`, and `Available_Floors` do not disappear from the UI because of minor payload-shape drift
 - Empty property metadata should be omitted from the public detail UI instead of showing placeholder dashes, and `Property_Age` belongs in the main property details grid rather than a secondary section
 
+### Similar property recommendations should stay type-matched and price-near
+- The public property detail page now recommends other live properties by matching the current `Property_Type` and `Listing_Type`, excluding the current `Property_Code`
+- The recommendation pass first prefers roughly `±0.5L` around the current property price, then widens to about `±1.5L` if needed and sorts the merged result by nearest price
+- The UI should keep reusing the shared `PropertyCard` component so similar-property recommendations stay visually aligned with the main listings pages
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty

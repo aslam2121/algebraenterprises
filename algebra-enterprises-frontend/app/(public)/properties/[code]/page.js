@@ -6,7 +6,12 @@ import Image from 'next/image';
 import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import PropertyCard from '@/components/PropertyCard';
 import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
+
+const SIMILAR_PRICE_DELTA = 0.5;
+const SIMILAR_PRICE_FALLBACK_DELTA = 1.5;
+const SIMILAR_PROPERTIES_LIMIT = 6;
 
 function normalizeListValue(value) {
   if (Array.isArray(value)) {
@@ -52,10 +57,107 @@ function hasDisplayValue(value) {
   return true;
 }
 
+function getNumericPrice(value) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : null;
+}
+
+function formatShortPrice(value, listingType) {
+  const numericValue = getNumericPrice(value);
+
+  if (numericValue === null) {
+    return null;
+  }
+
+  return `₹${numericValue}L${listingType === 'For Rent' ? '/month' : ''}`;
+}
+
+function buildSimilarPropertiesUrl(property, { priceDelta, pageSize = 18 } = {}) {
+  const params = new URLSearchParams();
+  params.set('populate', 'Images');
+  params.set('pagination[pageSize]', String(pageSize));
+  params.set('filters[Property_Status][$eq]', 'Live');
+  params.set('filters[Property_Type][$eq]', property.Property_Type);
+  params.set('filters[Property_Code][$ne]', property.Property_Code);
+  params.set('sort[0]', 'Price:asc');
+
+  if (property.Listing_Type) {
+    params.set('filters[Listing_Type][$eq]', property.Listing_Type);
+  }
+
+  const priceValue = getNumericPrice(property.Price);
+
+  if (priceValue !== null && priceDelta !== null) {
+    params.set('filters[Price][$gte]', String(Math.max(priceValue - priceDelta, 0)));
+    params.set('filters[Price][$lte]', String(priceValue + priceDelta));
+  }
+
+  return `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?${params.toString()}`;
+}
+
+function sortSimilarProperties(properties, targetPrice) {
+  return [...properties].sort((left, right) => {
+    if (targetPrice === null) {
+      return 0;
+    }
+
+    const leftDistance = Math.abs((getNumericPrice(left.Price) ?? Number.POSITIVE_INFINITY) - targetPrice);
+    const rightDistance = Math.abs((getNumericPrice(right.Price) ?? Number.POSITIVE_INFINITY) - targetPrice);
+
+    if (leftDistance !== rightDistance) {
+      return leftDistance - rightDistance;
+    }
+
+    return (getNumericPrice(left.Price) ?? Number.POSITIVE_INFINITY)
+      - (getNumericPrice(right.Price) ?? Number.POSITIVE_INFINITY);
+  });
+}
+
+async function fetchSimilarProperties(property) {
+  if (!property?.Property_Type || !property?.Property_Code) {
+    return [];
+  }
+
+  const requests = [
+    fetch(buildSimilarPropertiesUrl(property, { priceDelta: SIMILAR_PRICE_DELTA })),
+    fetch(buildSimilarPropertiesUrl(property, { priceDelta: SIMILAR_PRICE_FALLBACK_DELTA })),
+  ];
+
+  const settledResponses = await Promise.allSettled(requests);
+  const mergedProperties = [];
+  const seenCodes = new Set([property.Property_Code]);
+
+  for (const settledResponse of settledResponses) {
+    if (settledResponse.status !== 'fulfilled' || !settledResponse.value.ok) {
+      continue;
+    }
+
+    const payload = await settledResponse.value.json();
+    const records = Array.isArray(payload?.data) ? payload.data : [];
+
+    for (const record of records) {
+      const propertyCode = record?.Property_Code;
+
+      if (!propertyCode || seenCodes.has(propertyCode)) {
+        continue;
+      }
+
+      seenCodes.add(propertyCode);
+      mergedProperties.push(record);
+    }
+  }
+
+  const targetPrice = getNumericPrice(property.Price);
+
+  return sortSimilarProperties(mergedProperties, targetPrice).slice(0, SIMILAR_PROPERTIES_LIMIT);
+}
+
 export default function PropertyDetailPage() {
   const { code } = useParams();
   const [property, setProperty] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [similarProperties, setSimilarProperties] = useState([]);
+  const [similarLoading, setSimilarLoading] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -63,17 +165,65 @@ export default function PropertyDetailPage() {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchProperty() {
+      setLoading(true);
+      setSimilarLoading(false);
+      setSimilarProperties([]);
+
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?filters[Property_Code][$eq]=${code}&populate=Images`
         );
         const data = await res.json();
-        setProperty(data.data?.[0] || null);
-      } catch (e) { console.error(e); }
-      setLoading(false);
+        const nextProperty = data.data?.[0] || null;
+
+        if (!cancelled) {
+          setProperty(nextProperty);
+          setActiveImage(0);
+        }
+
+        if (nextProperty?.Property_Type) {
+          if (!cancelled) {
+            setSimilarLoading(true);
+          }
+
+          try {
+            const nextSimilarProperties = await fetchSimilarProperties(nextProperty);
+
+            if (!cancelled) {
+              setSimilarProperties(nextSimilarProperties);
+            }
+          } catch (similarError) {
+            console.error(similarError);
+
+            if (!cancelled) {
+              setSimilarProperties([]);
+            }
+          }
+        } else if (!cancelled) {
+          setSimilarProperties([]);
+        }
+      } catch (e) {
+        console.error(e);
+
+        if (!cancelled) {
+          setProperty(null);
+          setSimilarProperties([]);
+        }
+      } finally {
+        if (!cancelled) {
+        setLoading(false);
+        setSimilarLoading(false);
+        }
+      }
     }
     fetchProperty();
+
+    return () => {
+      cancelled = true;
+    };
   }, [code]);
 
   const formatPrice = (price, type) => {
@@ -161,6 +311,17 @@ export default function PropertyDetailPage() {
     ...image,
     resolvedUrl: getStrapiMediaUrl(image.url),
   }));
+  const propertyPrice = getNumericPrice(property.Price);
+  const priceRangeStart = propertyPrice !== null ? Math.max(propertyPrice - SIMILAR_PRICE_DELTA, 0) : null;
+  const priceRangeEnd = propertyPrice !== null ? propertyPrice + SIMILAR_PRICE_DELTA : null;
+  const browseListingsHref = property.Listing_Type === 'For Rent'
+    ? '/properties?type=rent'
+    : property.Listing_Type === 'For Sale'
+      ? '/properties?type=sale'
+      : '/properties';
+  const similarSectionSummary = propertyPrice !== null
+    ? `${property.Property_Type} properties around ${formatShortPrice(property.Price, property.Listing_Type)}. Nearest matches from ${formatShortPrice(priceRangeStart, property.Listing_Type)} to ${formatShortPrice(priceRangeEnd, property.Listing_Type)} are prioritized.`
+    : `More ${property.Property_Type?.toLowerCase()} properties with the same listing type.`;
   const detailItems = [
     { icon: '💰', label: 'Price', value: formatPrice(property.Price, property.Listing_Type) },
     { icon: '🏠', label: 'Property Type', value: property.Property_Type },
@@ -301,6 +462,11 @@ export default function PropertyDetailPage() {
           line-height: 1.35;
           font-weight: 500;
         }
+        .pd-similar-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 1rem;
+        }
 
         /* Sidebar card */
         .pd-price-card {
@@ -363,12 +529,14 @@ export default function PropertyDetailPage() {
           .pd-main-img { height: 240px; }
           .pd-thumb { width: 60px; height: 46px; }
           .pd-details-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .pd-similar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .pd-wrap { padding: 0 1rem; }
         }
 
         @media (max-width: 480px) {
           .pd-main-img { height: 200px; }
           .pd-details-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .pd-similar-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
@@ -512,6 +680,35 @@ export default function PropertyDetailPage() {
                 <div className="pd-card">
                   <p className="pd-card-label">Description</p>
                   <div style={{ color: '#cbd5e1', lineHeight: 1.8, fontSize: '0.9rem', whiteSpace: 'pre-line' }}>{description}</div>
+                </div>
+              )}
+
+              {(similarLoading || similarProperties.length > 0) && (
+                <div className="pd-card">
+                  <p className="pd-card-label">Similar Properties</p>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                    <div>
+                      <h2 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', marginBottom: '0.35rem' }}>
+                        More {property.Property_Type} options
+                      </h2>
+                      <p style={{ color: '#8a9bb5', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '680px' }}>
+                        {similarSectionSummary}
+                      </p>
+                    </div>
+                    <Link href={browseListingsHref} style={{ color: '#c9a84c', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}>
+                      Browse all {property.Listing_Type === 'For Sale' ? 'sale' : property.Listing_Type === 'For Rent' ? 'rent' : 'matching'} listings
+                    </Link>
+                  </div>
+
+                  {similarLoading ? (
+                    <p style={{ color: '#8a9bb5', fontSize: '0.9rem' }}>Loading similar properties...</p>
+                  ) : (
+                    <div className="pd-similar-grid">
+                      {similarProperties.map((similarProperty) => (
+                        <PropertyCard key={similarProperty.documentId || similarProperty.Property_Code} property={similarProperty} />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

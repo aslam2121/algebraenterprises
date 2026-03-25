@@ -40,6 +40,7 @@
 - Rotate the currently pasted R2 credentials before production use, because they were exposed in chat during setup
 - Re-run `npm run lint` and `npm run build` in `algebra-enterprises-frontend` after any further frontend edits
 - If property detail metadata ever looks incomplete again, check the public detail page for new fields that need to be rendered explicitly; `Property_Type`, `Available_Floors`, `Property_Age`, and `Features` are now shown there, and empty values are intentionally hidden
+- If the new similar-properties recommendations ever feel too narrow or too broad, adjust the public detail-page matching window; it currently prioritizes same-`Property_Type`, same-`Listing_Type` properties within about `±0.5L`, then falls back to a wider `±1.5L` fetch and sorts by nearest price
 - If neighbourhoods ever look blank again in the UI, check for new code reading `Neighborhood` directly instead of using the shared frontend normalizer
 - If neighbourhood filters stop working again, verify the frontend is not using `$eq` against the JSON-array `Neighbourhood` field; public filters should use `$contains`
 - If neighbourhoods ever look blank again in Strapi admin, verify the DB still stores valid JSON arrays for `neighbourhood` instead of plain text
