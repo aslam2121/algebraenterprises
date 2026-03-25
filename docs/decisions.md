@@ -153,6 +153,11 @@
 - The `/properties` page is the source of truth for the full public query model, which now includes listing type, area, property type, bedrooms, min price, max price, property code, and sort order
 - When public search changes in the future, update the reusable search-bar component and the `/properties` page query parsing together so deep links and same-route navigation stay aligned
 
+### Public theme switching should stay token-based and public-only
+- The website now has a dark/light toggle in the public navbar that persists the selected mode in `localStorage` and applies the theme before hydration by setting `document.documentElement.dataset.theme`
+- The implementation intentionally keeps the existing inline-style architecture and routes public colors through shared CSS variables in `app/globals.css` instead of adding a theming dependency or duplicating separate light-mode markup
+- The current scope is only the public website. Agent login/dashboard styling is unchanged and should only be themed later as a separate deliberate pass
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty

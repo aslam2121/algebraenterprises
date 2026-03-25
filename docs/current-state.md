@@ -1,7 +1,7 @@
 # Current State
 
 ## Last Updated
-2026-03-24
+2026-03-25
 
 ## Completed
 - Added a new root documentation file `project-stack-and-media-plugins.txt` that summarizes the current stack, installed plugins, active Cloudinary integration, and the media-service compatibility requirements for evaluating alternatives
@@ -34,6 +34,8 @@
 - The homepage hero now uses a reusable property search bar with listing type, neighbourhood, and expanded bedroom filters
 - The public `/properties` page now supports additional filters for listing type, min price, max price, bedrooms, and property code while keeping area, property type, and sort controls
 - The public property detail page now includes the same search bar in the desktop sidebar, plus a mobile search-toggle button that reveals it on small screens
+- The public website now has a light/dark theme toggle in the navbar that persists in `localStorage`, initializes before hydration, and switches the public pages through shared CSS theme variables instead of a second styling system
+- The theme toggle work is intentionally scoped to the public site only; the agent dashboard keeps its existing styling for now
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
 - The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set

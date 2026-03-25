@@ -39,8 +39,8 @@ export default function PropertySearchBar({
   return (
     <div
       style={{
-        background: isSidebar ? 'rgba(17,34,64,0.95)' : 'rgba(255,255,255,0.04)',
-        border: isSidebar ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(201,168,76,0.2)',
+        background: isSidebar ? 'var(--surface-panel)' : 'var(--surface-4)',
+        border: isSidebar ? '1px solid var(--line-soft)' : '1px solid var(--line-gold)',
         borderRadius: '16px',
         padding: isSidebar ? '1rem' : '1.2rem',
         backdropFilter: 'blur(10px)',
@@ -51,21 +51,21 @@ export default function PropertySearchBar({
         alignItems: isSidebar ? 'stretch' : 'center',
         maxWidth: isSidebar ? '100%' : '840px',
         animation: isSidebar ? 'none' : 'fadeUp 0.7s 0.3s ease both',
-        boxShadow: isSidebar ? 'none' : '0 25px 60px rgba(0,0,0,0.4)',
+        boxShadow: isSidebar ? 'none' : 'var(--shadow-floating)',
       }}
     >
       {isSidebar ? (
         <div>
-          <div style={{ fontSize: '0.7rem', color: '#c9a84c', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.35rem', fontWeight: 700 }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--gold)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.35rem', fontWeight: 700 }}>
             Quick Search
           </div>
-          <div style={{ color: '#8a9bb5', fontSize: '0.82rem', lineHeight: 1.5 }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.82rem', lineHeight: 1.5 }}>
             Search similar homes by listing type, neighbourhood, and bedrooms.
           </div>
         </div>
       ) : null}
 
-      <div style={{ display: 'flex', background: 'rgba(255,255,255,0.06)', borderRadius: '10px', padding: '4px', width: isSidebar ? '100%' : 'auto' }}>
+      <div style={{ display: 'flex', background: 'var(--surface-5)', borderRadius: '10px', padding: '4px', width: isSidebar ? '100%' : 'auto' }}>
         {['For Rent', 'For Sale'].map((type) => (
           <button
             key={type}
@@ -80,7 +80,7 @@ export default function PropertySearchBar({
               transition: 'all 0.2s',
               fontFamily: 'DM Sans, sans-serif',
               background: listingType === type ? 'var(--red)' : 'transparent',
-              color: listingType === type ? '#fff' : 'var(--muted)',
+              color: listingType === type ? 'var(--white)' : 'var(--text-muted)',
               boxShadow: listingType === type ? '0 4px 12px rgba(192,57,43,0.4)' : 'none',
               flex: isSidebar ? 1 : 'unset',
             }}
@@ -96,11 +96,11 @@ export default function PropertySearchBar({
         style={{
           flex: isSidebar ? 'unset' : 1,
           minWidth: isSidebar ? '100%' : '180px',
-          background: 'rgba(255,255,255,0.06)',
-          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'var(--input-bg)',
+          border: '1px solid var(--input-border)',
           borderRadius: '10px',
           padding: '0.6rem 1rem',
-          color: area ? '#fff' : 'var(--muted)',
+          color: area ? 'var(--text-primary)' : 'var(--text-muted)',
           fontSize: '0.88rem',
           outline: 'none',
           cursor: 'pointer',
@@ -109,7 +109,7 @@ export default function PropertySearchBar({
       >
         <option value="">All Neighbourhoods</option>
         {PROPERTY_SEARCH_NEIGHBOURHOODS.map((neighbourhood) => (
-          <option key={neighbourhood} value={neighbourhood} style={{ background: '#0a1628' }}>
+          <option key={neighbourhood} value={neighbourhood} style={{ background: 'var(--option-bg)' }}>
             {neighbourhood}
           </option>
         ))}
@@ -120,11 +120,11 @@ export default function PropertySearchBar({
         onChange={(event) => setBedrooms(event.target.value)}
         style={{
           minWidth: isSidebar ? '100%' : '170px',
-          background: 'rgba(255,255,255,0.06)',
-          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'var(--input-bg)',
+          border: '1px solid var(--input-border)',
           borderRadius: '10px',
           padding: '0.6rem 1rem',
-          color: bedrooms ? '#fff' : 'var(--muted)',
+          color: bedrooms ? 'var(--text-primary)' : 'var(--text-muted)',
           fontSize: '0.88rem',
           outline: 'none',
           cursor: 'pointer',
@@ -132,7 +132,7 @@ export default function PropertySearchBar({
         }}
       >
         {BEDROOM_FILTER_OPTIONS.map((option) => (
-          <option key={option.value || 'any'} value={option.value} style={{ background: '#0a1628' }}>
+          <option key={option.value || 'any'} value={option.value} style={{ background: 'var(--option-bg)' }}>
             {option.label}
           </option>
         ))}
@@ -145,7 +145,7 @@ export default function PropertySearchBar({
           borderRadius: '10px',
           border: 'none',
           background: 'linear-gradient(135deg, var(--red), var(--red-light))',
-          color: '#fff',
+          color: 'var(--white)',
           fontSize: '0.9rem',
           fontWeight: 600,
           cursor: 'pointer',

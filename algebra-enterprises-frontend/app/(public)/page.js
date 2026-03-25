@@ -65,10 +65,10 @@ export default async function Home() {
 
       {/* Areas strip */}
       <section style={{
-        borderTop: '1px solid rgba(201,168,76,0.15)',
-        borderBottom: '1px solid rgba(201,168,76,0.15)',
+        borderTop: '1px solid var(--line-gold)',
+        borderBottom: '1px solid var(--line-gold)',
         padding: '1.2rem 0',
-        background: 'rgba(17,34,64,0.5)',
+        background: 'var(--surface-2)',
       }}>
         <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', justifyContent: 'center', padding: '0 2rem' }}>
           {AREAS.map(area => <AreaLink key={area} area={area} />)}
@@ -80,7 +80,7 @@ export default async function Home() {
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '3rem', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#c9a84c', textTransform: 'uppercase', fontWeight: 500, marginBottom: '0.6rem' }}>
+              <div style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: 'var(--gold)', textTransform: 'uppercase', fontWeight: 500, marginBottom: '0.6rem' }}>
                 ✦ Curated Selection
               </div>
               <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)', lineHeight: 1.15 }}>
@@ -97,10 +97,10 @@ export default async function Home() {
       </section>
 
       {/* Why Algebra */}
-      <section style={{ padding: '6rem 0', background: 'rgba(17,34,64,0.4)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <section style={{ padding: '6rem 0', background: 'var(--surface-2)', borderTop: '1px solid var(--line-soft)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
-            <div style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#c9a84c', textTransform: 'uppercase', fontWeight: 500, marginBottom: '0.6rem' }}>✦ Our Promise</div>
+            <div style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: 'var(--gold)', textTransform: 'uppercase', fontWeight: 500, marginBottom: '0.6rem' }}>✦ Our Promise</div>
             <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.5rem)' }}>Why Choose Algebra Enterprises</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem' }}>
@@ -114,8 +114,8 @@ export default async function Home() {
         <div className="container">
           <div style={{
             borderRadius: '24px', padding: '4rem 3rem', textAlign: 'center',
-            background: 'linear-gradient(135deg, rgba(192,57,43,0.15) 0%, rgba(17,34,64,0.8) 50%, rgba(201,168,76,0.1) 100%)',
-            border: '1px solid rgba(201,168,76,0.2)',
+            background: 'linear-gradient(135deg, rgba(192,57,43,0.12) 0%, var(--surface-1) 50%, rgba(201,168,76,0.14) 100%)',
+            border: '1px solid var(--line-gold)',
             position: 'relative', overflow: 'hidden',
           }}>
             <div style={{
@@ -127,14 +127,14 @@ export default async function Home() {
             <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)', marginBottom: '1rem', position: 'relative' }}>
               Looking to List Your Property?
             </h2>
-            <p style={{ color: '#8a9bb5', maxWidth: '480px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
+            <p style={{ color: 'var(--text-muted)', maxWidth: '480px', margin: '0 auto 2rem', lineHeight: 1.6 }}>
               Join Delhi&apos;s most trusted real estate platform and connect with premium buyers and tenants.
             </p>
             <Link href="/contact" style={{
               display: 'inline-block', textDecoration: 'none',
               padding: '0.85rem 2.5rem', borderRadius: '10px',
               background: 'linear-gradient(135deg, #c0392b, #e74c3c)',
-              color: '#fff', fontSize: '0.95rem', fontWeight: 600,
+              color: 'var(--white)', fontSize: '0.95rem', fontWeight: 600,
               boxShadow: '0 8px 25px rgba(192,57,43,0.4)',
               letterSpacing: '0.02em',
             }}>Get In Touch</Link>

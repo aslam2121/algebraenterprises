@@ -302,22 +302,22 @@ export default function PropertyDetailPage() {
   };
 
   if (loading) return (
-    <div style={{ minHeight: '100vh', background: '#0a1628', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '80px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '80px' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ width: 44, height: 44, border: '3px solid rgba(201,168,76,0.2)', borderTop: '3px solid #c9a84c', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 1rem' }} />
-        <p style={{ color: '#8a9bb5', fontFamily: 'DM Sans, sans-serif' }}>Loading property...</p>
+        <p style={{ color: 'var(--text-muted)', fontFamily: 'DM Sans, sans-serif' }}>Loading property...</p>
       </div>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 
   if (!property) return (
-    <div style={{ minHeight: '100vh', background: '#0a1628', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 1.5rem 0' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--page-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 1.5rem 0' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🏚</div>
-        <h2 style={{ fontFamily: 'Playfair Display, serif', color: '#fff', marginBottom: '0.5rem' }}>Property Not Found</h2>
-        <p style={{ color: '#8a9bb5', marginBottom: '1.5rem', fontFamily: 'DM Sans, sans-serif' }}>This property may have been removed.</p>
-        <Link href="/properties" style={{ padding: '0.6rem 1.5rem', borderRadius: '8px', background: '#c0392b', color: '#fff', textDecoration: 'none', fontSize: '0.9rem' }}>Browse All Properties</Link>
+        <h2 style={{ fontFamily: 'Playfair Display, serif', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Property Not Found</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontFamily: 'DM Sans, sans-serif' }}>This property may have been removed.</p>
+        <Link href="/properties" style={{ padding: '0.6rem 1.5rem', borderRadius: '8px', background: '#c0392b', color: 'var(--white)', textDecoration: 'none', fontSize: '0.9rem' }}>Browse All Properties</Link>
       </div>
     </div>
   );
@@ -365,7 +365,7 @@ export default function PropertyDetailPage() {
 
         .pd-page {
           min-height: 100vh;
-          background: #0a1628;
+          background: var(--page-bg);
           padding-top: 80px;
           font-family: DM Sans, sans-serif;
           overflow-x: hidden;
@@ -378,13 +378,13 @@ export default function PropertyDetailPage() {
           box-sizing: border-box;
         }
         .pd-breadcrumb {
-          border-bottom: 1px solid rgba(255,255,255,0.07);
+          border-bottom: 1px solid var(--line-soft);
           padding: 0.9rem 0;
           font-size: 0.75rem;
-          color: #8a9bb5;
+          color: var(--text-muted);
         }
-        .pd-breadcrumb a { color: #8a9bb5; text-decoration: none; }
-        .pd-breadcrumb span.active { color: #c9a84c; }
+        .pd-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .pd-breadcrumb span.active { color: var(--gold); }
 
         /* Two column layout on desktop */
         .pd-layout {
@@ -404,7 +404,7 @@ export default function PropertyDetailPage() {
           border-radius: 14px;
           overflow: hidden;
           position: relative;
-          background: rgba(17,34,64,0.5);
+          background: var(--surface-2);
           margin-bottom: 0.7rem;
         }
         .pd-main-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -439,15 +439,15 @@ export default function PropertyDetailPage() {
 
         /* Cards */
         .pd-card {
-          background: rgba(17,34,64,0.6);
-          border: 1px solid rgba(255,255,255,0.07);
+          background: var(--surface-2);
+          border: 1px solid var(--line-soft);
           border-radius: 14px;
           padding: 1.3rem;
           margin-bottom: 1.2rem;
         }
         .pd-card-label {
           font-size: 0.7rem;
-          color: #c9a84c;
+          color: var(--gold);
           font-weight: 600;
           letter-spacing: 0.1em;
           text-transform: uppercase;
@@ -466,9 +466,9 @@ export default function PropertyDetailPage() {
           border-radius: 12px;
           background:
             linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.04)),
-            rgba(10,22,40,0.55);
-          border: 1px solid rgba(201,168,76,0.16);
-          box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+            var(--surface-3);
+          border: 1px solid var(--line-gold);
+          box-shadow: inset 0 1px 0 var(--line-soft);
         }
         .pd-feature-dot {
           width: 10px;
@@ -479,7 +479,7 @@ export default function PropertyDetailPage() {
           box-shadow: 0 0 0 4px rgba(201,168,76,0.08);
         }
         .pd-feature-text {
-          color: #fff4d2;
+          color: var(--text-gold-soft);
           font-size: 0.86rem;
           line-height: 1.35;
           font-weight: 500;
@@ -495,15 +495,15 @@ export default function PropertyDetailPage() {
 
         /* Sidebar card */
         .pd-price-card {
-          background: rgba(17,34,64,0.95);
-          border: 1px solid rgba(201,168,76,0.25);
+          background: var(--surface-panel);
+          border: 1px solid var(--line-gold);
           border-radius: 16px;
           padding: 1.4rem;
           margin-bottom: 1rem;
         }
         .pd-enquiry-card {
-          background: rgba(17,34,64,0.95);
-          border: 1px solid rgba(255,255,255,0.08);
+          background: var(--surface-panel);
+          border: 1px solid var(--line-soft);
           border-radius: 16px;
           padding: 1.4rem;
         }
@@ -512,24 +512,24 @@ export default function PropertyDetailPage() {
         .pd-input {
           width: 100%;
           padding: 0.65rem 0.9rem;
-          background: rgba(10,22,40,0.8);
-          border: 1px solid rgba(255,255,255,0.12);
+          background: var(--input-bg);
+          border: 1px solid var(--input-border);
           border-radius: 8px;
-          color: #fff;
+          color: var(--text-primary);
           font-size: 0.88rem;
           outline: none;
           font-family: DM Sans, sans-serif;
           display: block;
           box-sizing: border-box;
         }
-        .pd-input::placeholder { color: #8a9bb5; }
+        .pd-input::placeholder { color: var(--input-placeholder); }
         .pd-input:focus { border-color: rgba(201,168,76,0.5); }
 
         .pd-btn-red {
           display: flex; align-items: center; justify-content: center; gap: 0.5rem;
           width: 100%; padding: 0.75rem; border-radius: 10px; margin-bottom: 0.6rem;
           background: linear-gradient(135deg, #c0392b, #e74c3c);
-          color: #fff; text-decoration: none; font-weight: 600; font-size: 0.88rem;
+          color: var(--white); text-decoration: none; font-weight: 600; font-size: 0.88rem;
           box-shadow: 0 5px 18px rgba(192,57,43,0.4);
           border: none; cursor: pointer; font-family: DM Sans, sans-serif;
           box-sizing: border-box;
@@ -560,9 +560,9 @@ export default function PropertyDetailPage() {
             margin-bottom: 0.9rem;
             padding: 0.8rem 1rem;
             border-radius: 12px;
-            border: 1px solid rgba(201,168,76,0.22);
-            background: rgba(17,34,64,0.72);
-            color: #c9a84c;
+            border: 1px solid var(--line-gold);
+            background: var(--surface-2);
+            color: var(--gold);
             font-size: 0.84rem;
             font-weight: 600;
             font-family: DM Sans, sans-serif;
@@ -605,22 +605,22 @@ export default function PropertyDetailPage() {
               {/* Title */}
               <div style={{ marginBottom: '1.3rem' }}>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                  <span style={{ padding: '0.28rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', background: property.Listing_Type === 'For Rent' ? 'rgba(201,168,76,0.15)' : 'rgba(192,57,43,0.9)', color: property.Listing_Type === 'For Rent' ? '#c9a84c' : '#fff', border: property.Listing_Type === 'For Rent' ? '1px solid rgba(201,168,76,0.4)' : 'none' }}>
+                  <span style={{ padding: '0.28rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', background: property.Listing_Type === 'For Rent' ? 'rgba(201,168,76,0.15)' : 'rgba(192,57,43,0.9)', color: property.Listing_Type === 'For Rent' ? 'var(--gold)' : 'var(--white)', border: property.Listing_Type === 'For Rent' ? '1px solid rgba(201,168,76,0.4)' : 'none' }}>
                     {property.Listing_Type}
                   </span>
                   {property.Property_Type && (
-                    <span style={{ padding: '0.28rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', background: 'rgba(255,255,255,0.07)', color: '#8a9bb5', border: '1px solid rgba(255,255,255,0.1)' }}>{property.Property_Type}</span>
+                    <span style={{ padding: '0.28rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', background: 'var(--surface-5)', color: 'var(--text-muted)', border: '1px solid var(--line-strong)' }}>{property.Property_Type}</span>
                   )}
-                  <span style={{ padding: '0.28rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <span style={{ padding: '0.28rem 0.75rem', borderRadius: '6px', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'var(--surface-5)', border: '1px solid var(--line-strong)' }}>
                     <span style={{ width: 7, height: 7, borderRadius: '50%', background: statusColor[property.Property_Status] || '#22c55e', display: 'inline-block', flexShrink: 0 }} />
-                    <span style={{ color: '#8a9bb5' }}>{property.Property_Status}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>{property.Property_Status}</span>
                   </span>
                 </div>
-                <h1 style={{ fontSize: 'clamp(1.3rem, 4vw, 2rem)', lineHeight: 1.25, color: '#fff', fontFamily: 'Playfair Display, serif', marginBottom: '0.4rem', wordBreak: 'break-word' }}>
+                <h1 style={{ fontSize: 'clamp(1.3rem, 4vw, 2rem)', lineHeight: 1.25, color: 'var(--text-primary)', fontFamily: 'Playfair Display, serif', marginBottom: '0.4rem', wordBreak: 'break-word' }}>
                   {property.Title}
                 </h1>
                 {neighbourhood && (
-                  <p style={{ color: '#8a9bb5', fontSize: '0.88rem' }}>📍 {neighbourhood}, Delhi</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>📍 {neighbourhood}, Delhi</p>
                 )}
               </div>
 
@@ -666,7 +666,7 @@ export default function PropertyDetailPage() {
                 </>
               ) : (
                 <div className="pd-main-img" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <div style={{ textAlign: 'center', color: '#8a9bb5' }}>
+                  <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                     <div style={{ fontSize: '2.5rem', opacity: 0.3, marginBottom: '0.4rem' }}>🏠</div>
                     <p style={{ fontSize: '0.82rem' }}>No images available</p>
                   </div>
@@ -703,10 +703,10 @@ export default function PropertyDetailPage() {
                   <p className="pd-card-label">Property Details</p>
                   <div className="pd-details-grid">
                     {detailItems.map(({ icon, label, value }) => (
-                      <div key={label} style={{ padding: '0.85rem', background: 'rgba(10,22,40,0.5)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div key={label} style={{ padding: '0.85rem', background: 'var(--surface-3)', borderRadius: '10px', border: '1px solid var(--line-soft)' }}>
                         <div style={{ fontSize: '1rem', marginBottom: '0.3rem' }}>{icon}</div>
-                        <div style={{ fontSize: '0.65rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.2rem' }}>{label}</div>
-                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#fff', wordBreak: 'break-word' }}>{value}</div>
+                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.2rem' }}>{label}</div>
+                        <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-primary)', wordBreak: 'break-word' }}>{value}</div>
                       </div>
                     ))}
                   </div>
@@ -717,9 +717,9 @@ export default function PropertyDetailPage() {
                 <div className="pd-card">
                   <p className="pd-card-label">Features</p>
                   {property.Rooms ? (
-                    <div style={{ marginBottom: features.length > 0 ? '1rem' : 0, padding: '0.95rem 1rem', background: 'rgba(10,22,40,0.5)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ fontSize: '0.68rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.25rem' }}>Rooms</div>
-                      <div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Rooms}</div>
+                    <div style={{ marginBottom: features.length > 0 ? '1rem' : 0, padding: '0.95rem 1rem', background: 'var(--surface-3)', borderRadius: '12px', border: '1px solid var(--line-soft)' }}>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.25rem' }}>Rooms</div>
+                      <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>{property.Rooms}</div>
                     </div>
                   ) : null}
                   {features.length > 0 && (
@@ -739,7 +739,7 @@ export default function PropertyDetailPage() {
               {description && (
                 <div className="pd-card">
                   <p className="pd-card-label">Description</p>
-                  <div style={{ color: '#cbd5e1', lineHeight: 1.8, fontSize: '0.9rem', whiteSpace: 'pre-line' }}>{description}</div>
+                  <div style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '0.9rem', whiteSpace: 'pre-line' }}>{description}</div>
                 </div>
               )}
 
@@ -748,20 +748,20 @@ export default function PropertyDetailPage() {
                   <p className="pd-card-label">Similar Properties</p>
                   <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                     <div>
-                      <h2 style={{ color: '#fff', fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', marginBottom: '0.35rem' }}>
+                      <h2 style={{ color: 'var(--text-primary)', fontFamily: 'Playfair Display, serif', fontSize: '1.5rem', marginBottom: '0.35rem' }}>
                         More {property.Property_Type} options
                       </h2>
-                      <p style={{ color: '#8a9bb5', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '680px' }}>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6, maxWidth: '680px' }}>
                         {similarSectionSummary}
                       </p>
                     </div>
-                    <Link href={browseListingsHref} style={{ color: '#c9a84c', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}>
+                    <Link href={browseListingsHref} style={{ color: 'var(--gold)', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}>
                       Browse all {property.Listing_Type === 'For Sale' ? 'sale' : property.Listing_Type === 'For Rent' ? 'rent' : 'matching'} listings
                     </Link>
                   </div>
 
                   {similarLoading ? (
-                    <p style={{ color: '#8a9bb5', fontSize: '0.9rem' }}>Loading similar properties...</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading similar properties...</p>
                   ) : (
                     <div className="pd-similar-grid">
                       {similarProperties.map((similarProperty) => (
@@ -851,18 +851,18 @@ function SidebarContent({
       ) : null}
 
       <div className="pd-price-card">
-        <div style={{ fontSize: '0.7rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>
+        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>
           {property.Listing_Type === 'For Rent' ? 'Monthly Rent' : 'Sale Price'}
         </div>
-        <div style={{ fontSize: '1.85rem', fontWeight: 700, fontFamily: 'Playfair Display, serif', color: '#fff', marginBottom: '1rem' }}>
+        <div style={{ fontSize: '1.85rem', fontWeight: 700, fontFamily: 'Playfair Display, serif', color: 'var(--text-primary)', marginBottom: '1rem' }}>
           {formatPrice(property.Price, property.Listing_Type)}
         </div>
 
         {(property.Bedrooms || property.Bathrooms || property.Area_Sqm) && (
-          <div style={{ display: 'flex', gap: '1.2rem', marginBottom: '1.1rem', paddingBottom: '1.1rem', borderBottom: '1px solid rgba(255,255,255,0.07)', flexWrap: 'wrap' }}>
-            {property.Bedrooms  && <div><div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Bedrooms}</div><div style={{ fontSize: '0.68rem', color: '#8a9bb5' }}>Beds</div></div>}
-            {property.Bathrooms && <div><div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Bathrooms}</div><div style={{ fontSize: '0.68rem', color: '#8a9bb5' }}>Baths</div></div>}
-            {property.Area_Sqm  && <div><div style={{ fontSize: '1rem', fontWeight: 600, color: '#fff' }}>{property.Area_Sqm}</div><div style={{ fontSize: '0.68rem', color: '#8a9bb5' }}>sqm</div></div>}
+          <div style={{ display: 'flex', gap: '1.2rem', marginBottom: '1.1rem', paddingBottom: '1.1rem', borderBottom: '1px solid var(--line-soft)', flexWrap: 'wrap' }}>
+            {property.Bedrooms  && <div><div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>{property.Bedrooms}</div><div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Beds</div></div>}
+            {property.Bathrooms && <div><div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>{property.Bathrooms}</div><div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Baths</div></div>}
+            {property.Area_Sqm  && <div><div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>{property.Area_Sqm}</div><div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>sqm</div></div>}
           </div>
         )}
 
@@ -875,12 +875,12 @@ function SidebarContent({
       </div>
 
       <div className="pd-enquiry-card">
-        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', marginBottom: '1.1rem', color: '#fff' }}>Send Enquiry</h3>
+        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.05rem', marginBottom: '1.1rem', color: 'var(--text-primary)' }}>Send Enquiry</h3>
         {submitted ? (
           <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
             <div style={{ fontSize: '2.2rem', marginBottom: '0.6rem' }}>✅</div>
             <p style={{ color: '#22c55e', fontWeight: 500, marginBottom: '0.3rem' }}>Enquiry Sent!</p>
-            <p style={{ color: '#8a9bb5', fontSize: '0.82rem' }}>We&apos;ll get back to you shortly.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>We&apos;ll get back to you shortly.</p>
           </div>
         ) : (
           <form onSubmit={handleEnquiry}>
@@ -890,14 +890,14 @@ function SidebarContent({
               { key: 'email', label: 'Email',      type: 'email', placeholder: 'john@example.com' },
             ].map(({ key, label, type, placeholder }) => (
               <div key={key} style={{ marginBottom: '0.75rem' }}>
-                <label style={{ display: 'block', fontSize: '0.68rem', color: '#8a9bb5', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</label>
+                <label style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{label}</label>
                 <input type={type} placeholder={placeholder} required className="pd-input"
                   value={enquiryForm[key]} onChange={e => setEnquiryForm(f => ({ ...f, [key]: e.target.value }))}
                 />
               </div>
             ))}
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', fontSize: '0.68rem', color: '#8a9bb5', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Message</label>
+              <label style={{ display: 'block', fontSize: '0.68rem', color: 'var(--text-muted)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Message</label>
               <textarea rows={3} placeholder="I'm interested in this property..." className="pd-input"
                 value={enquiryForm.message} onChange={e => setEnquiryForm(f => ({ ...f, message: e.target.value }))}
                 style={{ resize: 'vertical' }}
