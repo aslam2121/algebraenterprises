@@ -144,6 +144,10 @@
 - The new `Published_Date` field is treated as public-facing metadata, so it now appears on the shared property card and in the property detail page's details grid
 - When future property schema fields are meant for visitors rather than internal admin use, the shared public card/detail components should be updated together so listings and detail pages stay consistent
 
+### Agent dashboard forms must stay aligned with the editable property schema
+- When a property field is editable by agents, it should exist in all three dashboard layers together: local form state, `propertyToForm()` edit hydration, and the outgoing `FormData` payload
+- The dashboard now includes `Published_Date`, `Rooms`, `Available_Floors`, `Parking`, and `Directions` in that path so edit mode does not silently hide or drop them
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty

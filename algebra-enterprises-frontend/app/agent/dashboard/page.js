@@ -121,9 +121,14 @@ function createEmptyPropertyForm() {
     Price: '',
     Bedrooms: '',
     Bathrooms: '',
+    Rooms: '',
     Area_Sqm: '',
     Area_sqft: '',
     Area_Acre: '',
+    Available_Floors: '',
+    Parking: '',
+    Directions: '',
+    Published_Date: '',
     Property_Address: '',
     Agent_Phone: '',
     Property_Age: '',
@@ -195,6 +200,24 @@ function stringifyFormValue(value) {
   return String(value);
 }
 
+function formatDisplayDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const parsedDate = new Date(value);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsedDate);
+}
+
 function descriptionToPlainText(description) {
   if (!Array.isArray(description)) {
     return '';
@@ -250,9 +273,14 @@ function propertyToForm(property) {
     Price: stringifyFormValue(property.Price),
     Bedrooms: stringifyFormValue(property.Bedrooms),
     Bathrooms: stringifyFormValue(property.Bathrooms),
+    Rooms: stringifyFormValue(property.Rooms),
     Area_Sqm: stringifyFormValue(property.Area_Sqm),
     Area_sqft: stringifyFormValue(property.Area_sqft),
     Area_Acre: stringifyFormValue(property.Area_Acre),
+    Available_Floors: property.Available_Floors || '',
+    Parking: stringifyFormValue(property.Parking),
+    Directions: property.Directions || '',
+    Published_Date: property.Published_Date || '',
     Property_Address: property.Property_Address || '',
     Agent_Phone: property.Agent_Phone || '',
     Property_Age: stringifyFormValue(property.Property_Age),
@@ -603,9 +631,14 @@ export default function AgentDashboard() {
     formData.append('Price', createForm.Price);
     formData.append('Bedrooms', createForm.Bedrooms);
     formData.append('Bathrooms', createForm.Bathrooms);
+    formData.append('Rooms', createForm.Rooms);
     formData.append('Area_Sqm', createForm.Area_Sqm);
     formData.append('Area_sqft', createForm.Area_sqft);
     formData.append('Area_Acre', createForm.Area_Acre);
+    formData.append('Available_Floors', createForm.Available_Floors);
+    formData.append('Parking', createForm.Parking);
+    formData.append('Directions', createForm.Directions);
+    formData.append('Published_Date', createForm.Published_Date);
     formData.append('Property_Address', createForm.Property_Address);
     formData.append('Agent_Phone', createForm.Agent_Phone);
     formData.append('Property_Age', createForm.Property_Age);
@@ -1008,6 +1041,7 @@ export default function AgentDashboard() {
               ) : (
                 filteredProperties.map((property) => {
                   const imageUrl = getStrapiMediaUrl(property.Images?.[0]?.url);
+                  const publishedDate = formatDisplayDate(property.Published_Date);
 
                   return (
                     <div key={property.id} className="prop-row">
@@ -1066,6 +1100,11 @@ export default function AgentDashboard() {
                           {getPropertyNeighbourhood(property) ? `📍 ${getPropertyNeighbourhood(property)} · ` : ''}
                           {property.Listing_Type} · {property.Property_Code}
                         </div>
+                        {publishedDate ? (
+                          <div style={{ fontSize: '0.75rem', color: '#8a9bb5', marginBottom: '0.2rem' }}>
+                            🗓 Published {publishedDate}
+                          </div>
+                        ) : null}
                         {property.Property_Address ? (
                           <div
                             style={{
@@ -1437,6 +1476,21 @@ export default function AgentDashboard() {
                 </div>
 
                 <div className="form-field">
+                  <label className="field-label" htmlFor="rooms">
+                    Rooms
+                  </label>
+                  <input
+                    id="rooms"
+                    type="number"
+                    min="0"
+                    className="dash-input"
+                    value={createForm.Rooms}
+                    onChange={(event) => handleCreateFieldChange('Rooms', event.target.value)}
+                    placeholder="6"
+                  />
+                </div>
+
+                <div className="form-field">
                   <label className="field-label" htmlFor="area-sqm">
                     Area (sqm)
                   </label>
@@ -1481,6 +1535,60 @@ export default function AgentDashboard() {
                     value={createForm.Area_Acre}
                     onChange={(event) => handleCreateFieldChange('Area_Acre', event.target.value)}
                     placeholder="0.5"
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label className="field-label" htmlFor="available-floors">
+                    Available Floors
+                  </label>
+                  <input
+                    id="available-floors"
+                    className="dash-input"
+                    value={createForm.Available_Floors}
+                    onChange={(event) => handleCreateFieldChange('Available_Floors', event.target.value)}
+                    placeholder="Ground + First"
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label className="field-label" htmlFor="parking">
+                    Parking
+                  </label>
+                  <input
+                    id="parking"
+                    type="number"
+                    min="0"
+                    className="dash-input"
+                    value={createForm.Parking}
+                    onChange={(event) => handleCreateFieldChange('Parking', event.target.value)}
+                    placeholder="2"
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label className="field-label" htmlFor="directions">
+                    Directions
+                  </label>
+                  <input
+                    id="directions"
+                    className="dash-input"
+                    value={createForm.Directions}
+                    onChange={(event) => handleCreateFieldChange('Directions', event.target.value)}
+                    placeholder="North East"
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label className="field-label" htmlFor="published-date">
+                    Published Date
+                  </label>
+                  <input
+                    id="published-date"
+                    type="date"
+                    className="dash-input"
+                    value={createForm.Published_Date}
+                    onChange={(event) => handleCreateFieldChange('Published_Date', event.target.value)}
                   />
                 </div>
 
