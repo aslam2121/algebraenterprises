@@ -7,6 +7,7 @@ import Lightbox from 'yet-another-react-lightbox';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import PropertyCard from '@/components/PropertyCard';
+import PropertySearchBar from '@/components/PropertySearchBar';
 import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
 
 const SIMILAR_PRICE_DELTA = 0.5;
@@ -179,6 +180,7 @@ export default function PropertyDetailPage() {
   const [activeImage, setActiveImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [enquiryForm, setEnquiryForm] = useState({ name: '', phone: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
 
@@ -487,6 +489,9 @@ export default function PropertyDetailPage() {
           grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 1rem;
         }
+        .pd-mobile-search-toggle {
+          display: none;
+        }
 
         /* Sidebar card */
         .pd-price-card {
@@ -546,6 +551,22 @@ export default function PropertyDetailPage() {
           }
           .pd-sidebar-desktop { display: none !important; }
           .pd-sidebar-mobile  { display: block !important; margin-bottom: 1.2rem; }
+          .pd-mobile-search-toggle {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            width: 100%;
+            margin-bottom: 0.9rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(201,168,76,0.22);
+            background: rgba(17,34,64,0.72);
+            color: #c9a84c;
+            font-size: 0.84rem;
+            font-weight: 600;
+            font-family: DM Sans, sans-serif;
+          }
           .pd-main-img { height: 240px; }
           .pd-thumb { width: 60px; height: 46px; }
           .pd-details-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -654,7 +675,26 @@ export default function PropertyDetailPage() {
 
               {/* Mobile sidebar — price + enquiry between gallery and details */}
               <div className="pd-sidebar-mobile">
-                <SidebarContent property={property} formatPrice={formatPrice} enquiryForm={enquiryForm} setEnquiryForm={setEnquiryForm} submitted={submitted} handleEnquiry={handleEnquiry} submitting={submitting} submitError={submitError} />
+                <button
+                  type="button"
+                  className="pd-mobile-search-toggle"
+                  onClick={() => setMobileSearchOpen((previous) => !previous)}
+                >
+                  <span style={{ fontSize: '1rem' }}>🔎</span>
+                  <span>{mobileSearchOpen ? 'Hide Search' : 'Search Other Properties'}</span>
+                </button>
+                <SidebarContent
+                  property={property}
+                  neighbourhood={neighbourhood}
+                  formatPrice={formatPrice}
+                  enquiryForm={enquiryForm}
+                  setEnquiryForm={setEnquiryForm}
+                  submitted={submitted}
+                  handleEnquiry={handleEnquiry}
+                  submitting={submitting}
+                  submitError={submitError}
+                  showSearchCard={mobileSearchOpen}
+                />
               </div>
 
               {/* Property Details */}
@@ -735,7 +775,18 @@ export default function PropertyDetailPage() {
 
             {/* ── RIGHT (desktop only) ── */}
             <div className="pd-sidebar-desktop">
-              <SidebarContent property={property} formatPrice={formatPrice} enquiryForm={enquiryForm} setEnquiryForm={setEnquiryForm} submitted={submitted} handleEnquiry={handleEnquiry} submitting={submitting} submitError={submitError} />
+              <SidebarContent
+                property={property}
+                neighbourhood={neighbourhood}
+                formatPrice={formatPrice}
+                enquiryForm={enquiryForm}
+                setEnquiryForm={setEnquiryForm}
+                submitted={submitted}
+                handleEnquiry={handleEnquiry}
+                submitting={submitting}
+                submitError={submitError}
+                showSearchCard
+              />
             </div>
 
           </div>
@@ -775,9 +826,30 @@ export default function PropertyDetailPage() {
   );
 }
 
-function SidebarContent({ property, formatPrice, enquiryForm, setEnquiryForm, submitted, handleEnquiry, submitting, submitError }) {
+function SidebarContent({
+  property,
+  neighbourhood,
+  formatPrice,
+  enquiryForm,
+  setEnquiryForm,
+  submitted,
+  handleEnquiry,
+  submitting,
+  submitError,
+  showSearchCard,
+}) {
   return (
     <>
+      {showSearchCard ? (
+        <PropertySearchBar
+          key={`${property.Property_Code}-sidebar-search`}
+          variant="sidebar"
+          initialListingType={property.Listing_Type === 'For Sale' ? 'For Sale' : 'For Rent'}
+          initialArea={neighbourhood || ''}
+          initialBedrooms={property.Bedrooms ? String(property.Bedrooms) : ''}
+        />
+      ) : null}
+
       <div className="pd-price-card">
         <div style={{ fontSize: '0.7rem', color: '#8a9bb5', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.3rem' }}>
           {property.Listing_Type === 'For Rent' ? 'Monthly Rent' : 'Sale Price'}

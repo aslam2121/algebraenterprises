@@ -1,9 +1,13 @@
 'use client';
 import { Suspense, useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/PropertyCard';
 import Link from 'next/link';
 import { PROPERTY_NEIGHBOURHOOD_FILTER_KEY } from '@/lib/strapi';
+import {
+  BEDROOM_FILTER_OPTIONS,
+  getListingTypeFromQueryValue,
+} from '@/lib/property-search';
 
 const AREAS = [
   'All Areas', 'Vasant Vihar', 'Defence Colony', 'Anand Niketan',
@@ -26,36 +30,110 @@ const PROPERTY_TYPES = [
   'Farm House',
 ];
 
-function getListingTypeFromParams(searchParams) {
-  return searchParams.get('type') === 'sale'
-    ? 'For Sale'
-    : searchParams.get('type') === 'rent'
-      ? 'For Rent'
-      : 'All';
+function getListingTypeParamValue(listingType) {
+  if (listingType === 'For Sale') {
+    return 'sale';
+  }
+
+  if (listingType === 'For Rent') {
+    return 'rent';
+  }
+
+  return '';
+}
+
+function getStateFromSearchParams(searchParams) {
+  return {
+    listingType: getListingTypeFromQueryValue(searchParams.get('type')),
+    area: searchParams.get('area') || 'All Areas',
+    propertyType: searchParams.get('propertyType') || 'All Types',
+    bedrooms: searchParams.get('bedrooms') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    propertyCode: searchParams.get('code') || '',
+    sortBy: searchParams.get('sort') || 'newest',
+  };
 }
 
 function PropertiesPageContent() {
+  const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
+  const initialState = getStateFromSearchParams(searchParams);
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [filtersReady, setFiltersReady] = useState(false);
 
   // Filter state — initialize from URL params
-  const [listingType, setListingType] = useState(getListingTypeFromParams(searchParams));
-  const [area, setArea] = useState(searchParams.get('area') || 'All Areas');
-  const [propertyType, setPropertyType] = useState('All Types');
-  const [sortBy, setSortBy] = useState('newest');
+  const [listingType, setListingType] = useState(initialState.listingType);
+  const [area, setArea] = useState(initialState.area);
+  const [propertyType, setPropertyType] = useState(initialState.propertyType);
+  const [bedrooms, setBedrooms] = useState(initialState.bedrooms);
+  const [minPrice, setMinPrice] = useState(initialState.minPrice);
+  const [maxPrice, setMaxPrice] = useState(initialState.maxPrice);
+  const [propertyCode, setPropertyCode] = useState(initialState.propertyCode);
+  const [sortBy, setSortBy] = useState(initialState.sortBy);
 
   const PAGE_SIZE = 12;
 
   useEffect(() => {
-    setListingType(getListingTypeFromParams(searchParams));
-    setArea(searchParams.get('area') || 'All Areas');
+    const nextState = getStateFromSearchParams(searchParams);
+
+    setListingType(nextState.listingType);
+    setArea(nextState.area);
+    setPropertyType(nextState.propertyType);
+    setBedrooms(nextState.bedrooms);
+    setMinPrice(nextState.minPrice);
+    setMaxPrice(nextState.maxPrice);
+    setPropertyCode(nextState.propertyCode);
+    setSortBy(nextState.sortBy);
     setPage(1);
+    setFiltersReady(true);
   }, [queryString, searchParams]);
+
+  useEffect(() => {
+    if (!filtersReady) {
+      return;
+    }
+
+    const params = new URLSearchParams();
+    const typeValue = getListingTypeParamValue(listingType);
+
+    if (typeValue) {
+      params.set('type', typeValue);
+    }
+    if (area !== 'All Areas') {
+      params.set('area', area);
+    }
+    if (propertyType !== 'All Types') {
+      params.set('propertyType', propertyType);
+    }
+    if (bedrooms) {
+      params.set('bedrooms', bedrooms);
+    }
+    if (minPrice.trim()) {
+      params.set('minPrice', minPrice.trim());
+    }
+    if (maxPrice.trim()) {
+      params.set('maxPrice', maxPrice.trim());
+    }
+    if (propertyCode.trim()) {
+      params.set('code', propertyCode.trim());
+    }
+    if (sortBy !== 'newest') {
+      params.set('sort', sortBy);
+    }
+
+    const nextQueryString = params.toString();
+
+    if (nextQueryString !== queryString) {
+      router.replace(nextQueryString ? `${pathname}?${nextQueryString}` : pathname, { scroll: false });
+    }
+  }, [filtersReady, listingType, area, propertyType, bedrooms, minPrice, maxPrice, propertyCode, sortBy, queryString, pathname, router]);
 
   useEffect(() => {
     let ignore = false;
@@ -74,6 +152,18 @@ function PropertiesPageContent() {
         }
         if (propertyType !== 'All Types') {
           url += `&filters[Property_Type][$eq]=${encodeURIComponent(propertyType)}`;
+        }
+        if (bedrooms) {
+          url += `&filters[Bedrooms][$gte]=${encodeURIComponent(bedrooms)}`;
+        }
+        if (minPrice.trim()) {
+          url += `&filters[Price][$gte]=${encodeURIComponent(minPrice.trim())}`;
+        }
+        if (maxPrice.trim()) {
+          url += `&filters[Price][$lte]=${encodeURIComponent(maxPrice.trim())}`;
+        }
+        if (propertyCode.trim()) {
+          url += `&filters[Property_Code][$containsi]=${encodeURIComponent(propertyCode.trim())}`;
         }
         if (sortBy === 'newest') url += '&sort=createdAt:desc';
         if (sortBy === 'price_asc') url += '&sort=Price:asc';
@@ -104,15 +194,31 @@ function PropertiesPageContent() {
     return () => {
       ignore = true;
     };
-  }, [listingType, area, propertyType, sortBy, page]);
+  }, [listingType, area, propertyType, bedrooms, minPrice, maxPrice, propertyCode, sortBy, page]);
 
   const handleFilter = (key, value) => {
     setPage(1);
     if (key === 'listingType') setListingType(value);
     if (key === 'area') setArea(value);
     if (key === 'propertyType') setPropertyType(value);
+    if (key === 'bedrooms') setBedrooms(value);
+    if (key === 'minPrice') setMinPrice(value);
+    if (key === 'maxPrice') setMaxPrice(value);
+    if (key === 'propertyCode') setPropertyCode(value);
     if (key === 'sortBy') setSortBy(value);
   };
+
+  function resetFilters() {
+    setListingType('All');
+    setArea('All Areas');
+    setPropertyType('All Types');
+    setBedrooms('');
+    setMinPrice('');
+    setMaxPrice('');
+    setPropertyCode('');
+    setSortBy('newest');
+    setPage(1);
+  }
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
@@ -147,13 +253,12 @@ function PropertiesPageContent() {
         <div style={{
           background: 'rgba(17,34,64,0.7)', border: '1px solid rgba(201,168,76,0.15)',
           borderRadius: '16px', padding: '1.2rem 1.5rem',
-          marginBottom: '2.5rem', display: 'flex',
-          flexWrap: 'wrap', gap: '1rem', alignItems: 'center',
+          marginBottom: '2.5rem',
           backdropFilter: 'blur(10px)',
         }}>
 
           {/* Listing Type */}
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', padding: '3px' }}>
+          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', padding: '3px', marginBottom: '1rem', flexWrap: 'wrap', width: 'fit-content', maxWidth: '100%' }}>
             {['All', 'For Rent', 'For Sale'].map(t => (
               <button key={t} onClick={() => handleFilter('listingType', t)} style={{
                 padding: '0.45rem 1rem', borderRadius: '8px', border: 'none',
@@ -166,47 +271,105 @@ function PropertiesPageContent() {
             ))}
           </div>
 
-          {/* Area Select */}
-          <select value={area} onChange={e => handleFilter('area', e.target.value)} style={{
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '10px', padding: '0.5rem 1rem',
-            color: area !== 'All Areas' ? '#fff' : '#8a9bb5',
-            fontSize: '0.83rem', outline: 'none', cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif', minWidth: '160px',
-          }}>
-            {AREAS.map(a => <option key={a} value={a} style={{ background: '#0a1628' }}>{a}</option>)}
-          </select>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
+            <select value={area} onChange={e => handleFilter('area', e.target.value)} style={{
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '10px', padding: '0.5rem 1rem',
+              color: area !== 'All Areas' ? '#fff' : '#8a9bb5',
+              fontSize: '0.83rem', outline: 'none', cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif', minWidth: '0',
+            }}>
+              {AREAS.map(a => <option key={a} value={a} style={{ background: '#0a1628' }}>{a}</option>)}
+            </select>
 
-          {/* Property Type */}
-          <select value={propertyType} onChange={e => handleFilter('propertyType', e.target.value)} style={{
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '10px', padding: '0.5rem 1rem',
-            color: propertyType !== 'All Types' ? '#fff' : '#8a9bb5',
-            fontSize: '0.83rem', outline: 'none', cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif', minWidth: '140px',
-          }}>
-            {PROPERTY_TYPES.map(t => <option key={t} value={t} style={{ background: '#0a1628' }}>{t}</option>)}
-          </select>
+            <select value={propertyType} onChange={e => handleFilter('propertyType', e.target.value)} style={{
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '10px', padding: '0.5rem 1rem',
+              color: propertyType !== 'All Types' ? '#fff' : '#8a9bb5',
+              fontSize: '0.83rem', outline: 'none', cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif', minWidth: '0',
+            }}>
+              {PROPERTY_TYPES.map(t => <option key={t} value={t} style={{ background: '#0a1628' }}>{t}</option>)}
+            </select>
 
-          {/* Sort */}
-          <select value={sortBy} onChange={e => handleFilter('sortBy', e.target.value)} style={{
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '10px', padding: '0.5rem 1rem',
-            color: '#fff', fontSize: '0.83rem', outline: 'none', cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif', marginLeft: 'auto',
-          }}>
-            <option value="newest" style={{ background: '#0a1628' }}>Newest First</option>
-            <option value="price_asc" style={{ background: '#0a1628' }}>Price: Low to High</option>
-            <option value="price_desc" style={{ background: '#0a1628' }}>Price: High to Low</option>
-          </select>
+            <select value={bedrooms} onChange={e => handleFilter('bedrooms', e.target.value)} style={{
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '10px', padding: '0.5rem 1rem',
+              color: bedrooms ? '#fff' : '#8a9bb5',
+              fontSize: '0.83rem', outline: 'none', cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif', minWidth: '0',
+            }}>
+              {BEDROOM_FILTER_OPTIONS.map(option => <option key={option.value || 'any'} value={option.value} style={{ background: '#0a1628' }}>{option.label}</option>)}
+            </select>
 
-          {/* Clear filters */}
-          {(listingType !== 'All' || area !== 'All Areas' || propertyType !== 'All Types') && (
-            <button onClick={() => { setListingType('All'); setArea('All Areas'); setPropertyType('All Types'); setPage(1); }} style={{
+            <input
+              value={minPrice}
+              onChange={e => handleFilter('minPrice', e.target.value)}
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Min Price (L)"
+              style={{
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '10px', padding: '0.5rem 1rem',
+                color: '#fff', fontSize: '0.83rem', outline: 'none',
+                fontFamily: 'DM Sans, sans-serif', minWidth: '0',
+              }}
+            />
+
+            <input
+              value={maxPrice}
+              onChange={e => handleFilter('maxPrice', e.target.value)}
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Max Price (L)"
+              style={{
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '10px', padding: '0.5rem 1rem',
+                color: '#fff', fontSize: '0.83rem', outline: 'none',
+                fontFamily: 'DM Sans, sans-serif', minWidth: '0',
+              }}
+            />
+
+            <input
+              value={propertyCode}
+              onChange={e => handleFilter('propertyCode', e.target.value)}
+              placeholder="Property Code"
+              style={{
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '10px', padding: '0.5rem 1rem',
+                color: '#fff', fontSize: '0.83rem', outline: 'none',
+                fontFamily: 'DM Sans, sans-serif', minWidth: '0',
+              }}
+            />
+
+            <select value={sortBy} onChange={e => handleFilter('sortBy', e.target.value)} style={{
+              background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '10px', padding: '0.5rem 1rem',
+              color: '#fff', fontSize: '0.83rem', outline: 'none', cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif', minWidth: '0',
+            }}>
+              <option value="newest" style={{ background: '#0a1628' }}>Newest First</option>
+              <option value="price_asc" style={{ background: '#0a1628' }}>Price: Low to High</option>
+              <option value="price_desc" style={{ background: '#0a1628' }}>Price: High to Low</option>
+            </select>
+          </div>
+
+          {(listingType !== 'All'
+            || area !== 'All Areas'
+            || propertyType !== 'All Types'
+            || bedrooms
+            || minPrice.trim()
+            || maxPrice.trim()
+            || propertyCode.trim()
+            || sortBy !== 'newest') && (
+            <button onClick={resetFilters} style={{
               background: 'rgba(192,57,43,0.15)', border: '1px solid rgba(192,57,43,0.3)',
               borderRadius: '8px', padding: '0.45rem 0.9rem',
               color: '#e74c3c', fontSize: '0.8rem', cursor: 'pointer',
               fontFamily: 'DM Sans, sans-serif',
+              marginTop: '1rem',
             }}>✕ Clear</button>
           )}
         </div>
@@ -228,7 +391,7 @@ function PropertiesPageContent() {
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
             <h3 style={{ fontFamily: 'Playfair Display, serif', marginBottom: '0.5rem' }}>No properties found</h3>
             <p style={{ color: '#8a9bb5', marginBottom: '1.5rem' }}>Try adjusting your filters</p>
-            <button onClick={() => { setListingType('All'); setArea('All Areas'); setPropertyType('All Types'); }} style={{
+            <button onClick={resetFilters} style={{
               padding: '0.6rem 1.5rem', borderRadius: '8px', border: '1px solid #c9a84c',
               background: 'transparent', color: '#c9a84c', cursor: 'pointer',
               fontFamily: 'DM Sans, sans-serif',
