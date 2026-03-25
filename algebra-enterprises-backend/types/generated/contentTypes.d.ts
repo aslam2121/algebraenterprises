@@ -627,6 +627,7 @@ export interface ApiPropertyProperty extends Struct.CollectionTypeSchema {
         'Farm House',
       ]
     >;
+    Published_Date: Schema.Attribute.Date & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
     Rooms: Schema.Attribute.Integer;
     Title: Schema.Attribute.String;

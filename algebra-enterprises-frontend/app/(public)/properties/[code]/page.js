@@ -62,6 +62,24 @@ function getNumericPrice(value) {
   return Number.isFinite(numericValue) ? numericValue : null;
 }
 
+function formatDisplayDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const parsedDate = new Date(value);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(parsedDate);
+}
+
 function formatShortPrice(value, listingType) {
   const numericValue = getNumericPrice(value);
 
@@ -214,8 +232,8 @@ export default function PropertyDetailPage() {
         }
       } finally {
         if (!cancelled) {
-        setLoading(false);
-        setSimilarLoading(false);
+          setLoading(false);
+          setSimilarLoading(false);
         }
       }
     }
@@ -312,6 +330,7 @@ export default function PropertyDetailPage() {
     resolvedUrl: getStrapiMediaUrl(image.url),
   }));
   const propertyPrice = getNumericPrice(property.Price);
+  const publishedDate = formatDisplayDate(property.Published_Date);
   const priceRangeStart = propertyPrice !== null ? Math.max(propertyPrice - SIMILAR_PRICE_DELTA, 0) : null;
   const priceRangeEnd = propertyPrice !== null ? propertyPrice + SIMILAR_PRICE_DELTA : null;
   const browseListingsHref = property.Listing_Type === 'For Rent'
@@ -330,6 +349,7 @@ export default function PropertyDetailPage() {
     { icon: '🚿', label: 'Bathrooms', value: property.Bathrooms },
     { icon: '📐', label: 'Area (sqm)', value: property.Area_Sqm ? `${property.Area_Sqm} sqm` : null },
     { icon: '🏗', label: 'Property Age', value: property.Property_Age ? `${property.Property_Age} yrs` : null },
+    { icon: '🗓', label: 'Published Date', value: publishedDate },
     { icon: '🚗', label: 'Parking', value: property.Parking },
     { icon: '🧭', label: 'Direction', value: property.Directions },
     { icon: '🏷', label: 'Code', value: property.Property_Code },

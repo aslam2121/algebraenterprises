@@ -4,9 +4,28 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
 
+function formatDisplayDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  const parsedDate = new Date(value);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return null;
+  }
+
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsedDate);
+}
+
 export default function PropertyCard({ property }) {
   const [hovered, setHovered] = useState(false);
   const neighbourhood = getPropertyNeighbourhood(property);
+  const publishedDate = formatDisplayDate(property.Published_Date);
 
   const img = property.Images?.length > 0
     ? getStrapiMediaUrl(property.Images[0].url)
@@ -95,6 +114,11 @@ export default function PropertyCard({ property }) {
           <div style={{ fontSize: '0.75rem', color: 'var(--gold)', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 500, marginBottom: '0.4rem' }}>
             📍 {neighbourhood || 'Delhi'}
           </div>
+          {publishedDate && (
+            <div style={{ fontSize: '0.77rem', color: '#8a9bb5', marginBottom: '0.6rem' }}>
+              🗓 Listed {publishedDate}
+            </div>
+          )}
 
           {/* Title */}
           <h3 style={{

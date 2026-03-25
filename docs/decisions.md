@@ -140,6 +140,10 @@
 - The homepage should not keep its own duplicate footer markup now that the public layout owns it
 - The agent dashboard should keep its own branded shell with a dashboard-specific header/footer instead of borrowing the public navbar layout
 
+### New public property fields should be surfaced in both card and detail views when relevant
+- The new `Published_Date` field is treated as public-facing metadata, so it now appears on the shared property card and in the property detail page's details grid
+- When future property schema fields are meant for visitors rather than internal admin use, the shared public card/detail components should be updated together so listings and detail pages stay consistent
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty

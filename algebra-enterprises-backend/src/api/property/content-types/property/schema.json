@@ -204,6 +204,10 @@
     },
     "Featured_Property": {
       "type": "boolean"
+    },
+    "Published_Date": {
+      "type": "date",
+      "required": true
     }
   }
 }
