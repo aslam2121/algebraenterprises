@@ -44,6 +44,7 @@
 - If the property schema gains more agent-managed fields, update the dashboard form state and payload together; `Published_Date`, `Rooms`, `Available_Floors`, `Parking`, and `Directions` are now included there
 - If the shared property search experience changes again, update both the reusable search-bar component and the `/properties` query parsing together so homepage/detail search and listings filters stay in sync
 - If `/properties?type=rent` or `/properties?type=sale` ever starts looping again, check for code that depends directly on the `useSearchParams()` object inside effects; the current fix parses from `searchParams.toString()` instead
+- If the same-route `/properties` filters ever loop again after future edits, also verify the URL-writeback effect is gated until the current query string has actually been applied into local component state
 - If public theme colors change again, update the shared theme variables in `app/globals.css` and the token-based public components instead of adding new hardcoded page colors
 - If the navbar branding changes again, update the theme-specific logo assets in `algebra-enterprises-frontend/public/logo` and keep the tiny-screen header width constraints in mind before widening CTA copy
 - If the theme bootstrap in `app/layout.js` changes again, keep it on the supported Next script path rather than reintroducing a raw `<script>` element inside the React tree

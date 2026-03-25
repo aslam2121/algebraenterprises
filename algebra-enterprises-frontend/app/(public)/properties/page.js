@@ -67,6 +67,7 @@ function PropertiesPageContent() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [filtersReady, setFiltersReady] = useState(false);
+  const [appliedQueryString, setAppliedQueryString] = useState(queryString);
 
   // Filter state — initialize from URL params
   const [listingType, setListingType] = useState(initialState.listingType);
@@ -92,11 +93,12 @@ function PropertiesPageContent() {
     setPropertyCode((currentValue) => currentValue === nextState.propertyCode ? currentValue : nextState.propertyCode);
     setSortBy((currentValue) => currentValue === nextState.sortBy ? currentValue : nextState.sortBy);
     setPage((currentPage) => currentPage === 1 ? currentPage : 1);
+    setAppliedQueryString(queryString);
     setFiltersReady(true);
   }, [queryString]);
 
   useEffect(() => {
-    if (!filtersReady) {
+    if (!filtersReady || appliedQueryString !== queryString) {
       return;
     }
 
@@ -133,7 +135,7 @@ function PropertiesPageContent() {
     if (nextQueryString !== queryString) {
       router.replace(nextQueryString ? `${pathname}?${nextQueryString}` : pathname, { scroll: false });
     }
-  }, [filtersReady, listingType, area, propertyType, bedrooms, minPrice, maxPrice, propertyCode, sortBy, queryString, pathname, router]);
+  }, [filtersReady, appliedQueryString, listingType, area, propertyType, bedrooms, minPrice, maxPrice, propertyCode, sortBy, queryString, pathname, router]);
 
   useEffect(() => {
     let ignore = false;
