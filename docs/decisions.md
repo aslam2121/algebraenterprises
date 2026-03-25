@@ -152,6 +152,7 @@
 - The homepage hero and the property detail sidebar/mobile search now reuse the same frontend search-bar component so listing type, neighbourhood, and bedroom filters behave consistently
 - The `/properties` page is the source of truth for the full public query model, which now includes listing type, area, property type, bedrooms, min price, max price, property code, and sort order
 - When public search changes in the future, update the reusable search-bar component and the `/properties` page query parsing together so deep links and same-route navigation stay aligned
+- When syncing `/properties` local state from the URL, use the serialized query string as the stable dependency and parse a fresh `URLSearchParams` from that string instead of depending directly on the `useSearchParams()` object inside effects
 
 ### Public theme switching should stay token-based and public-only
 - The website now has a dark/light toggle in the public navbar that persists the selected mode in `localStorage` and applies the theme before hydration by setting `document.documentElement.dataset.theme`

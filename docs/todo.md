@@ -43,6 +43,7 @@
 - If the property schema gains more public-facing fields, wire them into the shared card/detail components explicitly; `Published_Date` is now displayed on both
 - If the property schema gains more agent-managed fields, update the dashboard form state and payload together; `Published_Date`, `Rooms`, `Available_Floors`, `Parking`, and `Directions` are now included there
 - If the shared property search experience changes again, update both the reusable search-bar component and the `/properties` query parsing together so homepage/detail search and listings filters stay in sync
+- If `/properties?type=rent` or `/properties?type=sale` ever starts looping again, check for code that depends directly on the `useSearchParams()` object inside effects; the current fix parses from `searchParams.toString()` instead
 - If public theme colors change again, update the shared theme variables in `app/globals.css` and the token-based public components instead of adding new hardcoded page colors
 - If the navbar branding changes again, update the theme-specific logo assets in `algebra-enterprises-frontend/public/logo` and keep the tiny-screen header width constraints in mind before widening CTA copy
 - If light mode is ever extended to the agent portal, treat it as a separate task; the current toggle is intentionally scoped to the public site only

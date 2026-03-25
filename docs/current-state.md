@@ -34,6 +34,7 @@
 - The homepage hero now uses a reusable property search bar with listing type, neighbourhood, and expanded bedroom filters
 - The public `/properties` page now supports additional filters for listing type, min price, max price, bedrooms, and property code while keeping area, property type, and sort controls
 - The public property detail page now includes the same search bar in the desktop sidebar, plus a mobile search-toggle button that reveals it on small screens
+- The public `/properties` page query-sync was hardened again so `?type=rent` and `?type=sale` no longer replay state from the unstable `useSearchParams()` object and trigger the same-route navigation loop
 - The public website now has a light/dark theme toggle in the navbar that persists in `localStorage`, initializes before hydration, and switches the public pages through shared CSS theme variables instead of a second styling system
 - The theme toggle work is intentionally scoped to the public site only; the agent dashboard keeps its existing styling for now
 - The public navbar now uses the real company logo assets from `algebra-enterprises-frontend/public/logo`, switching between the black-text and white-text variants by theme

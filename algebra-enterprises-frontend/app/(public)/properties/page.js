@@ -60,7 +60,7 @@ function PropertiesPageContent() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const queryString = searchParams.toString();
-  const initialState = getStateFromSearchParams(searchParams);
+  const initialState = getStateFromSearchParams(new URLSearchParams(queryString));
 
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,19 +81,19 @@ function PropertiesPageContent() {
   const PAGE_SIZE = 12;
 
   useEffect(() => {
-    const nextState = getStateFromSearchParams(searchParams);
+    const nextState = getStateFromSearchParams(new URLSearchParams(queryString));
 
-    setListingType(nextState.listingType);
-    setArea(nextState.area);
-    setPropertyType(nextState.propertyType);
-    setBedrooms(nextState.bedrooms);
-    setMinPrice(nextState.minPrice);
-    setMaxPrice(nextState.maxPrice);
-    setPropertyCode(nextState.propertyCode);
-    setSortBy(nextState.sortBy);
-    setPage(1);
+    setListingType((currentValue) => currentValue === nextState.listingType ? currentValue : nextState.listingType);
+    setArea((currentValue) => currentValue === nextState.area ? currentValue : nextState.area);
+    setPropertyType((currentValue) => currentValue === nextState.propertyType ? currentValue : nextState.propertyType);
+    setBedrooms((currentValue) => currentValue === nextState.bedrooms ? currentValue : nextState.bedrooms);
+    setMinPrice((currentValue) => currentValue === nextState.minPrice ? currentValue : nextState.minPrice);
+    setMaxPrice((currentValue) => currentValue === nextState.maxPrice ? currentValue : nextState.maxPrice);
+    setPropertyCode((currentValue) => currentValue === nextState.propertyCode ? currentValue : nextState.propertyCode);
+    setSortBy((currentValue) => currentValue === nextState.sortBy ? currentValue : nextState.sortBy);
+    setPage((currentPage) => currentPage === 1 ? currentPage : 1);
     setFiltersReady(true);
-  }, [queryString, searchParams]);
+  }, [queryString]);
 
   useEffect(() => {
     if (!filtersReady) {
