@@ -46,6 +46,7 @@
 - If `/properties?type=rent` or `/properties?type=sale` ever starts looping again, check for code that depends directly on the `useSearchParams()` object inside effects; the current fix parses from `searchParams.toString()` instead
 - If public theme colors change again, update the shared theme variables in `app/globals.css` and the token-based public components instead of adding new hardcoded page colors
 - If the navbar branding changes again, update the theme-specific logo assets in `algebra-enterprises-frontend/public/logo` and keep the tiny-screen header width constraints in mind before widening CTA copy
+- If the theme bootstrap in `app/layout.js` changes again, keep it on the supported Next script path rather than reintroducing a raw `<script>` element inside the React tree
 - If light mode is ever extended to the agent portal, treat it as a separate task; the current toggle is intentionally scoped to the public site only
 - If property detail metadata ever looks incomplete again, check the public detail page for new fields that need to be rendered explicitly; `Property_Type`, `Available_Floors`, `Property_Age`, and `Features` are now shown there, and empty values are intentionally hidden
 - If the new similar-properties recommendations ever feel too narrow or too broad, adjust the public detail-page matching window; it currently prioritizes same-`Property_Type`, same-`Listing_Type` properties within about `±0.5L`, then falls back to a wider `±1.5L` fetch and sorts by nearest price

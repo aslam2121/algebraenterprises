@@ -1,4 +1,5 @@
 import './globals.css';
+import Script from 'next/script';
 
 const themeInitScript = `
   (function() {
@@ -21,7 +22,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <Script id="ae-theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
         {children}
       </body>
     </html>

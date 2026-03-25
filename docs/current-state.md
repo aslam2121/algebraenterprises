@@ -39,6 +39,7 @@
 - The theme toggle work is intentionally scoped to the public site only; the agent dashboard keeps its existing styling for now
 - The public navbar now uses the real company logo assets from `algebra-enterprises-frontend/public/logo`, switching between the black-text and white-text variants by theme
 - The mobile navbar was tightened so the header stays on one row below `400px`; the contact CTA shortens on very small widths and only drops away below `360px`, where the mobile menu still keeps the contact route accessible
+- The root layout theme bootstrap now uses Next's `beforeInteractive` script path instead of a raw `<script>` tag, which removes the Next/React client rendering warning while preserving early theme initialization
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
 - The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set
