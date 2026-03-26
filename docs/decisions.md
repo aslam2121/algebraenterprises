@@ -186,6 +186,7 @@
 - `algebra-enterprises-backend/scripts/import-available-floors.py` is the one-off path for syncing the root `properties_available_floors.xlsx` workbook into Strapi by `Property_Code`
 - The workbook is read directly with Python standard-library XLSX parsing so the importer does not need a new npm dependency just to handle a simple two-column spreadsheet
 - The updater writes `Available_Floors` to both draft and published rows for the matching `document_id`, keeping Strapi admin and published data aligned
+- The same Python importer now supports both SQLite and Postgres: SQLite writes stay direct through `sqlite3`, while Render/Postgres writes go through the local `psql` client using `DATABASE_URL` rather than introducing a new Python Postgres dependency
 - Duplicate workbook rows for the same `Property_Code` are merged by taking the later non-empty `Available_Floors` value
 
 ### Frontend neighbourhood filters must use `$contains` against `Neighbourhood`

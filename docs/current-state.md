@@ -64,6 +64,10 @@
 - The address/rent importer now preserves the JSON-array neighbourhood shape when updating rows:
   - Render Postgres rejects plain string writes like `Anand Niketan` for the multi-select `Neighbourhood` field
   - the importer now reuses the existing array value or wraps the CSV neighbourhood in a one-item array before updating
+- The available-floors importer now supports both SQLite and Render Postgres:
+  - the existing Python workbook parser is still used so no new XLSX dependency was added
+  - when `DATABASE_CLIENT=postgres`, the script now reads and updates `public.properties` through `psql` using `DATABASE_URL`
+  - this could not be live-verified inside the sandbox because external DNS to the Render host is blocked here
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency

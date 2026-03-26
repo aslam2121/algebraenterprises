@@ -2,7 +2,9 @@
 
 import argparse
 import json
+import os
 import sqlite3
+import subprocess
 import sys
 import time
 import zipfile
@@ -13,6 +15,7 @@ import re
 
 DEFAULT_XLSX_PATH = Path(__file__).resolve().parents[2] / 'properties_available_floors.xlsx'
 DEFAULT_DB_PATH = Path(__file__).resolve().parents[1] / '.tmp' / 'data.db'
+DEFAULT_DB_CLIENT = os.environ.get('DATABASE_CLIENT', 'sqlite').strip().lower() or 'sqlite'
 XML_NS = {
     'a': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main',
     'r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
@@ -21,9 +24,15 @@ XML_NS = {
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Import Available_Floors into Strapi properties.')
-    parser.add_argument('--apply', action='store_true', help='Write changes to the SQLite DB.')
+    parser.add_argument('--apply', action='store_true', help='Write changes to the configured DB.')
     parser.add_argument('--xlsx', default=str(DEFAULT_XLSX_PATH), help='Path to the source workbook.')
     parser.add_argument('--db', default=str(DEFAULT_DB_PATH), help='Path to the Strapi SQLite database.')
+    parser.add_argument(
+        '--db-client',
+        default=DEFAULT_DB_CLIENT,
+        choices=['sqlite', 'postgres'],
+        help='Database client to target. Defaults to DATABASE_CLIENT or sqlite.',
+    )
     parser.add_argument('--limit', type=int, help='Limit processed records for testing.')
     args = parser.parse_args()
 
@@ -198,6 +207,99 @@ def update_document_available_floors(conn, document_id, available_floors):
     )
 
 
+def build_psql_env():
+    database_url = normalize_cell(os.environ.get('DATABASE_URL', ''))
+    if not database_url:
+        raise RuntimeError('DATABASE_URL is required when --db-client=postgres.')
+
+    env = os.environ.copy()
+    env['DATABASE_URL'] = database_url
+
+    if env.get('DATABASE_SSL', '').lower() in {'1', 'true', 'yes', 'on'} and not env.get('PGSSLMODE'):
+        env['PGSSLMODE'] = 'require'
+
+    return env
+
+
+def run_psql(sql):
+    env = build_psql_env()
+    result = subprocess.run(
+        [
+            'psql',
+            env['DATABASE_URL'],
+            '-X',
+            '-v',
+            'ON_ERROR_STOP=1',
+            '-A',
+            '-F',
+            '\t',
+            '-P',
+            'footer=off',
+            '-c',
+            sql,
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    return result.stdout
+
+
+def load_published_properties_postgres():
+    output = run_psql(
+        '''
+        SELECT document_id, property_code, COALESCE(available_floors, '')
+        FROM public.properties
+        WHERE published_at IS NOT NULL
+        ORDER BY property_code ASC;
+        '''
+    )
+
+    published = {}
+    for line in output.splitlines():
+        if not line.strip():
+            continue
+
+        document_id, property_code, available_floors = (line.split('\t') + ['', '', ''])[:3]
+        published[normalize_cell(property_code).lower()] = {
+            'documentId': normalize_cell(document_id),
+            'availableFloors': normalize_available_floors(available_floors),
+        }
+
+    return published
+
+
+def sql_literal(value):
+    if value is None:
+        return 'NULL'
+
+    return "'" + str(value).replace("'", "''") + "'"
+
+
+def update_document_available_floors_postgres(updates):
+    if not updates:
+        return
+
+    statements = ['BEGIN;']
+
+    for update in updates:
+        statements.append(
+            '''
+            UPDATE public.properties
+            SET available_floors = {available_floors},
+                updated_at = NOW()
+            WHERE document_id = {document_id};
+            '''.format(
+                available_floors=sql_literal(update['availableFloors'] or None),
+                document_id=sql_literal(update['documentId']),
+            ).strip()
+        )
+
+    statements.append('COMMIT;')
+    run_psql('\n'.join(statements))
+
+
 def import_rows(args):
     workbook_rows = read_workbook_rows(Path(args.xlsx))
     records, duplicate_rows = merge_rows_by_property_code(workbook_rows)
@@ -205,7 +307,8 @@ def import_rows(args):
 
     summary = {
         'xlsxPath': str(Path(args.xlsx).resolve()),
-        'dbPath': str(Path(args.db).resolve()),
+        'dbClient': args.db_client,
+        'dbPath': str(Path(args.db).resolve()) if args.db_client == 'sqlite' else None,
         'totalWorkbookRows': len(workbook_rows),
         'uniquePropertyCodes': len(records),
         'processedRecords': len(limited_records),
@@ -220,10 +323,15 @@ def import_rows(args):
         'sample': [],
     }
 
-    conn = sqlite3.connect(args.db, timeout=30)
+    pending_postgres_updates = []
+    conn = None
 
     try:
-        published_by_code = load_published_properties(conn)
+        if args.db_client == 'sqlite':
+            conn = sqlite3.connect(args.db, timeout=30)
+            published_by_code = load_published_properties(conn)
+        else:
+            published_by_code = load_published_properties_postgres()
 
         for index, record in enumerate(limited_records, start=1):
             current_property = published_by_code.get(record['propertyCode'])
@@ -263,11 +371,18 @@ def import_rows(args):
             if not args.apply:
                 continue
 
-            update_document_available_floors(
-                conn,
-                current_property['documentId'],
-                next_available_floors,
-            )
+            if args.db_client == 'sqlite':
+                update_document_available_floors(
+                    conn,
+                    current_property['documentId'],
+                    next_available_floors,
+                )
+            else:
+                pending_postgres_updates.append({
+                    'documentId': current_property['documentId'],
+                    'availableFloors': next_available_floors,
+                })
+
             summary['updated'] += 1
 
             if index % 50 == 0:
@@ -277,12 +392,15 @@ def import_rows(args):
                     'apply': True,
                 }))
 
-        if args.apply:
+        if args.apply and args.db_client == 'sqlite':
             conn.commit()
+        elif args.apply and args.db_client == 'postgres':
+            update_document_available_floors_postgres(pending_postgres_updates)
 
         return summary
     finally:
-        conn.close()
+        if conn is not None:
+            conn.close()
 
 
 def main():
