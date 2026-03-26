@@ -196,6 +196,15 @@
 - Direct REST filtering with `filters[Neighbourhood][$eq]=...` returns zero rows against that stored shape
 - Public frontend filter builders should use `filters[Neighbourhood][$contains]=...` so the `/properties` area filter continues to work
 
+### Public neighbourhood filtering should be handled in the property controller when needed
+- In the deployed Strapi build for this project, the default REST `find` path can still throw `500 Internal Server Error` when filtering the `Neighbourhood` multi-select custom field
+- The public property controller now intercepts `Neighbourhood` / `Neighborhood` filters, runs the rest of the Strapi query normally, and then applies the final neighbourhood match plus pagination in controller code
+- This is preferred over pushing the `/properties` page into a client-side all-records filtering fallback
+
+### Public bedroom filters should be exact except for the top bucket
+- The public search UI should treat bedroom selections `1` through `9` as exact values, not `N+`
+- Only the top bucket remains open-ended, and it is now represented as `10+` mapped to `Bedrooms >= 10`
+
 ### Cloudflare R2 should be wired through Strapi's official `aws-s3` provider
 - The backend upload provider is being migrated from Cloudinary to Cloudflare R2 through `@strapi/provider-upload-aws-s3` to keep the change inside Strapi's supported provider path instead of adding a custom upload layer
 - R2 config should use the account-scoped `R2_ENDPOINT`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_REGION=auto`, with optional `R2_PUBLIC_URL` / `R2_ROOT_PATH` for saved asset URLs

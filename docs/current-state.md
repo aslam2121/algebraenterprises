@@ -307,6 +307,10 @@
   - live local Strapi returns `0` rows for `filters[Neighbourhood][$eq]=Vasant Vihar`
   - live local Strapi returns matching rows for `filters[Neighbourhood][$contains]=Vasant Vihar`
   - frontend lint still passes after switching the public filter builders to `$contains`
+- Verified the deployed public listings filter fix:
+  - the frontend bedroom dropdown now uses exact values for `1` through `9` and reserves the open-ended bucket for `10+`
+  - the public listings page now sends `Bedrooms[$eq]` for exact values and only uses `Bedrooms[$gte]=10` for the `10+` option
+  - the backend public property controller now intercepts `Neighbourhood` filters and applies the neighbourhood match after the normal Strapi query path, avoiding the deployed `500 Internal Server Error` caused by the multi-select custom field in default REST filtering
 - Verified the Cloudflare R2 migration wiring:
   - backend `npm install` replaced the Cloudinary provider dependency with `@strapi/provider-upload-aws-s3@5.39.0`
   - backend plugin config resolves to `provider: aws-s3` with `R2_ENDPOINT`, `R2_BUCKET`, `R2_REGION=auto`, optional `R2_PUBLIC_URL`, and blank `R2_ACL` omitted from upload params

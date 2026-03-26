@@ -79,6 +79,8 @@
 - If the new similar-properties recommendations ever feel too narrow or too broad, adjust the public detail-page matching window; it currently prioritizes same-`Property_Type`, same-`Listing_Type` properties within about `±0.5L`, then falls back to a wider `±1.5L` fetch and sorts by nearest price
 - If neighbourhoods ever look blank again in the UI, check for new code reading `Neighborhood` directly instead of using the shared frontend normalizer
 - If neighbourhood filters stop working again, verify the frontend is not using `$eq` against the JSON-array `Neighbourhood` field; public filters should use `$contains`
+- If deployed neighbourhood filters ever start returning empty results or `500` again, check `src/api/property/controllers/property.js`; the public `find` route now strips `Neighbourhood` out of the default Strapi query and applies the neighbourhood match in controller code before paginating
+- If public bedroom filtering feels too broad again, keep the current behavior: `1` through `9` are exact matches and only `10+` should map to `Bedrooms >= 10`
 - If neighbourhoods ever look blank again in Strapi admin, verify the DB still stores valid JSON arrays for `neighbourhood` instead of plain text
 - Re-run `node scripts/import-wordpress-properties.js` in `algebra-enterprises-backend` as a dry-run before any future CSV apply pass
 - If `Published_Date` is required in the property schema, keep the importer fallback in place or pass `--published-date YYYY-MM-DD` on apply runs so new rows do not fail validation

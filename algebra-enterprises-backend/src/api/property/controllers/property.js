@@ -17,6 +17,54 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function getPropertyNeighbourhoodValue(property) {
+  const value = property?.Neighbourhood ?? property?.Neighborhood;
+
+  if (Array.isArray(value)) {
+    return typeof value[0] === 'string' ? value[0] : '';
+  }
+
+  return typeof value === 'string' ? value : '';
+}
+
+function matchesNeighbourhoodFilter(property, filterValue) {
+  const neighbourhood = getPropertyNeighbourhoodValue(property).toLowerCase();
+
+  if (!neighbourhood) {
+    return false;
+  }
+
+  if (typeof filterValue === 'string') {
+    return neighbourhood === filterValue.toLowerCase();
+  }
+
+  if (!filterValue || typeof filterValue !== 'object') {
+    return true;
+  }
+
+  const exactValue = typeof filterValue.$eq === 'string' ? filterValue.$eq : null;
+  if (exactValue) {
+    return neighbourhood === exactValue.toLowerCase();
+  }
+
+  const exactInsensitiveValue = typeof filterValue.$eqi === 'string' ? filterValue.$eqi : null;
+  if (exactInsensitiveValue) {
+    return neighbourhood === exactInsensitiveValue.toLowerCase();
+  }
+
+  const containsValue = typeof filterValue.$contains === 'string' ? filterValue.$contains : null;
+  if (containsValue) {
+    return neighbourhood.includes(containsValue.toLowerCase());
+  }
+
+  const containsInsensitiveValue = typeof filterValue.$containsi === 'string' ? filterValue.$containsi : null;
+  if (containsInsensitiveValue) {
+    return neighbourhood.includes(containsInsensitiveValue.toLowerCase());
+  }
+
+  return true;
+}
+
 function flattenErrorCodes(error) {
   const nestedErrors = Array.isArray(error?.errors) ? error.errors : [];
   const codes = [error?.code, ...nestedErrors.map((nestedError) => nestedError?.code)].filter(Boolean);
@@ -124,6 +172,49 @@ async function getAssignedPropertyForUser(strapi, userId, documentId) {
 }
 
 module.exports = createCoreController('api::property.property', ({ strapi }) => ({
+
+  async find(ctx) {
+    const rawFilters = ctx.query?.filters || {};
+    const neighbourhoodFilter = rawFilters.Neighbourhood ?? rawFilters.Neighborhood;
+
+    if (!neighbourhoodFilter) {
+      return super.find(ctx);
+    }
+
+    await this.validateQuery(ctx);
+
+    const sanitizedQuery = await this.sanitizeQuery(ctx);
+    const normalizedFilters = { ...(sanitizedQuery.filters || {}) };
+
+    delete normalizedFilters.Neighbourhood;
+    delete normalizedFilters.Neighborhood;
+
+    const page = Math.max(parseInt(sanitizedQuery.pagination?.page, 10) || 1, 1);
+    const pageSize = Math.max(parseInt(sanitizedQuery.pagination?.pageSize, 10) || 25, 1);
+
+    const { results } = await strapi.service('api::property.property').find({
+      ...sanitizedQuery,
+      filters: normalizedFilters,
+      pagination: {
+        page: 1,
+        pageSize: 1000,
+      },
+    });
+
+    const filteredResults = results.filter((property) => matchesNeighbourhoodFilter(property, neighbourhoodFilter));
+    const startIndex = (page - 1) * pageSize;
+    const paginatedResults = filteredResults.slice(startIndex, startIndex + pageSize);
+    const sanitizedResults = await this.sanitizeOutput(paginatedResults, ctx);
+
+    return this.transformResponse(sanitizedResults, {
+      pagination: {
+        page,
+        pageSize,
+        pageCount: filteredResults.length > 0 ? Math.ceil(filteredResults.length / pageSize) : 0,
+        total: filteredResults.length,
+      },
+    });
+  },
 
   async findMyProperties(ctx) {
     const user = ctx.state.user;

@@ -55,6 +55,18 @@ function getStateFromSearchParams(searchParams) {
   };
 }
 
+function buildBedroomFilterQuery(bedrooms) {
+  if (!bedrooms) {
+    return '';
+  }
+
+  if (bedrooms === '10+') {
+    return '&filters[Bedrooms][$gte]=10';
+  }
+
+  return `&filters[Bedrooms][$eq]=${encodeURIComponent(bedrooms)}`;
+}
+
 function PropertiesPageContent() {
   const router = useRouter();
   const pathname = usePathname();
@@ -155,9 +167,7 @@ function PropertiesPageContent() {
         if (propertyType !== 'All Types') {
           url += `&filters[Property_Type][$eq]=${encodeURIComponent(propertyType)}`;
         }
-        if (bedrooms) {
-          url += `&filters[Bedrooms][$gte]=${encodeURIComponent(bedrooms)}`;
-        }
+        url += buildBedroomFilterQuery(bedrooms);
         if (minPrice.trim()) {
           url += `&filters[Price][$gte]=${encodeURIComponent(minPrice.trim())}`;
         }
