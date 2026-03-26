@@ -5,8 +5,25 @@ const { safeDestroyStrapi } = require('./utils/safe-destroy-strapi');
 
 const propertySchema = require('../src/api/property/content-types/property/schema.json');
 
-const NEIGHBORHOOD_OPTIONS = propertySchema.attributes.Neighborhood.options;
+const NEIGHBORHOOD_ATTRIBUTE_KEY = propertySchema.attributes.Neighborhood
+  ? 'Neighborhood'
+  : 'Neighbourhood';
+const NEIGHBORHOOD_OPTIONS = propertySchema.attributes[NEIGHBORHOOD_ATTRIBUTE_KEY]?.options || [];
 const NEIGHBORHOOD_SET = new Set(NEIGHBORHOOD_OPTIONS);
+
+function getPropertyNeighborhood(property) {
+  if (!property || typeof property !== 'object') {
+    return '';
+  }
+
+  const value = property.Neighborhood ?? property.Neighbourhood;
+
+  if (Array.isArray(value)) {
+    return typeof value[0] === 'string' ? value[0].trim() : '';
+  }
+
+  return typeof value === 'string' ? value.trim() : '';
+}
 
 function parseArgs(argv) {
   const options = {
@@ -130,7 +147,7 @@ async function findCandidateProperties(strapi, neighborhoods) {
     },
   });
 
-  return properties.filter((property) => neighborhoods.includes(property.Neighborhood));
+  return properties.filter((property) => neighborhoods.includes(getPropertyNeighborhood(property)));
 }
 
 async function assignProperties(options) {
@@ -184,7 +201,7 @@ async function assignProperties(options) {
           documentId: property.documentId,
           propertyCode: property.Property_Code,
           title: property.Title,
-          neighborhood: property.Neighborhood,
+          neighborhood: getPropertyNeighborhood(property),
           currentAgent: property.Assigned_Agent
             ? {
                 id: property.Assigned_Agent.id,

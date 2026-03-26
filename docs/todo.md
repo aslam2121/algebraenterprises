@@ -19,6 +19,7 @@
   - pass one or more `--neighborhood` values
   - if you need to avoid reassigning existing agent-owned properties, include `--only-unassigned`
   - already applied in this session for Umar on `Anand Niketan`, `Vasant Vihar`, `Shanti Niketan`, and `Westend`, for Azhar on `Defence Colony`, `Hauz Khas`, `Panchsheel Park`, `Safdarjung Enclave`, and `SDA`, and for Nazish on the requested 17-neighborhood set
+  - if the script ever fails on `propertySchema.attributes.Neighborhood`, check that it still uses the same `Neighborhood`/`Neighbourhood` fallback as the other backend scripts
 - Decide whether to keep `agent-dashboard-worklog.md` as a rolling log or fold its key points into `docs/current-state.md`
 - Confirm the new root repo commit was created successfully and use it as the base for future changes
 

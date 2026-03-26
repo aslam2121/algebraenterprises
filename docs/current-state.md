@@ -73,6 +73,9 @@
   - address/rent import applied successfully to the deployed Render database
   - available-floors import applied successfully to the deployed Render database
   - the only remaining workbook misses are the non-existent property codes `ag1665`, `ag1195`, and `ag675-1`
+- The bulk-assignment script now matches the current schema and stored neighbourhood shape:
+  - it no longer assumes `propertySchema.attributes.Neighborhood`
+  - it now reads either `Neighborhood` or `Neighbourhood` and unwraps the one-item JSON array before matching neighborhoods
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency

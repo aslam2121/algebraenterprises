@@ -86,6 +86,7 @@
 - The script requires either `--agent-id` or `--agent-email` plus one or more `--neighborhood` values
 - `--apply` performs the updates; omitting it produces a dry-run preview
 - `--only-unassigned` limits the selection to properties without an assigned agent
+- Because the schema stores `Neighbourhood` as a JSON-backed multi-select, the assignment script must resolve the active attribute key (`Neighborhood` vs `Neighbourhood`) and compare against the unwrapped one-item array value instead of assuming a plain string field
 
 ### Address and rent refreshes should use a dedicated CSV updater
 - `algebra-enterprises-backend/scripts/import-address-rent.js` is the one-off path for syncing the root `algebra-address-rent.csv` file into Strapi by `Property_Code`
