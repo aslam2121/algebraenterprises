@@ -76,6 +76,7 @@
 - Because `Published_Date` is now required in the property schema but not present in the source CSV, the importer should preserve the existing `Published_Date` on updates and assign a fallback date to new rows
 - The importer now defaults that fallback to the current date and also accepts `--published-date YYYY-MM-DD` for deterministic apply runs
 - `Published_Date` must also be carried through the shared `buildPropertyData()` helper because both the importer and the agent create/edit routes rely on that same normalized write payload
+- Local one-off Strapi scripts that target Render Postgres should tolerate the known `tarn` shutdown `aborted` error and keep the successful write summary, because the failure can happen during `strapi.destroy()` after the actual work is finished
 - CSV listing type alias `For Rent, For Sale` is normalized to the schema value `For Rent and For Sale`
 - Duplicate CSV rows for the same `Property_Code` are merged by taking later non-empty field values, which resolved the conflicting `ag1373` rows during this import
 - Parking import values are normalized as follows before validation: blank and `no` become empty, `yes` becomes `1`, and numeric strings are kept as integers

@@ -7,6 +7,7 @@ const { parse } = require('csv-parse/sync');
 const { createStrapi } = require('@strapi/strapi');
 
 const { buildPropertyData } = require('../src/api/property/utils/agent-property');
+const { safeDestroyStrapi } = require('./utils/safe-destroy-strapi');
 const propertySchema = require('../src/api/property/content-types/property/schema.json');
 
 const DEFAULT_CSV_PATH = path.resolve(__dirname, '../../algebra_properties_data.csv');
@@ -496,7 +497,7 @@ async function importRows(options) {
 
     return summary;
   } finally {
-    await strapi.destroy();
+    await safeDestroyStrapi(strapi);
   }
 }
 

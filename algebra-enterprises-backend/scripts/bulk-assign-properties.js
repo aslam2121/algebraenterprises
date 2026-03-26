@@ -1,6 +1,7 @@
 'use strict';
 
 const { createStrapi } = require('@strapi/strapi');
+const { safeDestroyStrapi } = require('./utils/safe-destroy-strapi');
 
 const propertySchema = require('../src/api/property/content-types/property/schema.json');
 
@@ -213,7 +214,7 @@ async function assignProperties(options) {
 
     return summary;
   } finally {
-    await strapi.destroy();
+    await safeDestroyStrapi(strapi);
   }
 }
 
