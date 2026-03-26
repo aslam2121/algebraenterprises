@@ -179,10 +179,17 @@ function priceChanged(currentPrice, nextPrice) {
 
 function getPropertyNeighborhood(property) {
   if (!property || typeof property !== 'object') {
-    return '';
+    return [];
   }
 
-  return normalizeCsvCell(property.Neighborhood || property.Neighbourhood);
+  const value = property.Neighborhood ?? property.Neighbourhood;
+
+  if (Array.isArray(value)) {
+    return value.map((item) => normalizeCsvCell(item)).filter(Boolean);
+  }
+
+  const normalized = normalizeCsvCell(value);
+  return normalized ? [normalized] : [];
 }
 
 async function findPublishedPropertyByCode(strapi, propertyCode) {
@@ -244,17 +251,20 @@ async function importRows(options) {
       summary.matchedPublishedProperties += 1;
 
       const currentNeighborhood = getPropertyNeighborhood(currentProperty);
-      const nextNeighborhood = currentNeighborhood || record.neighborhood;
+      const currentNeighborhoodValue = currentNeighborhood[0] || '';
+      const nextNeighborhood = currentNeighborhood.length > 0
+        ? currentNeighborhood
+        : (record.neighborhood ? [record.neighborhood] : []);
       if (
         record.neighborhood
-        && currentNeighborhood
-        && canonicalizeNeighborhood(record.neighborhood) !== canonicalizeNeighborhood(currentNeighborhood)
+        && currentNeighborhoodValue
+        && canonicalizeNeighborhood(record.neighborhood) !== canonicalizeNeighborhood(currentNeighborhoodValue)
       ) {
         summary.neighborhoodMismatches.push({
           row: record.rowNumber,
           propertyCode: record.propertyCode,
           csvNeighborhood: record.neighborhood,
-          propertyNeighborhood: currentNeighborhood,
+          propertyNeighborhood: currentNeighborhoodValue,
         });
       }
 
@@ -292,7 +302,7 @@ async function importRows(options) {
       if (summary.sample.length < 15) {
         summary.sample.push({
           propertyCode: record.propertyCode,
-          neighborhood: currentNeighborhood || record.neighborhood || null,
+          neighborhood: currentNeighborhoodValue || record.neighborhood || null,
           currentAddress,
           nextAddress,
           currentPrice,

@@ -90,6 +90,7 @@
 ### Address and rent refreshes should use a dedicated CSV updater
 - `algebra-enterprises-backend/scripts/import-address-rent.js` is the one-off path for syncing the root `algebra-address-rent.csv` file into Strapi by `Property_Code`
 - The script updates only the private `Property_Address` field and `Price`, instead of widening the broader WordPress property importer
+- Even though the importer only intends to refresh address/rent data, it must preserve `Neighbourhood` in JSON-array form when writing back through Strapi because the field is backed by the multi-select plugin
 - CSV price normalization rules are:
   - `L` / `l` values stay in lakhs
   - `K` / `k` values are converted to lakhs by dividing by `100`

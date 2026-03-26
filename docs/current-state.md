@@ -60,6 +60,9 @@
 - Render-targeted local Strapi scripts now ignore the known `tarn` `aborted` error during shutdown:
   - the import loop can finish and still print its summary instead of failing after the writes complete
   - the safe shutdown wrapper is now used by the property importer, address/rent importer, bulk assignment script, and neighbourhood repair scripts
+- The address/rent importer now preserves the JSON-array neighbourhood shape when updating rows:
+  - Render Postgres rejects plain string writes like `Anand Niketan` for the multi-select `Neighbourhood` field
+  - the importer now reuses the existing array value or wraps the CSV neighbourhood in a one-item array before updating
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
