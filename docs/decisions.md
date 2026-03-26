@@ -163,6 +163,12 @@
 - The public navbar branding now uses the theme-appropriate company logo asset from `public/logo` instead of the temporary text mark, and the sub-`400px` header layout is explicitly constrained so the CTA does not wrap the header onto a second line
 - The root layout should inject the pre-hydration theme bootstrap through `next/script` with `strategy="beforeInteractive"` rather than a raw `<script>` node, because the raw script path now triggers a Next/React client-render warning
 
+### Render deployment should use native services plus Postgres and R2
+- This repo should be deployed to Render as separate native web services for `algebra-enterprises-backend` and `algebra-enterprises-frontend`, plus a Render Postgres database
+- Production on Render should not use SQLite because Render web-service filesystems are ephemeral
+- The backend now includes the `pg` package explicitly so the Strapi service can connect to Render Postgres without relying on transitive dependencies
+- The current public frontend architecture still depends on `NEXT_PUBLIC_STRAPI_URL` from the browser, so the backend must remain a public web service unless the frontend fetch model is refactored later
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty

@@ -23,6 +23,11 @@
 - Confirm the new root repo commit was created successfully and use it as the base for future changes
 
 ## Validation
+- Follow `docs/render-hobby-deploy.md` for the first Render deployment of this repo:
+  - create Render Postgres first
+  - deploy the backend web service second
+  - deploy the frontend web service third
+  - only then migrate/import local data
 - Use the refreshed root `project-stack-and-media-plugins.txt` summary as the quick reference before evaluating or swapping media providers
 - After changing `R2_PUBLIC_URL` again in the future, rewrite existing stored `files.url` / `files.formats.*.url` values or reupload the affected assets so older media rows do not keep pointing at the old host
 - After changing backend R2 env values like `R2_PUBLIC_URL`, restart Strapi before doing new uploads; otherwise newly created file rows can keep using the old host until the backend process is refreshed
@@ -31,6 +36,11 @@
   - `R2_PUBLIC_URL` must be an HTTPS public/custom delivery domain, not the raw upload API endpoint
   - production `NEXT_PUBLIC_STRAPI_URL` must also be HTTPS
   - recheck Next image loading and CSP after the final production domains are chosen
+- Before the first Render go-live, complete the manual work that cannot be automated from this repo:
+  - create the production Strapi admin user
+  - recreate or migrate agent users
+  - migrate local SQLite data into Render Postgres or re-import from the source files
+  - verify R2 uploads from Strapi admin and the agent dashboard against the deployed backend
 - Before production, confirm the new rate limits behave correctly behind the real proxy/CDN headers:
   - local verification is complete; only the deployed-header behavior remains
   - repeated bad agent logins should return `429`

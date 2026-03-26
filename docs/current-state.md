@@ -1,7 +1,7 @@
 # Current State
 
 ## Last Updated
-2026-03-25
+2026-03-26
 
 ## Completed
 - Added a new root documentation file `project-stack-and-media-plugins.txt` that summarizes the current stack, installed plugins, active Cloudinary integration, and the media-service compatibility requirements for evaluating alternatives
@@ -42,12 +42,18 @@
 - The public navbar now uses the real company logo assets from `algebra-enterprises-frontend/public/logo`, switching between the black-text and white-text variants by theme
 - The mobile navbar was tightened so the header stays on one row below `400px`; the contact CTA shortens on very small widths and only drops away below `360px`, where the mobile menu still keeps the contact route accessible
 - The root layout theme bootstrap now uses Next's `beforeInteractive` script path instead of a raw `<script>` tag, which removes the Next/React client rendering warning while preserving early theme initialization
+- Render-native deployment prep is now in place for the current monorepo:
+  - the backend now includes the `pg` driver explicitly for Render Postgres
+  - the frontend package now declares its Node/NPM engine expectations for Render
+  - `algebra-enterprises-backend/.env.render.example` and `algebra-enterprises-frontend/.env.render.example` were added as deploy-time env templates
+  - `docs/render-hobby-deploy.md` was added as the Render Hobby runbook for this frontend/backend/Postgres/R2 setup
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
 - The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set
 - Frontend lint passes after these changes
 - Frontend production build passes on Next 16.2.0 in the sandbox
 - Backend admin build passes after adding the rate-limit middleware
+- Backend admin build still passes after adding the explicit `pg` dependency for Render/Postgres deployment
 - Frontend `npm audit` reports `0` vulnerabilities after the Next patch update
 - Verified live frontend and backend reachability outside the sandbox on `http://localhost:3000` and `http://localhost:1337`
 - Verified agent auth worked for `agenttest@example.com` during dashboard validation before the temporary test account was removed
