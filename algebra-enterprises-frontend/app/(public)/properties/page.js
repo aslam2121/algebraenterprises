@@ -3,7 +3,7 @@ import { Suspense, useState, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import PropertyCard from '@/components/PropertyCard';
 import Link from 'next/link';
-import { PROPERTY_NEIGHBOURHOOD_FILTER_KEY } from '@/lib/strapi';
+import { PROPERTY_NEIGHBOURHOOD_FILTER_KEY, STRAPI_BASE_URL } from '@/lib/strapi';
 import {
   BEDROOM_FILTER_OPTIONS,
   getListingTypeFromQueryValue,
@@ -144,7 +144,7 @@ function PropertiesPageContent() {
       setLoading(true);
 
       try {
-        let url = `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?populate=Images&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}&filters[Property_Status][$eq]=Live`;
+        let url = `${STRAPI_BASE_URL}/api/properties?populate=Images&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}&filters[Property_Status][$eq]=Live`;
 
         if (listingType !== 'All') {
           url += `&filters[Listing_Type][$eq]=${encodeURIComponent(listingType)}`;

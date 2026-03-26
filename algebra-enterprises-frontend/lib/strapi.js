@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const strapiURL = (process.env.NEXT_PUBLIC_STRAPI_URL || '').replace(/\/$/, '');
+export const STRAPI_BASE_URL = (process.env.NEXT_PUBLIC_STRAPI_URL || '').replace(/\/$/, '');
+const strapiURL = STRAPI_BASE_URL;
 export const PROPERTY_NEIGHBOURHOOD_FILTER_KEY = 'Neighbourhood';
 
 export function getStrapiMediaUrl(url) {

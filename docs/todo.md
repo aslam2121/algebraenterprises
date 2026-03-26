@@ -44,7 +44,8 @@
   - deploy the frontend web service and point it at the Render backend
   - after the frontend redeploy, verify `/`, `/properties`, property detail pages, agent login/dashboard, and image loading from the public R2 host
   - set backend `CORS_ORIGINS` to include the deployed frontend origin, then redeploy the backend so public browser fetches to `/api/properties` are allowed
-  - after the backend CORS fix, redeploy the frontend again if homepage property sections were built empty during the earlier broken state
+  - set frontend `NEXT_PUBLIC_STRAPI_URL` without a trailing slash, then redeploy the frontend so it stops generating `//api/...` requests
+  - after the backend CORS fix and frontend URL fix, redeploy the frontend again if homepage property sections were built empty during the earlier broken state
 - During the first Render data re-import from a local shell:
   - use the Render Postgres external URL, not the internal URL
   - enable DB SSL in the local shell env (`DATABASE_SSL=true`, `DATABASE_SSL_REJECT_UNAUTHORIZED=false`)

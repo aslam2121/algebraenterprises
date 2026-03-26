@@ -1,6 +1,7 @@
 import Hero from '@/components/Hero';
 import PropertyCard from '@/components/PropertyCard';
 import { AreaLink, ViewAllLink, FeatureCard } from '@/components/HomeClientParts';
+import { STRAPI_BASE_URL } from '@/lib/strapi';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -8,7 +9,7 @@ export const dynamic = 'force-dynamic';
 async function getFeaturedProperties() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?filters[Featured_Property][$eq]=true&filters[Property_Status][$eq]=Live&populate=Images&pagination[limit]=6`,
+      `${STRAPI_BASE_URL}/api/properties?filters[Featured_Property][$eq]=true&filters[Property_Status][$eq]=Live&populate=Images&pagination[limit]=6`,
       { cache: 'no-store' }
     );
     const data = await res.json();
@@ -19,7 +20,7 @@ async function getFeaturedProperties() {
 async function getRecentProperties() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?filters[Property_Status][$eq]=Live&populate=Images&pagination[limit]=6&sort=createdAt:desc`,
+      `${STRAPI_BASE_URL}/api/properties?filters[Property_Status][$eq]=Live&populate=Images&pagination[limit]=6&sort=createdAt:desc`,
       { cache: 'no-store' }
     );
     const data = await res.json();
@@ -30,7 +31,7 @@ async function getRecentProperties() {
 async function getStats() {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?pagination[limit]=1`,
+      `${STRAPI_BASE_URL}/api/properties?pagination[limit]=1`,
       { cache: 'no-store' }
     );
     const data = await res.json();

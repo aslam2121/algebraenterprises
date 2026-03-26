@@ -79,6 +79,10 @@
 - The frontend no longer depends on the unused Tailwind PostCSS plugin during builds:
   - `postcss.config.mjs` now uses an empty plugin set because the app does not use Tailwind directives
   - this removes the Render build failure where `NODE_ENV=production` skipped the dev-only `@tailwindcss/postcss` package
+- Public frontend property fetches now normalize `NEXT_PUBLIC_STRAPI_URL` through the shared helper:
+  - the deployed frontend had been built with a trailing-slash backend URL, which produced `//api/properties` requests
+  - the backend correctly rejected those double-slash requests as `400 BadRequestError` with `Malicious Path`
+  - homepage, listings, property detail, similar-properties fetches, and public enquiries now all use the trimmed base URL
 - The backend CORS middleware is now explicit and env-driven for deployed public property fetches:
   - `strapi::cors` now allowlists local dev plus `FRONTEND_URL` / `CORS_ORIGINS`
   - this fixes the deployed frontend case where `/api/properties` returned data but the browser blocked it because `Access-Control-Allow-Origin` was blank

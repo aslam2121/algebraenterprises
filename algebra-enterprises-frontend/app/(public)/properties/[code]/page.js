@@ -8,7 +8,7 @@ import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import PropertyCard from '@/components/PropertyCard';
 import PropertySearchBar from '@/components/PropertySearchBar';
-import { getPropertyNeighbourhood, getStrapiMediaUrl } from '@/lib/strapi';
+import { getPropertyNeighbourhood, getStrapiMediaUrl, STRAPI_BASE_URL } from '@/lib/strapi';
 
 const SIMILAR_PRICE_DELTA = 0.5;
 const SIMILAR_PRICE_FALLBACK_DELTA = 1.5;
@@ -111,7 +111,7 @@ function buildSimilarPropertiesUrl(property, { priceDelta, pageSize = 18 } = {})
     params.set('filters[Price][$lte]', String(priceValue + priceDelta));
   }
 
-  return `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?${params.toString()}`;
+  return `${STRAPI_BASE_URL}/api/properties?${params.toString()}`;
 }
 
 function sortSimilarProperties(properties, targetPrice) {
@@ -194,7 +194,7 @@ export default function PropertyDetailPage() {
 
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/properties?filters[Property_Code][$eq]=${code}&populate=Images`
+          `${STRAPI_BASE_URL}/api/properties?filters[Property_Code][$eq]=${code}&populate=Images`
         );
         const data = await res.json();
         const nextProperty = data.data?.[0] || null;
@@ -275,7 +275,7 @@ export default function PropertyDetailPage() {
     setSubmitting(true);
     setSubmitError('');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/enquiries`, {
+      const res = await fetch(`${STRAPI_BASE_URL}/api/enquiries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
