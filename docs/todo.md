@@ -47,6 +47,7 @@
   - when running `node scripts/import-wordpress-properties.js --apply`, pass `--published-date YYYY-MM-DD` if you want a stable explicit date on new imported rows
   - if a past run reached the progress logs and only failed with a final `Error: aborted` from `strapi.destroy()`, treat that as a shutdown issue and verify whether the rows were already written before rerunning
   - keep the address/rent importer writing `Neighbourhood` as a one-item JSON array, not a plain string, or Postgres will reject the update
+  - if the abort reappears on Node 22, make sure the script is using the latest `safe-destroy-strapi.js`; the late `unhandledRejection` variant should now be suppressed too
 - Before production, confirm the new rate limits behave correctly behind the real proxy/CDN headers:
   - local verification is complete; only the deployed-header behavior remains
   - repeated bad agent logins should return `429`

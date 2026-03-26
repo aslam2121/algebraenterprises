@@ -5,15 +5,52 @@ async function safeDestroyStrapi(strapi) {
     return;
   }
 
-  try {
-    await strapi.destroy();
-  } catch (error) {
+  let deferredError = null;
+  let ignoredAbort = false;
+  const ignoreAbortError = (error) => {
     if (error?.message === 'aborted') {
-      console.warn('[script-shutdown] Ignored aborted Strapi pool shutdown during script teardown.');
+      ignoredAbort = true;
+      return true;
+    }
+
+    return false;
+  };
+  const handleUnhandledRejection = (reason) => {
+    if (ignoreAbortError(reason)) {
       return;
     }
 
-    throw error;
+    deferredError = deferredError || reason;
+  };
+  const handleUncaughtException = (error) => {
+    if (ignoreAbortError(error)) {
+      return;
+    }
+
+    deferredError = deferredError || error;
+  };
+
+  process.prependListener('unhandledRejection', handleUnhandledRejection);
+  process.prependListener('uncaughtException', handleUncaughtException);
+
+  try {
+    await strapi.destroy();
+  } catch (error) {
+    if (!ignoreAbortError(error)) {
+      throw error;
+    }
+  } finally {
+    await new Promise((resolve) => setImmediate(resolve));
+    process.removeListener('unhandledRejection', handleUnhandledRejection);
+    process.removeListener('uncaughtException', handleUncaughtException);
+  }
+
+  if (ignoredAbort) {
+    console.warn('[script-shutdown] Ignored aborted Strapi pool shutdown during script teardown.');
+  }
+
+  if (deferredError) {
+    throw deferredError;
   }
 }
 

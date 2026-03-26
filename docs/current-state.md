@@ -60,6 +60,7 @@
 - Render-targeted local Strapi scripts now ignore the known `tarn` `aborted` error during shutdown:
   - the import loop can finish and still print its summary instead of failing after the writes complete
   - the safe shutdown wrapper is now used by the property importer, address/rent importer, bulk assignment script, and neighbourhood repair scripts
+  - the wrapper now also suppresses the late `unhandledRejection` form of that same abort seen on Node 22 during Postgres pool teardown
 - The address/rent importer now preserves the JSON-array neighbourhood shape when updating rows:
   - Render Postgres rejects plain string writes like `Anand Niketan` for the multi-select `Neighbourhood` field
   - the importer now reuses the existing array value or wraps the CSV neighbourhood in a one-item array before updating
