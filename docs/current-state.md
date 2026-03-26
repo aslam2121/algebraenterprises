@@ -76,6 +76,9 @@
 - The bulk-assignment script now matches the current schema and stored neighbourhood shape:
   - it no longer assumes `propertySchema.attributes.Neighborhood`
   - it now reads either `Neighborhood` or `Neighbourhood` and unwraps the one-item JSON array before matching neighborhoods
+- The frontend no longer depends on the unused Tailwind PostCSS plugin during builds:
+  - `postcss.config.mjs` now uses an empty plugin set because the app does not use Tailwind directives
+  - this removes the Render build failure where `NODE_ENV=production` skipped the dev-only `@tailwindcss/postcss` package
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
