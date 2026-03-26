@@ -79,6 +79,9 @@
 - The frontend no longer depends on the unused Tailwind PostCSS plugin during builds:
   - `postcss.config.mjs` now uses an empty plugin set because the app does not use Tailwind directives
   - this removes the Render build failure where `NODE_ENV=production` skipped the dev-only `@tailwindcss/postcss` package
+- The backend CORS middleware is now explicit and env-driven for deployed public property fetches:
+  - `strapi::cors` now allowlists local dev plus `FRONTEND_URL` / `CORS_ORIGINS`
+  - this fixes the deployed frontend case where `/api/properties` returned data but the browser blocked it because `Access-Control-Allow-Origin` was blank
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency

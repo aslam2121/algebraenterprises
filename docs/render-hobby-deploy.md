@@ -68,12 +68,17 @@ Required:
 
 Optional:
 - `R2_ROOT_PATH`
+- `CORS_ORIGINS`
+- `FRONTEND_URL`
 - `PROPERTY_IMAGE_WATERMARK`
 
 ### Notes
 - This repo now includes the `pg` package explicitly so Strapi can use PostgreSQL on Render.
 - Keep backend and Postgres in the same Render region.
 - Use the internal Render Postgres URL for `DATABASE_URL`.
+- Set backend CORS so the public frontend can read `/api/properties` directly from the browser:
+  - `CORS_ORIGINS` should include at least `https://<your-frontend-service>.onrender.com`
+  - if you add a custom frontend domain later, append it there too
 
 ## Frontend Service
 

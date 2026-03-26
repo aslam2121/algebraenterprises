@@ -174,6 +174,7 @@
 - Production on Render should not use SQLite because Render web-service filesystems are ephemeral
 - The backend now includes the `pg` package explicitly so the Strapi service can connect to Render Postgres without relying on transitive dependencies
 - The current public frontend architecture still depends on `NEXT_PUBLIC_STRAPI_URL` from the browser, so the backend must remain a public web service unless the frontend fetch model is refactored later
+- Because the public frontend fetches Strapi directly from the browser, backend CORS must be configured explicitly with the deployed frontend origin(s); relying on the default `strapi::cors` path left `Access-Control-Allow-Origin` blank on Render in this project
 
 ### The root repository should have a GitHub-facing README
 - The repo now includes a root `README.md` so GitHub shows a basic project overview, repository layout, local run commands, and the current deployment-note entry point
