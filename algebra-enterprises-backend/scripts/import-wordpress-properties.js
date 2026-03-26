@@ -26,6 +26,7 @@ function parseArgs(argv) {
     csvPath: DEFAULT_CSV_PATH,
     parkingCsvPath: fs.existsSync(DEFAULT_PARKING_CSV_PATH) ? DEFAULT_PARKING_CSV_PATH : undefined,
     limit: undefined,
+    publishedDate: new Date().toISOString().slice(0, 10),
   };
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -57,6 +58,23 @@ function parseArgs(argv) {
 
     if (arg === '--parking-csv') {
       options.parkingCsvPath = path.resolve(process.cwd(), argv[index + 1]);
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--published-date') {
+      const rawDate = String(argv[index + 1] || '').trim();
+
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+        throw new Error('--published-date must use YYYY-MM-DD format.');
+      }
+
+      const parsedDate = new Date(`${rawDate}T00:00:00Z`);
+      if (Number.isNaN(parsedDate.getTime())) {
+        throw new Error('--published-date must be a valid date.');
+      }
+
+      options.publishedDate = rawDate;
       index += 1;
       continue;
     }
@@ -301,7 +319,7 @@ function resolveNeighborhood(record, currentProperty) {
   return '';
 }
 
-function buildImportData(record, currentProperty) {
+function buildImportData(record, currentProperty, options) {
   const currentImages = currentProperty?.Images || [];
   const resolvedNeighborhood = resolveNeighborhood(record, currentProperty);
 
@@ -327,6 +345,7 @@ function buildImportData(record, currentProperty) {
     Rooms: record.Rooms || currentProperty?.Rooms,
     Parking: record.Parking,
     Directions: record.Directions || currentProperty?.Directions,
+    Published_Date: currentProperty?.Published_Date || options.publishedDate,
   };
 
   let propertyData;
@@ -419,7 +438,7 @@ async function importRows(options) {
         propertyData,
         clearedAddress,
         derivedNeighborhood,
-      } = buildImportData(record, currentProperty);
+      } = buildImportData(record, currentProperty, options);
 
       if (clearedAddress) {
         summary.clearedAddresses += 1;
@@ -441,6 +460,7 @@ async function importRows(options) {
           rooms: propertyData.Rooms ?? null,
           parking: propertyData.Parking ?? null,
           directions: propertyData.Directions || null,
+          publishedDate: propertyData.Published_Date,
           features: propertyData.Features,
           clearedAddress,
         });

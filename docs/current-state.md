@@ -47,6 +47,13 @@
   - the frontend package now declares its Node/NPM engine expectations for Render
   - `algebra-enterprises-backend/.env.render.example` and `algebra-enterprises-frontend/.env.render.example` were added as deploy-time env templates
   - `docs/render-hobby-deploy.md` was added as the Render Hobby runbook for this frontend/backend/Postgres/R2 setup
+- The first Render backend deployment is now live against Render Postgres:
+  - Strapi starts successfully in production on Render and the admin UI is reachable
+  - the deployed Postgres database is empty until data is re-imported or migrated
+  - local import scripts targeting Render Postgres must use the external database URL with SSL enabled
+- The WordPress property importer now fills the required `Published_Date` field during re-imports:
+  - existing properties keep their current `Published_Date`
+  - newly created rows default to the current date unless `--published-date YYYY-MM-DD` is passed explicitly
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency

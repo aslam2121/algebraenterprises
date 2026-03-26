@@ -41,6 +41,10 @@
   - recreate or migrate agent users
   - migrate local SQLite data into Render Postgres or re-import from the source files
   - verify R2 uploads from Strapi admin and the agent dashboard against the deployed backend
+- During the first Render data re-import from a local shell:
+  - use the Render Postgres external URL, not the internal URL
+  - enable DB SSL in the local shell env (`DATABASE_SSL=true`, `DATABASE_SSL_REJECT_UNAUTHORIZED=false`)
+  - when running `node scripts/import-wordpress-properties.js --apply`, pass `--published-date YYYY-MM-DD` if you want a stable explicit date on new imported rows
 - Before production, confirm the new rate limits behave correctly behind the real proxy/CDN headers:
   - local verification is complete; only the deployed-header behavior remains
   - repeated bad agent logins should return `429`
@@ -66,6 +70,7 @@
 - If neighbourhood filters stop working again, verify the frontend is not using `$eq` against the JSON-array `Neighbourhood` field; public filters should use `$contains`
 - If neighbourhoods ever look blank again in Strapi admin, verify the DB still stores valid JSON arrays for `neighbourhood` instead of plain text
 - Re-run `node scripts/import-wordpress-properties.js` in `algebra-enterprises-backend` as a dry-run before any future CSV apply pass
+- If `Published_Date` is required in the property schema, keep the importer fallback in place or pass `--published-date YYYY-MM-DD` on apply runs so new rows do not fail validation
 - Re-run `node scripts/import-address-rent.js` in `algebra-enterprises-backend` as a dry-run before any future address/rent apply pass
 - Re-run `node scripts/backfill-neighbourhood-from-title.js` in `algebra-enterprises-backend` as a dry-run if future imports leave neighbourhood values blank again
 - Re-run `node scripts/normalize-neighbourhood-json.js` in `algebra-enterprises-backend` if older string-shaped neighbourhood data ever gets reintroduced

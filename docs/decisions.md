@@ -73,6 +73,8 @@
 - The importer also reads the root `algebra_Parking.csv` file, using `Property_Code` as the overlay key for `Parking`
 - Imported properties should have their private `Property_Address` cleared to an empty string rather than filled with placeholder text
 - Existing non-CSV fields such as images, assigned agent, description, price, and area values are preserved during import updates
+- Because `Published_Date` is now required in the property schema but not present in the source CSV, the importer should preserve the existing `Published_Date` on updates and assign a fallback date to new rows
+- The importer now defaults that fallback to the current date and also accepts `--published-date YYYY-MM-DD` for deterministic apply runs
 - CSV listing type alias `For Rent, For Sale` is normalized to the schema value `For Rent and For Sale`
 - Duplicate CSV rows for the same `Property_Code` are merged by taking later non-empty field values, which resolved the conflicting `ag1373` rows during this import
 - Parking import values are normalized as follows before validation: blank and `no` become empty, `yes` becomes `1`, and numeric strings are kept as integers
