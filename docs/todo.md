@@ -71,6 +71,7 @@
 - If neighbourhoods ever look blank again in Strapi admin, verify the DB still stores valid JSON arrays for `neighbourhood` instead of plain text
 - Re-run `node scripts/import-wordpress-properties.js` in `algebra-enterprises-backend` as a dry-run before any future CSV apply pass
 - If `Published_Date` is required in the property schema, keep the importer fallback in place or pass `--published-date YYYY-MM-DD` on apply runs so new rows do not fail validation
+- If `Published_Date` ever stops saving again from agent create/edit or scripted imports, check `src/api/property/utils/agent-property.js`; the shared property-data builder must keep that field in its returned payload
 - Re-run `node scripts/import-address-rent.js` in `algebra-enterprises-backend` as a dry-run before any future address/rent apply pass
 - Re-run `node scripts/backfill-neighbourhood-from-title.js` in `algebra-enterprises-backend` as a dry-run if future imports leave neighbourhood values blank again
 - Re-run `node scripts/normalize-neighbourhood-json.js` in `algebra-enterprises-backend` if older string-shaped neighbourhood data ever gets reintroduced

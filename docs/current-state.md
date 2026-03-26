@@ -54,6 +54,9 @@
 - The WordPress property importer now fills the required `Published_Date` field during re-imports:
   - existing properties keep their current `Published_Date`
   - newly created rows default to the current date unless `--published-date YYYY-MM-DD` is passed explicitly
+- The shared backend property-data builder now persists `Published_Date` on all property writes:
+  - the Render importer can now create new records without tripping the required-date validation
+  - agent dashboard create/edit requests no longer silently drop `Published_Date` on the backend
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency

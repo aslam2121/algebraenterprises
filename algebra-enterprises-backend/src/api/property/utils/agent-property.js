@@ -86,6 +86,25 @@ function normalizeBoolean(value) {
   return value === true || value === 'true' || value === '1' || value === 1 || value === 'on';
 }
 
+function normalizeDate(value, fieldName) {
+  if (value === undefined || value === null || value === '') {
+    return undefined;
+  }
+
+  const normalized = normalizeString(value);
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
+    throw new Error(`${fieldName} must use YYYY-MM-DD format.`);
+  }
+
+  const parsedDate = new Date(`${normalized}T00:00:00Z`);
+  if (Number.isNaN(parsedDate.getTime())) {
+    throw new Error(`${fieldName} must be a valid date.`);
+  }
+
+  return normalized;
+}
+
 function parseArrayField(value, fieldName) {
   if (!value) {
     return [];
@@ -261,6 +280,7 @@ function buildPropertyData(body, agentId, imageIds = [], options = {}) {
     Rooms: normalizeInteger(body.Rooms, 'Rooms'),
     Parking: normalizeInteger(body.Parking, 'Parking'),
     Directions: normalizeOptionalString(body.Directions),
+    Published_Date: normalizeDate(body.Published_Date, 'Published date'),
     Images: imageIds,
   };
 }
