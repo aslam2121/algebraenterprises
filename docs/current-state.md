@@ -68,6 +68,11 @@
   - the existing Python workbook parser is still used so no new XLSX dependency was added
   - when `DATABASE_CLIENT=postgres`, the script now reads and updates `public.properties` through `psql` using `DATABASE_URL`
   - this could not be live-verified inside the sandbox because external DNS to the Render host is blocked here
+- The Render Postgres data re-import is now complete for the current property dataset:
+  - WordPress property import applied successfully to the deployed Render database
+  - address/rent import applied successfully to the deployed Render database
+  - available-floors import applied successfully to the deployed Render database
+  - the only remaining workbook misses are the non-existent property codes `ag1665`, `ag1195`, and `ag675-1`
 - A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
@@ -279,6 +284,12 @@
     - `ag852`: `Ground+Basement`
     - `ag1616`: `Ground, First, Second and Third`
     - `ag1033`: remains blank as intended
+- Verified the available-floors import against Render Postgres:
+  - the script processed 267 workbook rows and merged the duplicate blank `ag1373` entry
+  - 263 published properties matched in the deployed Render database
+  - 180 Render rows were updated and 83 were already unchanged
+  - the only misses were the three non-existent property codes `ag1665`, `ag1195`, and `ag675-1`
+  - dry-run and apply both worked from the local shell using the Render env and `psql`
 - Verified the frontend neighbourhood-filter regression fix:
   - live local Strapi returns `0` rows for `filters[Neighbourhood][$eq]=Vasant Vihar`
   - live local Strapi returns matching rows for `filters[Neighbourhood][$contains]=Vasant Vihar`

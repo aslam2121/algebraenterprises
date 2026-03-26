@@ -37,10 +37,10 @@
   - production `NEXT_PUBLIC_STRAPI_URL` must also be HTTPS
   - recheck Next image loading and CSP after the final production domains are chosen
 - Before the first Render go-live, complete the manual work that cannot be automated from this repo:
-  - create the production Strapi admin user
-  - recreate or migrate agent users
-  - migrate local SQLite data into Render Postgres or re-import from the source files
+  - recreate or verify agent users
+  - run or verify any required bulk property assignments for those agent users
   - verify R2 uploads from Strapi admin and the agent dashboard against the deployed backend
+  - deploy the frontend web service and point it at the Render backend
 - During the first Render data re-import from a local shell:
   - use the Render Postgres external URL, not the internal URL
   - enable DB SSL in the local shell env (`DATABASE_SSL=true`, `DATABASE_SSL_REJECT_UNAUTHORIZED=false`)
@@ -49,6 +49,7 @@
   - keep the address/rent importer writing `Neighbourhood` as a one-item JSON array, not a plain string, or Postgres will reject the update
   - if the abort reappears on Node 22, make sure the script is using the latest `safe-destroy-strapi.js`; the late `unhandledRejection` variant should now be suppressed too
   - `python3 scripts/import-available-floors.py` can now target Render Postgres too, but it requires working `psql` access from your local machine because sandbox DNS to the Render host is blocked here
+  - this phase is now complete for the current dataset; only rerun these imports if the source files change or the production database is reset
 - Before production, confirm the new rate limits behave correctly behind the real proxy/CDN headers:
   - local verification is complete; only the deployed-header behavior remains
   - repeated bad agent logins should return `429`
