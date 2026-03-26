@@ -169,6 +169,9 @@
 - The backend now includes the `pg` package explicitly so the Strapi service can connect to Render Postgres without relying on transitive dependencies
 - The current public frontend architecture still depends on `NEXT_PUBLIC_STRAPI_URL` from the browser, so the backend must remain a public web service unless the frontend fetch model is refactored later
 
+### The root repository should have a GitHub-facing README
+- The repo now includes a root `README.md` so GitHub shows a basic project overview, repository layout, local run commands, and the current deployment-note entry point
+
 ### Strapi neighbourhood values must be stored as JSON arrays
 - The `Neighbourhood` field is a JSON custom field backed by the multi-select plugin, so Strapi admin expects array-shaped values even when `max: 1`
 - Older scripts had been writing plain strings like `Vasant Vihar`, which the frontend could normalize but the Strapi admin UI rendered as empty

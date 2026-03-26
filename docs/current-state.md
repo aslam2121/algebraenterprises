@@ -47,6 +47,7 @@
   - the frontend package now declares its Node/NPM engine expectations for Render
   - `algebra-enterprises-backend/.env.render.example` and `algebra-enterprises-frontend/.env.render.example` were added as deploy-time env templates
   - `docs/render-hobby-deploy.md` was added as the Render Hobby runbook for this frontend/backend/Postgres/R2 setup
+- A root `README.md` now exists so GitHub shows a proper project overview for this monorepo instead of an empty landing page
 - The frontend `next@16.1.6` audit finding was resolved by moving to the patched `next@16.2.0` / `eslint-config-next@16.2.0` line
 - Redundant root `package.json` and `package-lock.json` files were removed because the frontend already owns the `js-cookie` dependency
 - The unrelated backend watermark fallback change was reverted so agent image uploads default back to `ALGEBRA ENTERPRISES` unless `PROPERTY_IMAGE_WATERMARK` is set

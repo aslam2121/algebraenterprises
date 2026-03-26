@@ -84,3 +84,4 @@
   - agent property edit with replacement image upload still working after frontend fixes
 ## Cleanup / Follow-Up
 - Keep `docs/current-state.md`, `docs/todo.md`, and `docs/decisions.md` updated after each meaningful task
+- Keep the root `README.md` aligned with the actual repo structure and deployment approach as the project changes
